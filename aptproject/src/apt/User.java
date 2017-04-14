@@ -1,55 +1,81 @@
 package apt;
 
 import java.awt.BorderLayout;
+import java.awt.Checkbox;
 import java.awt.Choice;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
 
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.border.EtchedBorder;
 
 public class User extends JFrame implements ActionListener {
-	JPanel p_north, p_south;
+	JPanel p_north, p_north_right, p_south;
 	JTable table;
 	JScrollPane scroll;
 	Choice choice;
 	JButton bt_find, bt_copy, bt_xls;
-	Connection con;
+	Checkbox ch_a, ch_b, ch_c;
 	DBManager manager;
+	Connection con;
+	ListModel listModel;
+	JFileChooser chooser;
 	
 
 	public User() {
 	
+		chooser = new JFileChooser();
 		p_north = new JPanel();
+		p_north_right = new JPanel();
 		p_south = new JPanel();
-		table = new JTable(3, 4);
+		table = new JTable();
 		scroll = new JScrollPane(table);
 		bt_find = new JButton("¡∂»∏");
 		bt_copy = new JButton("¿Œº‚");
 		bt_xls = new JButton("xml∑Œ ≥ª∫∏≥ª±‚");
+		ch_a = new Checkbox("∏Ù∂Û");
+		ch_b = new Checkbox("∏Ù∂Û");
+		ch_c = new Checkbox("∏Ù∂Û");
 
 		setLayout(new BorderLayout());
 
-		p_north.add(bt_copy);
-		p_north.add(bt_xls);
-		p_north.add(bt_find);
+	
+		p_north_right.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 20));
+
+		p_north_right.add(bt_copy);
+		p_north_right.add(bt_xls);
+		p_north_right.add(bt_find);
+
+		p_north.add(p_north_right);
+
+		p_north.setBorder(new EtchedBorder(EtchedBorder.RAISED));
 
 		p_south.add(scroll);
 
 		scroll.setPreferredSize(new Dimension(680, 500));
-		p_north.setPreferredSize(new Dimension(700, 100));
+	
 
+		// p_north_left.setPreferredSize(new Dimension(350, 100));
+		// p_north_right.setPreferredSize(new Dimension(350, 100));
+		p_north.setPreferredSize(new Dimension(700, 80));
+		
+		bt_copy.addActionListener(this); 
+		bt_find.addActionListener(this); 
+		bt_xls.addActionListener(this); 
+		
 		add(p_north, BorderLayout.NORTH);
 		add(p_south, BorderLayout.CENTER);
+		setVisible(true);
+		setSize(700, 700);
 
-		bt_find.addActionListener(this);
-		bt_copy.addActionListener(this);
-		bt_xls.addActionListener(this);
 
 		setVisible(true);
 		setSize(700, 700);

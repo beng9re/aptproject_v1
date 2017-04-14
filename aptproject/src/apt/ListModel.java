@@ -16,13 +16,11 @@ public class ListModel extends AbstractTableModel{
 
 	public ListModel(Connection con) {
 		this.con = con;
-		getList();
+		getList("select * from aptuser");
 	}
 
-	public void getList() {
-		StringBuffer sql = new StringBuffer();
-		////////////////////조건문만 주면 됩니다.
-		sql.append("select * from aptuser");
+	public void getList(String sql) {
+	
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
@@ -64,5 +62,10 @@ public class ListModel extends AbstractTableModel{
 	public Object getValueAt(int row, int col) {
 	
 		return data.elementAt(row).elementAt(col);
+	}
+	
+	public String getColumnName(int col) {
+		
+		return columnName.get(col);
 	}
 }

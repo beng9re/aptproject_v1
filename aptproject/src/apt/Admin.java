@@ -1,13 +1,19 @@
 package apt;
 
 import java.awt.BorderLayout;
-import java.awt.Checkbox;
 import java.awt.Choice;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.ResultSetMetaData;
+import java.sql.SQLException;
+import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JFileChooser;
@@ -15,7 +21,10 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextField;
 import javax.swing.border.EtchedBorder;
+
+import db.UserCategory;
 
 
 public class Admin extends JFrame implements ActionListener {
@@ -24,11 +33,15 @@ public class Admin extends JFrame implements ActionListener {
 	JScrollPane scroll;
 	Choice choice;
 	JButton bt_find, bt_copy, bt_xls;
-	Checkbox ch_a, ch_b, ch_c;
+	JTextField t_input;
+	//Checkbox ch_a, ch_b, ch_c;
+	
 	DBManager manager;
 	Connection con;
 	ListModel listModel;
 	JFileChooser chooser;
+	
+	Vector <UserCategory>user = new Vector<UserCategory>();
 
 	public Admin() {
 		chooser = new JFileChooser();
@@ -42,9 +55,10 @@ public class Admin extends JFrame implements ActionListener {
 		bt_find = new JButton("¡∂»∏");
 		bt_copy = new JButton("¿Œº‚");
 		bt_xls = new JButton("xml∑Œ ≥ª∫∏≥ª±‚");
-		ch_a = new Checkbox("∏Ù∂Û");
-		ch_b = new Checkbox("∏Ù∂Û");
-		ch_c = new Checkbox("∏Ù∂Û");
+		t_input = new JTextField(15);
+//		ch_a = new Checkbox("∏Ù∂Û");
+//		ch_b = new Checkbox("∏Ù∂Û");
+//		ch_c = new Checkbox("∏Ù∂Û");
 
 		setLayout(new BorderLayout());
 
@@ -52,9 +66,10 @@ public class Admin extends JFrame implements ActionListener {
 		p_north_right.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 20));
 
 		p_north_left.add(choice);
-		p_north_left.add(ch_a);
-		p_north_left.add(ch_b);
-		p_north_left.add(ch_c);
+		p_north_left.add(t_input);
+//		p_north_left.add(ch_a);
+//		p_north_left.add(ch_b);
+//		p_north_left.add(ch_c);
 
 		p_north_right.add(bt_copy);
 		p_north_right.add(bt_xls);
@@ -78,17 +93,73 @@ public class Admin extends JFrame implements ActionListener {
 		bt_find.addActionListener(this); 
 		bt_xls.addActionListener(this); 
 		
+		t_input.addKeyListener(new KeyAdapter() {
+			public void keyReleased(KeyEvent e) {
+				int key=e.getKeyCode();
+				if(key==KeyEvent.VK_ENTER){
+					String msg=t_input.getText();
+					String data=choice.getSelectedItem();
+					String sql= "select * from aptuser where "+data+"= '"+msg+"' ";
+					
+					listModel.getList(sql);
+					table.updateUI();
+//					int colNum=choice.getSelectedIndex();
+//			
+//					for(int i=0; i<listModel.data.size();i++){
+//						if(listModel.data.elementAt(i).elementAt(colNum)==t_input.getText()){
+//							
+//						}
+//					}
+				}
+			}
+		});
+		
 		add(p_north, BorderLayout.NORTH);
 		add(p_south, BorderLayout.CENTER);
 		setVisible(true);
 		setSize(700, 700);
 
 		init();
+		getUser();
 	}
 
 	public void init() {
 		manager = DBManager.getInstance();
 		this.con = manager.getConnection();
+	}
+	
+	
+	public void getUser(){
+		PreparedStatement pstmt=null;
+		ResultSet rs=null;
+		String sql = "select * from aptuser";
+		
+		try {
+			pstmt=con.prepareStatement(sql);
+			rs=pstmt.executeQuery();
+			
+			ResultSetMetaData meta= rs.getMetaData();
+			for(int i=1; i<=meta.getColumnCount(); i++){
+				choice.add(meta.getColumnName(i));
+			}
+			
+			while(rs.next()){
+				UserCategory dto = new UserCategory();
+				dto.setAptuser_code(rs.getString("aptuser_code"));
+				dto.setAptuser_id(rs.getString("aptuser_id"));
+				dto.setAptuser_ip(rs.getString("aptuser_ip"));
+				dto.setAptuser_live(rs.getString("aptuser_live"));
+				dto.setAptuser_name(rs.getString("aptuser_name"));
+				dto.setAptuser_perm(rs.getString("aptuser_perm"));
+				dto.setAptuser_phone(rs.getString("aptuser_phone"));
+				dto.setAptuser_pw(rs.getString("aptuser_pw"));
+				dto.setAptuser_regdate(rs.getString("aptuser_regdate"));
+				user.add(dto);
+			}
+		} catch (SQLException e) {
+			
+			e.printStackTrace();
+		}
 	}
 
 	public void getList(){
@@ -96,7 +167,6 @@ public class Admin extends JFrame implements ActionListener {
 			table.updateUI();
 	}
 
-	@Override
 	public void actionPerformed(ActionEvent e) {
 		Object obj = e.getSource();
 		if (obj == bt_find) {
