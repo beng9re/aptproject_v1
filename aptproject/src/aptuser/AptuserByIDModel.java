@@ -6,10 +6,12 @@
  * 삭제 : deleteData()
  * 의 기능을 담당한다
  */
-package db;
+package aptuser;
 
 import java.sql.Connection;
 import java.sql.SQLException;
+
+import db.Aptuser;
 
 public class AptuserByIDModel extends AptuserModel {
 	private String sql = "select * from aptuser where aptuser_id = ?";

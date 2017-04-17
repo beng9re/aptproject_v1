@@ -20,7 +20,6 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import db.Aptuser;
-import db.AptuserByIDModel;
 import db.DBManager;
 
 public abstract class UserInfo extends JFrame {

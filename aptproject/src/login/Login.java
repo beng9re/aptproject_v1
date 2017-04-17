@@ -24,7 +24,6 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import db.DBManager;
-import db.LoginModel;
 
 public class Login extends JFrame implements ActionListener {
 	private JPanel pnl_top, pnl_field, pnl_bot;

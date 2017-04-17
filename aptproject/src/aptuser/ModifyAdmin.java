@@ -1,7 +1,5 @@
 package aptuser;
 
-import db.AptuserByIDModel;
-
 public class ModifyAdmin extends UserInfo {
 	//회원ID, 바코드, 비밀번호, 비밀번호확인, 이름, 연락처, 등록일, 주소
 	char[] isEdit = { 'N', 'Y', 'Y', 'Y', 'N', 'N', 'N', 'N' };
