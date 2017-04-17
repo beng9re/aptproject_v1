@@ -7,9 +7,12 @@ import java.awt.FlowLayout;
 import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.KeyAdapter;
+import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.Connection;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -21,6 +24,10 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import db.Aptuser;
+import db.AptuserModel;
+import db.DBManager;
+
 public class Login extends JFrame implements ActionListener {
 	private JPanel pnl_top, pnl_field, pnl_bot;
 	private JLabel lb_id, lb_pw;
@@ -28,8 +35,9 @@ public class Login extends JFrame implements ActionListener {
 	private JPasswordField txf_pw;
 	private JButton btn_login, btn_barcode;
 	
-//	private DBManager dbMgr;
+	private DBManager dbMgr = DBManager.getInstance();
 	private Connection conn;
+	private AptuserModel model;
 	
 	public Login() {
 		pnl_top = new JPanel();
@@ -72,10 +80,18 @@ public class Login extends JFrame implements ActionListener {
 		//리스너 연결
 		btn_barcode.addActionListener(this);
 		btn_login.addActionListener(this);
+		txf_pw.addKeyListener(new KeyAdapter() {
+			@Override
+			public void keyPressed(KeyEvent e) {
+				if (e.getKeyCode()==KeyEvent.VK_ENTER) {
+					login();
+				}
+			}
+		});
 		this.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				//db연결 종료
+				dbMgr.disconnect();
 				System.exit(0);
 			}
 		});
@@ -86,10 +102,22 @@ public class Login extends JFrame implements ActionListener {
 		setLocationRelativeTo(null);
 		setResizable(false);
 		setVisible(true);
+		
+		connect();
+	}
+	
+	private void connect() {
+		conn = dbMgr.getConnection();
+		model = new AptuserModel(conn);
 	}
 	
 	private void login() {
-		System.out.println("로그인버튼");
+		//DB에서 회원정보 조회해서 id pw 일치여부 확인 (admin//4321)
+		if (model.loginChk(txf_id.getText(), txf_pw.getPassword())) {
+			JOptionPane.showMessageDialog(this, "로그인 성공");
+		} else {
+			JOptionPane.showMessageDialog(this, "회원정보가 일치하지 않습니다");
+		}
 	}
 	
 	@Override
