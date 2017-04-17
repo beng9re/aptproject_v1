@@ -1,4 +1,10 @@
-package chat.client;
+/* 
+ * 채팅창 외형, 특별한 기능은 없다
+ * 텍스트area에 글이 스크롤 범위 밖으로 나가면
+ * 자동으로 스크롤되게, 방법이 없으면 캔버스로 전환
+ */
+
+package chat;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
