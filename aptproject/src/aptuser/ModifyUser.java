@@ -8,6 +8,7 @@ public class ModifyUser extends UserInfo {
 	
 	public ModifyUser() {
 		init(isEdit, titleStr, btnTxt);
+		loadInfo();
 	}
 	
 	@Override

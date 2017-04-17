@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.sql.Connection;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -16,6 +18,10 @@ import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
+
+import db.Aptuser;
+import db.AptuserByIDModel;
+import db.DBManager;
 
 public abstract class UserInfo extends JFrame {
 	JPanel pnl_center, pnl_south;
@@ -122,8 +128,29 @@ public abstract class UserInfo extends JFrame {
 //		setPreferredSize(new Dimension(700, 700));
 		setVisible(true);
 		setSize(700,700);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 
+	//회원 정보 불러오기
+	public void loadInfo() {
+		//프로그램 전체에서 id와 conn은 항상보유중이어야함
+		String id = "admin";
+		DBManager dbMgr = DBManager.getInstance();
+		Connection conn = dbMgr.getConnection();
+
+		//ID로 유저정보를 찾아서 가져온다
+		AptuserByIDModel model = new AptuserByIDModel(conn, id);
+		ArrayList<Aptuser> aptuser = model.getData();
+		
+		//필드에 회원정보를 입력한다
+		txfArr[0].setText(aptuser.get(0).getAptuser_id());
+		txfArr[1].setText(aptuser.get(0).getAptuser_code());
+		txfArr[2].setText(aptuser.get(0).getAptuser_name());
+		txfArr[3].setText(aptuser.get(0).getAptuser_phone());
+		txfArr[4].setText(aptuser.get(0).getAptuser_regdate());
+		txfArr[5].setText(Integer.toString(aptuser.get(0).getUnit_id()));
+	}
+	
 	//버튼을 눌렀을 때 동작내용
 	abstract public void confirm();
 	

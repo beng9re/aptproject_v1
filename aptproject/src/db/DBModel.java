@@ -17,7 +17,10 @@ public abstract class DBModel {
 	protected ArrayList arrList = new ArrayList();
 	
 	//바인드 변수관련 설정을 하는 메서드
-	protected abstract void setSQL() throws SQLException;
+	//바인드 변수를 사용하려면 오버라이딩 해야함
+	protected void setSQL() throws SQLException {
+		pstmt = conn.prepareStatement(sql);
+	}
 	
 	//dto로 부터 데이터를 받아오는 메서드
 	protected abstract void setTable(ResultSet rs, int count_col) throws SQLException;
@@ -37,7 +40,6 @@ public abstract class DBModel {
 			exeUpdate();
 		}
 	}
-	
 	
 	private void exeQuery() {
 		try {

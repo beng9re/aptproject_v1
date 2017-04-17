@@ -12,7 +12,6 @@ import java.awt.event.KeyEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.Connection;
-import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -24,9 +23,8 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import db.Aptuser;
-import db.AptuserModel;
 import db.DBManager;
+import db.LoginModel;
 
 public class Login extends JFrame implements ActionListener {
 	private JPanel pnl_top, pnl_field, pnl_bot;
@@ -37,7 +35,7 @@ public class Login extends JFrame implements ActionListener {
 	
 	private DBManager dbMgr = DBManager.getInstance();
 	private Connection conn;
-	private AptuserModel model;
+	private LoginModel model;
 	
 	public Login() {
 		pnl_top = new JPanel();
@@ -108,7 +106,7 @@ public class Login extends JFrame implements ActionListener {
 	
 	private void connect() {
 		conn = dbMgr.getConnection();
-		model = new AptuserModel(conn);
+		model = new LoginModel(conn);
 	}
 	
 	private void login() {
