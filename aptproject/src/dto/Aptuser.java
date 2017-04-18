@@ -10,6 +10,8 @@ public class Aptuser {
 	private String aptuser_pw;
 	private String aptuser_regdate;
 	private String aptuser_phone;
+	private int Unit_id;
+	
 	public String getAptuser_code() {
 		return aptuser_code;
 	}
@@ -64,7 +66,11 @@ public class Aptuser {
 	public void setAptuser_phone(String aptuser_phone) {
 		this.aptuser_phone = aptuser_phone;
 	}
-	
-	
+	public int getUnit_id() {
+		return Unit_id;
+	}
+	public void setUnit_id(int unit_id) {
+		Unit_id = unit_id;
+	}
 	
 }
