@@ -93,7 +93,7 @@ public class RetunPan extends JPanel implements ActionListener{
 		tf_id=new JTextField(20);
 		
 		tf_code=new JTextField(20);//바코드
-		tf_takeTime=new JTextField("       클릭하세요",20);//수거예정일
+		tf_takeTime=new JTextField("    클릭하세요",20);//수거예정일
 		
 		tf_id.setPreferredSize(new Dimension(20,30));
 		tf_code.setPreferredSize(new Dimension(20,30));
