@@ -89,7 +89,7 @@ public ReturnCal(RetunPan rp) {
 	
 	setVisible(true);
 	setBounds(700, 0, 400, 400);
-	setDefaultCloseOperation(EXIT_ON_CLOSE);
+
 	
 	
 	
