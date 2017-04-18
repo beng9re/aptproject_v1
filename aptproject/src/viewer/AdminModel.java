@@ -56,7 +56,12 @@ public class AdminModel extends AbstractTableModel{
 	
 		return data.size();
 	}
-
+	
+	public void setValueAt(Object value, int row, int col) {
+		data.get(row).set(col,value);
+		this.fireTableCellUpdated(row, col);
+	}
+	
 	public Object getValueAt(int row, int col) {
 		return data.elementAt(row).elementAt(col);
 	}
