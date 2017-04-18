@@ -1,4 +1,4 @@
-package complex_regist_table;
+package complex.regist.table;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;

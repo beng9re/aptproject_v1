@@ -1,4 +1,4 @@
-package coplex_regist;
+package complex.regist;
 
 import java.awt.Color;
 import java.awt.Dimension;

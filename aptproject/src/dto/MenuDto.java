@@ -1,4 +1,4 @@
-package tree;
+package dto;
 
 import java.util.Date;
 

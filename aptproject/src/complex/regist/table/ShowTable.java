@@ -1,4 +1,4 @@
-package complex_regist_table;
+package complex.regist.table;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
@@ -8,11 +8,11 @@ import javax.swing.JFrame;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
 
-import coplex_regist.TestDBManager;
+import db.DBManager;
 
 public class ShowTable extends JFrame{
 	Connection con;
-	TestDBManager manager=TestDBManager.getInstance();
+	DBManager manager=DBManager.getInstance();
 	JTable table;
 	JScrollPane scroll;
 	db_Table db_table;

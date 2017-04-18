@@ -1,6 +1,6 @@
-package db;
+package dto;
 
-public class UserCategory {
+public class Aptuser {
 	private String aptuser_code;
 	private String aptuser_id;
 	private String aptuser_ip;

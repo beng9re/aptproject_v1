@@ -1,4 +1,4 @@
-package coplex_regist;
+package complex.regist;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -30,7 +30,8 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 
-import complex_regist_table.ShowTable;
+import complex.regist.table.ShowTable;
+import db.DBManager;
 import hjm.DBManager;
 
 public class AptPanel extends JPanel implements ActionListener{
@@ -41,7 +42,7 @@ public class AptPanel extends JPanel implements ActionListener{
 	ButtonGroup group;
 	MiddlePanel mp;//동,호수를 입력이 들어있는 패널
 	Connection con;
-	TestDBManager manager=TestDBManager.getInstance();
+	DBManager manager=DBManager.getInstance();
 	PreparedStatement pstmt;
 	Vector<String> vec=new Vector<String>();//호수를 담기 위한 벡터
 	String ss;

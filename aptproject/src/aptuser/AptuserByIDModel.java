@@ -11,7 +11,7 @@ package aptuser;
 import java.sql.Connection;
 import java.sql.SQLException;
 
-import db.Aptuser;
+import dto.Aptuser;
 
 public class AptuserByIDModel extends AptuserModel {
 	private String sql = "select * from aptuser where aptuser_id = ?";

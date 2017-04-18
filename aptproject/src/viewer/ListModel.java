@@ -1,4 +1,4 @@
-package apt;
+package viewer;
 
 import java.sql.Connection;
 import java.sql.PreparedStatement;
@@ -9,17 +9,18 @@ import java.util.Vector;
 
 import javax.swing.table.AbstractTableModel;
 
-public class AdminModel extends AbstractTableModel{
+public class ListModel extends AbstractTableModel{
 	Vector<String> columnName = new Vector<String>();
 	Vector<Vector> data = new Vector<Vector>();
 	Connection con;
 
-	public AdminModel(Connection con) {
+	public ListModel(Connection con) {
 		this.con = con;
 		getList("select * from aptuser");
 	}
 
 	public void getList(String sql) {
+	
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 		try {
@@ -31,7 +32,7 @@ public class AdminModel extends AbstractTableModel{
 			
 			ResultSetMetaData meta = rs.getMetaData();
 			for (int i = 1; i <=meta.getColumnCount(); i++) {
-				columnName.add(meta.getColumnName(i));
+				columnName.add(meta.getColumnTypeName(i));
 			}
 
 			while (rs.next()) {
@@ -43,6 +44,7 @@ public class AdminModel extends AbstractTableModel{
 			}
 
 		} catch (SQLException e) {
+			// TODO Auto-generated catch block
 			e.printStackTrace();
 		}
 	}
@@ -58,11 +60,12 @@ public class AdminModel extends AbstractTableModel{
 	}
 
 	public Object getValueAt(int row, int col) {
+	
 		return data.elementAt(row).elementAt(col);
 	}
 	
 	public String getColumnName(int col) {
+		
 		return columnName.get(col);
 	}
-	
 }

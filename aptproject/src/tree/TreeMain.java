@@ -19,6 +19,7 @@ import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import db.DBManager;
+import dto.MenuDto;
 import message.RecieveMessage;
 import message.SendMessage;
 

@@ -1,4 +1,4 @@
-package apt;
+package viewer;
 
 import java.awt.BorderLayout;
 import java.awt.Checkbox;
@@ -20,6 +20,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.border.EtchedBorder;
 import javax.swing.plaf.basic.BasicBorders.RadioButtonBorder;
+
+import db.DBManager;
 
 public class User extends JFrame implements ActionListener {
 	JPanel p_north, p_north_right, p_south;

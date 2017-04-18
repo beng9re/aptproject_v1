@@ -29,6 +29,7 @@ import javax.swing.JTextField;
 import javax.swing.border.Border;
 
 import db.DBManager;
+import dto.ComplexDto;
 import tree.TreeMain;
 
 public class SendMessage extends JFrame implements ActionListener{

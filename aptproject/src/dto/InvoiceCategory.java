@@ -1,4 +1,4 @@
-package db;
+package dto;
 
 public class InvoiceCategory {
 	private String invoice_id;

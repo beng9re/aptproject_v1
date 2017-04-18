@@ -19,8 +19,8 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
-import db.Aptuser;
 import db.DBManager;
+import dto.Aptuser;
 
 public abstract class UserInfo extends JFrame {
 	JPanel pnl_center, pnl_south;

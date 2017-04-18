@@ -10,9 +10,9 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import Edit.InvEditPan;
-import apt.Admin;
 import aptuser.RegistUser;
 import db.DBManager;
+import viewer.Admin;
 
 public class Main extends JFrame {
 	DBManager dbMgr;

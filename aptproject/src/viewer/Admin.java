@@ -1,4 +1,4 @@
-package apt;
+package viewer;
 
 import java.awt.BorderLayout;
 import java.awt.Choice;
@@ -34,8 +34,9 @@ import javax.swing.JTextField;
 import javax.swing.border.EtchedBorder;
 import javax.swing.event.TableModelEvent;
 
-import db.InvoiceCategory;
-import db.UserCategory;
+import db.DBManager;
+import dto.InvoiceCategory;
+import dto.Aptuser;
 
 public class Admin extends JFrame implements ActionListener {
 	JPanel p_north_radio, p_north, p_north_left, p_north_right, p_south;
@@ -55,7 +56,7 @@ public class Admin extends JFrame implements ActionListener {
 	JRadioButton rb_invoice;
 	String tableName;
 
-	Vector<UserCategory> user = new Vector<UserCategory>();
+	Vector<Aptuser> user = new Vector<Aptuser>();
 	Vector<InvoiceCategory> invoice = new Vector<InvoiceCategory>();
 
 	public Admin() {
@@ -172,7 +173,7 @@ public class Admin extends JFrame implements ActionListener {
 			}
 
 			while (rs.next()) {
-				UserCategory dto = new UserCategory();
+				Aptuser dto = new Aptuser();
 				dto.setAptuser_code(rs.getString("aptuser_code"));
 				dto.setAptuser_id(rs.getString("aptuser_id"));
 				dto.setAptuser_ip(rs.getString("aptuser_ip"));

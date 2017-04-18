@@ -4,8 +4,8 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import db.Aptuser;
 import db.DBModel;
+import dto.Aptuser;
 
 public class AptuserModel extends DBModel {
 	private String[] colName = { "aptuser_id", "aptuser_pw", "aptuser_code", "unit_id", "aptuser_name",
