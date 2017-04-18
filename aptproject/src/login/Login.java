@@ -24,6 +24,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import db.DBManager;
+import main.Main;
 
 public class Login extends JFrame implements ActionListener {
 	private JPanel pnl_top, pnl_field, pnl_bot;
@@ -88,8 +89,7 @@ public class Login extends JFrame implements ActionListener {
 		this.addWindowListener(new WindowAdapter() {
 			@Override
 			public void windowClosing(WindowEvent e) {
-				dbMgr.disconnect();
-				System.exit(0);
+				exit();
 			}
 		});
 		
@@ -112,6 +112,8 @@ public class Login extends JFrame implements ActionListener {
 		//DB에서 회원정보 조회해서 id pw 일치여부 확인 (admin//4321)
 		if (model.loginChk(txf_id.getText(), txf_pw.getPassword())) {
 			JOptionPane.showMessageDialog(this, "로그인 성공");
+			new Main(dbMgr, txf_id.getText());
+			exit();
 		} else {
 			JOptionPane.showMessageDialog(this, "회원정보가 일치하지 않습니다");
 		}
@@ -125,6 +127,10 @@ public class Login extends JFrame implements ActionListener {
 		} else if (e.getSource() == btn_barcode) {
 			JOptionPane.showMessageDialog(Login.this, "바코드를 입력해주세요");
 		}
+	}
+	
+	public void exit() {
+		System.exit(0);
 	}
 	
 	public static void main(String[] args) {
