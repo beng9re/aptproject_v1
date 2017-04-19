@@ -13,6 +13,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
@@ -21,7 +22,7 @@ import javax.swing.JTextField;
 import db.DBManager;
 import dto.Aptuser;
 
-public abstract class UserInfo extends JPanel {
+public abstract class UserInfo extends JFrame {
 	JPanel pnl_center, pnl_south;
 	// 배열 isEdit은 수정가능여부, column은 항목이름
 	char[] isEdit;
@@ -42,13 +43,11 @@ public abstract class UserInfo extends JPanel {
 	JButton btn_confirm;
 	String titleStr;
 	String btnTxt;
-	
-	AptuserByIDModel model;
-	ArrayList<Aptuser> aptuser;
 
 	//상속시 용도변경을 위한 생성자 대용
 	public void init(char[] isEdit, String titleStr, String btnTxt) {
 		this.isEdit = isEdit;
+		this.column = column;
 		this.titleStr = titleStr;
 		this.btnTxt = btnTxt;
 
@@ -83,7 +82,6 @@ public abstract class UserInfo extends JPanel {
 			// 텍스트필드와 비밀번호 필드 생성
 			if (!column[i][1].equals("aptuser_pw")) {
 				txfArr[i-j] = new JTextField();
-				txfArr[i-j].setDisabledTextColor(Color.BLACK);
 				pan.add(txfArr[i-j]);
 				// 권한이 없으면 수정불가능 하게
 				if (isEdit[i] == 'N') {
@@ -126,7 +124,10 @@ public abstract class UserInfo extends JPanel {
 			}
 		});
 		
-		setPreferredSize(new Dimension(700, 700));
+//		setPreferredSize(new Dimension(700, 700));
+		setVisible(true);
+		setSize(700,700);
+		setDefaultCloseOperation(EXIT_ON_CLOSE);
 	}
 
 	//회원 정보 불러오기
@@ -137,8 +138,8 @@ public abstract class UserInfo extends JPanel {
 		Connection conn = dbMgr.getConnection();
 
 		//ID로 유저정보를 찾아서 가져온다
-		model = new AptuserByIDModel(conn, id);
-		aptuser = model.getData();
+		AptuserByIDModel model = new AptuserByIDModel(conn, id);
+		ArrayList<Aptuser> aptuser = model.getData();
 		
 		//필드에 회원정보를 입력한다
 		txfArr[0].setText(aptuser.get(0).getAptuser_id());
@@ -146,8 +147,7 @@ public abstract class UserInfo extends JPanel {
 		txfArr[2].setText(aptuser.get(0).getAptuser_name());
 		txfArr[3].setText(aptuser.get(0).getAptuser_phone());
 		txfArr[4].setText(aptuser.get(0).getAptuser_regdate());
-		String address = aptuser.get(0).getComplex_name() + " " + aptuser.get(0).getUnit_name(); 
-		txfArr[5].setText(address);
+		txfArr[5].setText(Integer.toString(aptuser.get(0).getUnit_id()));
 	}
 	
 	//버튼을 눌렀을 때 동작내용

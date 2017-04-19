@@ -10,11 +10,11 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import Edit.InvEditPan;
-import aptuser.ModifyAdmin;
-import aptuser.ModifyUser;
 import aptuser.RegistUser;
 import db.DBManager;
-import viewer.Admin;
+import viewer.Admin_InvoiceView;
+import viewer.Admin_UserView;
+import viewer.User;
 
 public class Main extends JFrame {
 	DBManager dbMgr;
@@ -30,8 +30,6 @@ public class Main extends JFrame {
 	User user; //물품목록(사용자용)
 	InvEditPan invEdit; //물품등록
 	RegistUser regiUser; //회원등록
-	ModifyUser modUser; //회원정보수정
-	ModifyAdmin modAdmin; //관리자 정보 수정
 		
 	//테스트를 위해서 임시사용중인 생성자
 	public Main() {
@@ -50,14 +48,9 @@ public class Main extends JFrame {
 	//패널 전환은 카드 레이아웃을 사용해볼 예정
 	public void init() {
 		invEdit = new InvEditPan();
-<<<<<<< HEAD
-//		modUser = new ModifyUser();
-		modAdmin = new ModifyAdmin();
-=======
 		admin_invoice=new Admin_InvoiceView();
 		admin_user=new Admin_UserView();
 		user= new User();
->>>>>>> ca32b58bf46db19f4df3538fc904bc2182bd7c6b
 		
 		menu = new Menu(this);
 		pnl_content = new JPanel();
@@ -65,11 +58,7 @@ public class Main extends JFrame {
 		
 		//테스트 할 패널
 		////////////////////////////////////////////////////
-<<<<<<< HEAD
-		pnl_content.add(modAdmin, "modU");
-=======
-		pnl_content.add(admin_user , "invE");
->>>>>>> ca32b58bf46db19f4df3538fc904bc2182bd7c6b
+		pnl_content.add(admin_invoice , "invE");
 		////////////////////////////////////////////////////
 		
 		add(menu, BorderLayout.WEST);

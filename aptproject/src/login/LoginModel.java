@@ -12,7 +12,7 @@ public class LoginModel extends AptuserModel {
 	
 	public LoginModel(Connection conn) {
 		this.conn = conn;
-		setQuery(sql, false);
+		setQuery(sql);
 	}
 	
 	protected void setSQL() throws SQLException {

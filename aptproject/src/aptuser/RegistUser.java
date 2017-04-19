@@ -15,4 +15,8 @@ public class RegistUser extends UserInfo {
 		
 	}
 	
+	public static void main(String[] args) {
+		new RegistUser();
+	}
+
 }

@@ -23,7 +23,7 @@ public abstract class DBModel {
 	}
 	
 	//dto로 부터 데이터를 받아오는 메서드
-	protected abstract void setTable(ResultSet rs) throws SQLException;
+	protected abstract void setTable(ResultSet rs, int count_col) throws SQLException;
 
 	protected void init(String[] colName, String sql) {
 		this.colName = colName;
@@ -46,7 +46,7 @@ public abstract class DBModel {
 			setSQL();
 			rs = pstmt.executeQuery();
 			//각 테이블에 맞춰 setTable 메서드 수정 (상속받은 클래스에서)
-			setTable(rs);
+			setTable(rs, colName.length);
 			
 		} catch (SQLException e) {
 			e.printStackTrace();

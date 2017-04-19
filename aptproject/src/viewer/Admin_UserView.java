@@ -122,8 +122,10 @@ public class Admin_UserView extends JPanel implements ActionListener {
 				int row = table.getSelectedRow();
 				int col = table.getSelectedColumn();
 				String name = JOptionPane.showInputDialog("수정해 주세요");
-				adminModel.setValueAt(name, row, col);
-				tableChanged(row,col);
+				if (name != null) {
+					adminModel.setValueAt(name, row, col);
+					tableChanged(row, col);
+				}
 			}
 		});
 
@@ -229,7 +231,7 @@ public class Admin_UserView extends JPanel implements ActionListener {
 
 		String sql = "update " + tableName + " set " + column + "=" + "'" + value + "' ";
 		sql += "where aptuser_id=" + table.getValueAt(row, 0);
-		
+
 		try {
 			pstmt = con.prepareStatement(sql);
 			int result = pstmt.executeUpdate();

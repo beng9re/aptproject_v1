@@ -17,10 +17,12 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
+import java.sql.Time;
 import java.util.Vector;
 
 import javax.swing.ButtonGroup;
@@ -34,6 +36,7 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.EtchedBorder;
 
+import org.apache.poi.hslf.util.SystemTimeUtils;
 import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -130,8 +133,10 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 				int row = table.getSelectedRow();
 				if (rb_invoice.isSelected()) {
 					String name = JOptionPane.showInputDialog("수령인의 성함을 기입해 주세요");
-					invoiceModel.setValueAt(name, row, 4);
-					tableChanged(row);
+					if (name != null) {
+						invoiceModel.setValueAt(name, row, 4);
+						tableChanged(row);
+					}
 				}
 			}
 		});
@@ -204,7 +209,7 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 	public void getInvoice(String sql) {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		
+
 		try {
 			pstmt = con.prepareStatement(sql);
 			rs = pstmt.executeQuery();
@@ -233,10 +238,10 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 
 	public void getList(String sql) {
 		if (rb_allInvoice.isSelected()) {
-			table.setModel(invoiceModel = new InvoiceModel(con,sql));
+			table.setModel(invoiceModel = new InvoiceModel(con, sql));
 			table.updateUI();
 		} else if (rb_invoice.isSelected()) {
-			table.setModel(invoiceModel = new InvoiceModel(con,sql));
+			table.setModel(invoiceModel = new InvoiceModel(con, sql));
 			table.updateUI();
 		}
 	}
@@ -263,12 +268,12 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 
 		} else if (obj == rb_allInvoice) {
 			tableName = "invoice";
-			String sql="select * from invoice";
+			String sql = "select * from invoice";
 			getInvoice(sql);
 			getList(sql);
 		} else if (obj == rb_invoice) {
 			tableName = "invoice";
-			String sql="select * from invoice where invoice_takeflag is null or invoice_takeflag='N'";
+			String sql = "select * from invoice where invoice_takeflag is null or invoice_takeflag='N'";
 			getList(sql);
 		}
 	}
@@ -278,14 +283,22 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 		int col = 4;
 		String value = (String) table.getValueAt(row, col);
 		String column = invoiceModel.columnName.elementAt(col);
-
-		String sql = "update " + tableName + " set " + column + "=" + "'" + value + "' ";
-		sql += "where aptuser_id=" + table.getValueAt(row, 1);
-
+		String date_col=invoiceModel.columnName.elementAt(5);
+				
+		String sql = "update " + tableName + " set " + column + "=" + "'" + value + "',"+ date_col + "= sysdate, invoice_takeflag='Y'";
+		sql += " where invoice_id=" + table.getValueAt(row, 0);
+	
+		System.out.println(sql);
 		try {
 			pstmt = con.prepareStatement(sql);
 			int result = pstmt.executeUpdate();
-			if (result != 0) {
+		
+			String re = "select * from invoice";
+			invoiceModel.getList(re);
+			String a=(String)invoiceModel.getValueAt(row, 5);
+			table.setValueAt(a, row, 5);
+			
+			if (result != 0 ) {
 				JOptionPane.showConfirmDialog(this, "업데이트 완료");
 				table.updateUI();
 			}
@@ -303,7 +316,6 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 			}
 		}
 	}
-
 
 	public void createExcel() {
 		HSSFWorkbook workBook = new HSSFWorkbook();
