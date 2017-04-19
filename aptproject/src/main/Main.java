@@ -10,6 +10,8 @@ import javax.swing.JFrame;
 import javax.swing.JPanel;
 
 import Edit.InvEditPan;
+import aptuser.ModifyAdmin;
+import aptuser.ModifyUser;
 import aptuser.RegistUser;
 import db.DBManager;
 import viewer.Admin;
@@ -26,6 +28,8 @@ public class Main extends JFrame {
 	Admin admin; //물품목록(관리자용)
 	InvEditPan invEdit; //물품등록
 	RegistUser regiUser; //회원등록
+	ModifyUser modUser; //회원정보수정
+	ModifyAdmin modAdmin; //관리자 정보 수정
 		
 	//테스트를 위해서 임시사용중인 생성자
 	public Main() {
@@ -44,6 +48,8 @@ public class Main extends JFrame {
 	//패널 전환은 카드 레이아웃을 사용해볼 예정
 	public void init() {
 		invEdit = new InvEditPan();
+//		modUser = new ModifyUser();
+		modAdmin = new ModifyAdmin();
 		
 		menu = new Menu(this);
 		pnl_content = new JPanel();
@@ -51,7 +57,7 @@ public class Main extends JFrame {
 		
 		//테스트 할 패널
 		////////////////////////////////////////////////////
-		pnl_content.add(invEdit, "invE");
+		pnl_content.add(modAdmin, "modU");
 		////////////////////////////////////////////////////
 		
 		add(menu, BorderLayout.WEST);

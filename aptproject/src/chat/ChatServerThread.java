@@ -1,7 +1,3 @@
-/* 
- * 채팅창의 보내고 받는 기능을 별도 thread로 관리하고
- * 프로토콜에 따라서 쪽지 송신여부를 확인하여 쪽지를 띄운다
- */
 package chat;
 
 import java.io.BufferedReader;
@@ -11,24 +7,20 @@ import java.io.InputStreamReader;
 import java.io.OutputStreamWriter;
 import java.net.Socket;
 
-import javax.swing.Box;
-
 import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 import org.json.simple.parser.ParseException;
 
-public class ChatClientThread extends Thread {
+public class ChatServerThread extends Thread {
 	Socket socket;
-	ChatClient client;
 	boolean flag = true;
 	
 	BufferedReader buffR;
 	BufferedWriter buffW;
 	JSONParser parser;
 	
-	public ChatClientThread(Socket socket, ChatClient client) {
+	public ChatServerThread(Socket socket) {
 		this.socket = socket;
-		this.client = client;
 		try {
 			buffR = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			buffW = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
@@ -38,7 +30,8 @@ public class ChatClientThread extends Thread {
 		}
 		start();
 	}
-
+	
+	//메세지 종류를 분류하여 처리 (채팅, 쪽지알림, 목록갱신요청)
 	private String parsing(String msg) {
 		try {
 			JSONObject msgObj = (JSONObject)parser.parse(msg);
@@ -53,38 +46,24 @@ public class ChatClientThread extends Thread {
 	
 	private void listen() {
 		try {
-			client.scrollFlag = true;
 			String msg = buffR.readLine();
-			//받아온 채팅을 분석한다(JSON파싱)
-			msg = parsing(msg);
-			
-			//채팅 내용을 클라이언트에 보여준다
-			ChatMessage chatbox = new ChatMessage(client, msg);
-			client.pnl_chat.add(chatbox);
-			client.pnl_chat.add(Box.createHorizontalGlue());
-			client.pnl_chat.revalidate();
-			
+//			msg = parsing(msg);
+			send(msg);
+			System.out.println(msg);
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-
-	public void send(String msg) {
+	
+	private void send(String msg) {
 		try {
-			StringBuffer sb = new StringBuffer();
-			sb.append("{");
-			sb.append("\"requestType\":\"chat\",");
-			sb.append("\"user_id\":\""+client.id+"\",");
-			sb.append("\"msg\":\""+msg+"\"");
-			sb.append("}");
-			
-			buffW.write(sb + "\n");
+			buffW.write(msg + "\n");
 			buffW.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
 	}
-
+	
 	private void disconnect() {
 		if (buffR != null) {
 			try {
@@ -101,7 +80,7 @@ public class ChatClientThread extends Thread {
 			}
 		}
 	}
-
+	
 	@Override
 	public void run() {
 		while (flag) {
@@ -109,4 +88,5 @@ public class ChatClientThread extends Thread {
 		}
 		disconnect();
 	}
+	
 }
