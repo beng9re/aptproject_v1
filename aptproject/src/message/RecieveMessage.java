@@ -30,9 +30,7 @@ import tree.TreeMain;
 
 public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 	
-	DBManager  instance = DBManager.getInstance();
-	Connection con;
-	
+	Connection con;	
 	TreeMain treeMain;
 	
 	JPanel  p_south, p_center, p_north;
@@ -46,9 +44,8 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 	RecieveMsgModel  model;
 	
 	public RecieveMessage(TreeMain treeMain) {
-		
 		this.treeMain = treeMain;
-		
+		this.con = treeMain.con;
 		
 		p_north = new JPanel();
 		p_center = new JPanel();
@@ -129,8 +126,6 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 	}
 	
 	public void init(){
-		// DB Connect
-		con = instance.getConnection();
 		
 		model = new RecieveMsgModel(con);
 		table.setModel(model);

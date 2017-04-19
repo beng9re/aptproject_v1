@@ -34,7 +34,6 @@ import tree.TreeMain;
 
 public class SendMessage extends JFrame implements ActionListener{
 	
-	DBManager  instance = DBManager.getInstance();
 	Connection con;
 	
 	TreeMain treeMain;
@@ -53,6 +52,7 @@ public class SendMessage extends JFrame implements ActionListener{
 	public SendMessage(TreeMain treeMain) {
 		
 		this.treeMain = treeMain;
+		this.con = treeMain.con;
 		
 		p_north = new JPanel();
 		p_center = new JPanel();
@@ -118,7 +118,9 @@ public class SendMessage extends JFrame implements ActionListener{
 		
 		setTitle("쪽지 보내기");
 		setVisible(true);
-		setBounds(200, 50, 700, 700);
+		int X=(this.treeMain.getX()+200+10);
+		int Y=(this.treeMain.getY()+30);
+		setBounds(X, Y, 700, 700);
 		//setLocationRelativeTo(null);
 		//setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
@@ -126,9 +128,6 @@ public class SendMessage extends JFrame implements ActionListener{
 	
 	// 초기 작업
 	public void init(){
-		
-		// DB Connect
-		con = instance.getConnection();
 		
 		model = new CompUnitModel(con);
 		table.setModel(model);
@@ -138,7 +137,7 @@ public class SendMessage extends JFrame implements ActionListener{
 	}
 	
 	public void close(){
-		this.treeMain.menuObjList.remove(this);
+		//this.treeMain.menuObjList.remove(this);
 	}
 	
 	// 메세지 보내기

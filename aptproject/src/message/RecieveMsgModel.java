@@ -24,7 +24,7 @@ public class RecieveMsgModel extends AbstractTableModel{
 		columnName.add("수신시간");
 		columnName.add("확인여부");
 		columnName.add("msg_recieve_id");
-		columnName.add("send_user_id");
+		columnName.add("msg_send_user_id");
 		columnName.add("msg_send_content");
 		
 		getList("");
@@ -37,12 +37,12 @@ public class RecieveMsgModel extends AbstractTableModel{
 		
 		StringBuffer  sql = new StringBuffer();
 		sql.append(" select u.user_name 송신자명, s.msg_send_title 제목, r.msg_recieve_time 수신시간 \n");
-		sql.append("        , msg_confirm_flag 확인여부, r.msg_recieve_id, s.send_user_id, s.msg_send_content \n");  // 
+		sql.append("        , msg_confirm_flag 확인여부, r.msg_recieve_id, s.msg_send_user_id, s.msg_send_content \n");  // 
 		sql.append(" from  recieve_message r \n");
 		sql.append("         ,send_message    s \n");
 		sql.append("         ,apt_user             u \n");
 		sql.append(" where r.msg_send_id = s.msg_send_id \n");
-		sql.append(" and    u.user_id        = s.send_user_id \n");
+		sql.append(" and    u.user_id        = s.msg_send_user_id \n");
 		sql.append(" and   (u.user_name like ? or  \n");
 		sql.append("            s.msg_send_title like ? )  \n");
 		sql.append(" order by r.msg_recieve_time desc ");
@@ -63,7 +63,7 @@ public class RecieveMsgModel extends AbstractTableModel{
 				vec.add(rs.getString("수신시간"));
 				vec.add(rs.getString("확인여부"));
 				vec.add(rs.getString("msg_recieve_id"));
-				vec.add(rs.getString("send_user_id"));
+				vec.add(rs.getString("msg_send_user_id"));
 				vec.add(rs.getString("msg_send_content"));
 				
 				data.add(vec);
