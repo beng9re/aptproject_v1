@@ -10,11 +10,14 @@ public class Aptuser {
 	private String aptuser_pw;
 	private String aptuser_regdate;
 	private String aptuser_phone;
+<<<<<<< HEAD
 	private int complex_id;
 	private String complex_name;
 	private int unit_id;
 	private String unit_name;
 	
+=======
+>>>>>>> ca32b58bf46db19f4df3538fc904bc2182bd7c6b
 	public String getAptuser_code() {
 		return aptuser_code;
 	}
@@ -69,6 +72,7 @@ public class Aptuser {
 	public void setAptuser_phone(String aptuser_phone) {
 		this.aptuser_phone = aptuser_phone;
 	}
+<<<<<<< HEAD
 	public int getComplex_id() {
 		return complex_id;
 	}
@@ -93,5 +97,9 @@ public class Aptuser {
 	public void setUnit_name(String unit_name) {
 		this.unit_name = unit_name;
 	}
+=======
+	
+	
+>>>>>>> ca32b58bf46db19f4df3538fc904bc2182bd7c6b
 	
 }

@@ -5,6 +5,7 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.GridLayout;
 import java.awt.Image;
+import java.awt.Point;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
@@ -30,7 +31,8 @@ public class ReturnCal extends JFrame  {
 	JLabel lb_cal;
 	JLabel prev,next; //이전 이후 라벨
 
-	JPanel p_cal,p_day;
+	JPanel p_cal,p_day,p_calPan;
+	Todaypan p_today;
 	Calendar cal;
 	ArrayList<DayPan> dplist=new ArrayList<DayPan>();
 	
@@ -41,17 +43,20 @@ public class ReturnCal extends JFrame  {
 	
 	int date;
 	String dataData;
-   ImageIcon i_next;
+    ImageIcon i_next;
    
 	RetunPan rp;
 	URL url;
 public ReturnCal(RetunPan rp) {
 	
 	this.rp=rp;
+	
+	
+	p_calPan=new JPanel(new BorderLayout());
 	p_cal=new JPanel();
 	p_cal.setPreferredSize(new Dimension(400, 40));
 	p_day=new JPanel(new GridLayout(6, 7));
-	
+	p_today=new Todaypan();
 	prev=new JLabel("◀");
 	prev.setPreferredSize(new Dimension(30, 30));
 
@@ -72,8 +77,10 @@ public ReturnCal(RetunPan rp) {
 	lb_cal.setFont(new Font("고딕체", Font.BOLD, 20));
 	
 	
-	add(p_cal,BorderLayout.NORTH);
-	//p_cal.setBackground(Color.cyan);
+	add(p_calPan,BorderLayout.NORTH);
+	p_calPan.add(p_cal,BorderLayout.NORTH);
+	p_calPan.add(p_today);
+	p_cal.setBackground(Color.pink);
 	p_cal.add(prev);
 	p_cal.add(lb_cal);
 	p_cal.add(next);
@@ -88,7 +95,9 @@ public ReturnCal(RetunPan rp) {
 	
 	
 	setVisible(true);
-	setBounds(700, 0, 400, 400);
+	
+	setLocation(new Point(1410, 170));
+	setSize(400, 400);
 
 	
 	

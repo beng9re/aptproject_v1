@@ -25,7 +25,9 @@ public class Main extends JFrame {
 	Menu menu;
 	
 	//실행할 패널들을 미리 생성한다
-	Admin admin; //물품목록(관리자용)
+	Admin_InvoiceView admin_invoice; //물품목록(관리자용)
+	Admin_UserView admin_user;//사용자목록(관리자용)
+	User user; //물품목록(사용자용)
 	InvEditPan invEdit; //물품등록
 	RegistUser regiUser; //회원등록
 	ModifyUser modUser; //회원정보수정
@@ -48,8 +50,14 @@ public class Main extends JFrame {
 	//패널 전환은 카드 레이아웃을 사용해볼 예정
 	public void init() {
 		invEdit = new InvEditPan();
+<<<<<<< HEAD
 //		modUser = new ModifyUser();
 		modAdmin = new ModifyAdmin();
+=======
+		admin_invoice=new Admin_InvoiceView();
+		admin_user=new Admin_UserView();
+		user= new User();
+>>>>>>> ca32b58bf46db19f4df3538fc904bc2182bd7c6b
 		
 		menu = new Menu(this);
 		pnl_content = new JPanel();
@@ -57,7 +65,11 @@ public class Main extends JFrame {
 		
 		//테스트 할 패널
 		////////////////////////////////////////////////////
+<<<<<<< HEAD
 		pnl_content.add(modAdmin, "modU");
+=======
+		pnl_content.add(admin_user , "invE");
+>>>>>>> ca32b58bf46db19f4df3538fc904bc2182bd7c6b
 		////////////////////////////////////////////////////
 		
 		add(menu, BorderLayout.WEST);
@@ -85,8 +97,8 @@ public class Main extends JFrame {
 	//작동하는 버튼에 연결된 JFrame
 	/////////////////////////////////////////////////////////////
 	public void list() {
-		if (admin==null) {
-			admin = new Admin();
+		if (admin_invoice==null) {
+			admin_invoice = new Admin_InvoiceView();
 		}
 //		regiUser = new RegistUser();
 	}

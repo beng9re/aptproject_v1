@@ -1,0 +1,12 @@
+diff a/aptproject/src/main/Main.java b/aptproject/src/main/Main.java	(rejected hunks)
+@@ -97,8 +97,8 @@
+ 	//�۵��ϴ� ��ư�� ����� JFrame
+ 	/////////////////////////////////////////////////////////////
+ 	public void list() {
+-		if (admin==null) {
+-			admin = new Admin();
++		if (admin_invoice==null) {
++			admin_invoice = new Admin_InvoiceView();
+ 		}
+ //		regiUser = new RegistUser();
+ 	}

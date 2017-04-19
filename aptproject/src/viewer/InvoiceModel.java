@@ -14,9 +14,9 @@ public class InvoiceModel extends AbstractTableModel {
 	Vector<String> columnName = new Vector<String>();
 	Vector<Vector> data = new Vector<Vector>();
 
-	public InvoiceModel(Connection con) {
+	public InvoiceModel(Connection con,String sql) {
 		this.con = con;
-		getList("select *from invoice");
+		getList(sql);
 	}
 
 	public void getList(String sql) {
