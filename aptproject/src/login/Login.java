@@ -113,7 +113,6 @@ public class Login extends JFrame implements ActionListener {
 		if (model.loginChk(txf_id.getText(), txf_pw.getPassword())) {
 			JOptionPane.showMessageDialog(this, "로그인 성공");
 			new Main(dbMgr, txf_id.getText());
-			exit();
 		} else {
 			JOptionPane.showMessageDialog(this, "회원정보가 일치하지 않습니다");
 		}
