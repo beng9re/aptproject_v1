@@ -7,6 +7,8 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
+import javax.swing.text.BadLocationException;
+import javax.swing.text.Utilities;
 
 public class ChatMessage extends JPanel {
 	ChatClient client;
@@ -23,8 +25,7 @@ public class ChatMessage extends JPanel {
 		content.setAlignmentX(JComponent.RIGHT_ALIGNMENT);
 				
 		//글자수에 따라 크기 다르게
-		System.out.println(Math.ceil(msg.length()/15)+1);
-		int height = (int)((Math.ceil(msg.length()/15)+1)*20);
+		int height = (int)((Math.ceil(msg.getBytes().length/28)+1)*20);
 		content.setPreferredSize(new Dimension(170, height));
 		content.setMaximumSize(content.getPreferredSize());
 		content.setEditable(false);
