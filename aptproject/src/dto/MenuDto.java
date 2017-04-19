@@ -6,13 +6,14 @@ public class MenuDto {
 	
 	int menu_id;
 	int menu_level;
-	int menu_up_id;
+	int menu_up_level_id;
 	String menu_name;
 	String menu_class_name;
 	String menu_use_flag;
 	String admin_role_flag;
 	String user_role_flag;
 	Date menu_regdate;
+	String menu_type;
 	
 	public int getMenu_id() {
 		return menu_id;
@@ -26,11 +27,11 @@ public class MenuDto {
 	public void setMenu_level(int menu_level) {
 		this.menu_level = menu_level;
 	}
-	public int getMenu_up_id() {
-		return menu_up_id;
+	public int getMenu_up_level_id() {
+		return menu_up_level_id;
 	}
-	public void setMenu_up_id(int menu_up_id) {
-		this.menu_up_id = menu_up_id;
+	public void setMenu_up_level_id(int menu_up_level_id) {
+		this.menu_up_level_id = menu_up_level_id;
 	}
 	public String getMenu_name() {
 		return menu_name;
@@ -43,6 +44,12 @@ public class MenuDto {
 	}
 	public void setMenu_class_name(String menu_class_name) {
 		this.menu_class_name = menu_class_name;
+	}
+	public String getMenu_type() {
+		return menu_type;
+	}
+	public void setMenu_type(String menu_type) {
+		this.menu_type = menu_type;
 	}
 	public String getMenu_use_flag() {
 		return menu_use_flag;

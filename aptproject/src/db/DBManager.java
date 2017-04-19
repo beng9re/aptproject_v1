@@ -23,7 +23,7 @@ public class DBManager {
 	private String diriver = "oracle.jdbc.driver.OracleDriver";
 	private String url = "jdbc:oracle:thin:@localhost:1521:XE";
 	private String user = "apt";
-	private String password ="apt";
+	private String password ="aptapt";
 	private Connection con;
 
 	private DBManager() {
