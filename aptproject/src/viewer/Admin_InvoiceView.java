@@ -17,12 +17,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Time;
 import java.util.Vector;
 
 import javax.swing.ButtonGroup;
@@ -36,12 +34,9 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.EtchedBorder;
 
-import org.apache.poi.hslf.util.SystemTimeUtils;
-import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Workbook;
 
 import db.DBManager;
 import dto.Aptuser;
@@ -293,13 +288,14 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 			pstmt = con.prepareStatement(sql);
 			int result = pstmt.executeUpdate();
 		
-			String re = "select * from invoice";
+			String re = "select * from invoice where invoice_takeflag is null or invoice_takeflag='N'";
 			invoiceModel.getList(re);
 			String a=(String)invoiceModel.getValueAt(row, 5);
 			table.setValueAt(a, row, 5);
 			
 			if (result != 0 ) {
 				JOptionPane.showConfirmDialog(this, "업데이트 완료");
+				
 				table.updateUI();
 			}
 			System.out.println(sql);
