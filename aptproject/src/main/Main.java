@@ -8,9 +8,9 @@ import java.sql.Connection;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
-import javax.swing.JRadioButton;
 
 import Edit.InvEditPan;
+import aptuser.ModifyUser;
 import aptuser.RegistUser;
 import db.DBManager;
 import viewer.Admin_InvoiceView;
@@ -33,6 +33,7 @@ public class Main extends JFrame {
 	User user; //물품목록(사용자용)
 	InvEditPan invEdit; //물품등록
 	RegistUser regiUser; //회원등록
+	ModifyUser modUser; //회원정보수정
 		
 	//테스트를 위해서 임시사용중인 생성자
 	public Main() {
