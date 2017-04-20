@@ -55,6 +55,7 @@ public class MiddlePanel extends JPanel{
 		
 		la_1.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 20));
 		la_2.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 20));
+		
 
 		t_complex.setBorder(new LineBorder(Color.orange, 5));
 		t_unit1.setBorder(new LineBorder(Color.orange, 5));
