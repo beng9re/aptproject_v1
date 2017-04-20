@@ -43,7 +43,7 @@ import dto.Aptuser;
 import dto.InvoiceCategory;
 
 public class Admin_UserView extends JPanel implements ActionListener {
-	JPanel p_north, p_north_left, p_north_right, p_south;
+	JPanel p_north, p_north_left, p_north_right, p_center,p_south;
 	JTable table;
 	JScrollPane scroll;
 	Choice choice;
@@ -68,10 +68,10 @@ public class Admin_UserView extends JPanel implements ActionListener {
 	public Admin_UserView() {
 		chooser = new JFileChooser();
 		p_north = new JPanel();
-
+		p_south = new JPanel();
 		p_north_left = new JPanel();
 		p_north_right = new JPanel();
-		p_south = new JPanel();
+		p_center = new JPanel();
 		table = new JTable();
 		scroll = new JScrollPane(table);
 		choice = new Choice();
@@ -104,12 +104,13 @@ public class Admin_UserView extends JPanel implements ActionListener {
 
 		p_north.setBorder(new EtchedBorder(EtchedBorder.RAISED));
 
-		p_south.add(scroll);
+		p_center.add(scroll);
 
 		scroll.setPreferredSize(new Dimension(680, 500));
 		choice.setPreferredSize(new Dimension(150, 30));
 
 		p_north.setPreferredSize(new Dimension(700, 80));
+		p_south.setPreferredSize(new Dimension(700, 80));
 
 		bt_copy.addActionListener(this);
 		bt_find.addActionListener(this);
@@ -138,18 +139,21 @@ public class Admin_UserView extends JPanel implements ActionListener {
 			}
 		});
 
-		add(p_north, BorderLayout.NORTH);
 		p_north.setBackground(Color.PINK);
 		rb_user.setBackground(Color.PINK);
 		p_north_left.setBackground(Color.PINK);
+		p_south.setBackground(Color.PINK);
 		p_north_right.setBackground(Color.PINK);
 		bt_copy.setBackground(Color.WHITE);
 		bt_find.setBackground(Color.WHITE);
 		bt_xls.setBackground(Color.WHITE);
-		add(p_south, BorderLayout.CENTER);
+		
+		add(p_north, BorderLayout.NORTH);
+		add(p_center, BorderLayout.CENTER);
+		add(p_south, BorderLayout.SOUTH);
+		
 		setVisible(true);
 		setSize(700, 700);
-
 		init();
 
 	}
