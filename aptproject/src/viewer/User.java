@@ -5,8 +5,11 @@ import java.awt.Choice;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.ItemEvent;
+import java.awt.event.ItemListener;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -29,13 +32,13 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import db.DBManager;
 
-public class User extends JPanel implements ActionListener {
-	JPanel p_north, p_north_right, p_south;
+public class User extends JPanel implements ActionListener, ItemListener {
+	JPanel p_radio, p_north, p_north_right, p_center, p_south;
 	JTable table;
 	JScrollPane scroll;
 	Choice choice;
-	JButton bt_find, bt_copy, bt_xls;
-	JRadioButton rb_a, rb_b, rb_c;
+	JButton bt_find, bt_xls;
+	JRadioButton rb_a, rb_b;
 	DBManager manager;
 	Connection con;
 	JFileChooser chooser;
@@ -44,34 +47,33 @@ public class User extends JPanel implements ActionListener {
 	public User() {
 
 		chooser = new JFileChooser();
+		p_radio = new JPanel();
 		p_north = new JPanel();
 		p_north_right = new JPanel();
+		p_center = new JPanel();
 		p_south = new JPanel();
 		table = new JTable();
 		scroll = new JScrollPane(table);
 		bt_find = new JButton("조회");
-		bt_copy = new JButton("인쇄");
 		bt_xls = new JButton("엑셀파일로 내보내기");
-		rb_a = new JRadioButton("전체 목록 보기");
-		rb_b = new JRadioButton("내 목록 보기");
-		rb_c = new JRadioButton("수령 완료 목록 보기");
+		rb_a = new JRadioButton("주문 물품");
+		rb_b = new JRadioButton("반송 물품");
+		choice = new Choice();
 
+		choice.addItem("▼목록을 선택하세요");
+		
 		ButtonGroup group = new ButtonGroup();
-
-		setLayout(new BorderLayout());
-
 		group.add(rb_a);
 		group.add(rb_b);
-		group.add(rb_c);
 
 		setLayout(new BorderLayout());
+		p_radio.setLayout(new GridLayout(2, 1));
 
-		p_north_right.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 20));
+		p_radio.add(rb_a);
+		p_radio.add(rb_b);
 
-		p_north_right.add(rb_a);
-		p_north_right.add(rb_b);
-		p_north_right.add(rb_c);
-		p_north_right.add(bt_copy);
+		p_north_right.add(p_radio);
+		p_north_right.add(choice);
 		p_north_right.add(bt_xls);
 		p_north_right.add(bt_find);
 
@@ -79,32 +81,30 @@ public class User extends JPanel implements ActionListener {
 
 		p_north.setBorder(new EtchedBorder(EtchedBorder.RAISED));
 
-		p_south.add(scroll);
+		p_center.add(scroll);
 
 		scroll.setPreferredSize(new Dimension(680, 500));
 
-		// p_north_left.setPreferredSize(new Dimension(350, 100));
-		// p_north_right.setPreferredSize(new Dimension(350, 100));
 		p_north.setPreferredSize(new Dimension(700, 80));
+		p_south.setPreferredSize(new Dimension(700, 80));
 
-		bt_copy.addActionListener(this);
 		bt_find.addActionListener(this);
 		bt_xls.addActionListener(this);
 		rb_a.addActionListener(this);
 		rb_b.addActionListener(this);
-		rb_c.addActionListener(this);
+		choice.addItemListener(this);
 
 		rb_a.setBackground(Color.pink);
 		rb_b.setBackground(Color.pink);
-		rb_c.setBackground(Color.pink);
 		p_north.setBackground(Color.PINK);
+		p_south.setBackground(Color.PINK);
 		p_north_right.setBackground(Color.PINK);
-		bt_copy.setBackground(Color.WHITE);
 		bt_find.setBackground(Color.WHITE);
 		bt_xls.setBackground(Color.WHITE);
 
 		add(p_north, BorderLayout.NORTH);
-		add(p_south, BorderLayout.CENTER);
+		add(p_center, BorderLayout.CENTER);
+		add(p_south, BorderLayout.SOUTH);
 		setVisible(true);
 		setSize(700, 700);
 
@@ -122,10 +122,6 @@ public class User extends JPanel implements ActionListener {
 
 		table.setModel(new UserModel(con, sb));
 		table.updateUI();
-	}
-
-	public void copy() {
-
 	}
 
 	public void createExcel() {
@@ -164,30 +160,87 @@ public class User extends JPanel implements ActionListener {
 
 	}
 
+	public void itemStateChanged(ItemEvent e) {
+
+		if (rb_a.isSelected()) {
+			if (choice.getSelectedIndex() == 1) {
+				StringBuffer sb = new StringBuffer();
+				sb.append(
+						"select INVOICE_ID as 상품, aptuser_name as 택배주인 , INVOICE_TAKETIME as 수령시간, INVOICE_TAKER as 수령인");
+				sb.append(" from invoice i inner join aptuser a on a.aptuser_id = i.aptuser_id and a.aptuser_perm=503");
+				getList(sb);
+			} else if (choice.getSelectedIndex() == 2) {
+				StringBuffer sb = new StringBuffer();
+				sb.append(
+						"select INVOICE_ID as 상품, aptuser_name as 택배주인 , INVOICE_TAKETIME as 수령시간, INVOICE_TAKER as 수령인");
+				sb.append(" from invoice i inner join aptuser a on a.aptuser_id = i.aptuser_id and a.aptuser_id=2011");
+				getList(sb);
+			} else if (choice.getSelectedIndex() == 3) {
+				StringBuffer sb = new StringBuffer();
+				sb.append(
+						"select INVOICE_ID as 상품, aptuser_name as 택배주인 , INVOICE_TAKETIME as 수령시간, INVOICE_TAKER as 수령인");
+				sb.append(
+						" from invoice i inner join aptuser a on a.aptuser_id = i.aptuser_id and i.invoice_takeflag ='N' ");
+				getList(sb);
+			} else if (choice.getSelectedIndex() == 4) {
+				StringBuffer sb = new StringBuffer();
+				sb.append(
+						"select INVOICE_ID as 상품, aptuser_name as 택배주인 , INVOICE_TAKETIME as 수령시간, INVOICE_TAKER as 수령인");
+				sb.append(
+						" from invoice i inner join aptuser a on a.aptuser_id = i.aptuser_id and i.invoice_takeflag ='Y' ");
+				getList(sb);
+			}
+		} else if (rb_b.isSelected()) {
+			if (choice.getSelectedIndex() == 1) {
+				StringBuffer sb = new StringBuffer();
+				sb.append(
+						"select returninv_id as 상품, aptuser_name as 택배주인 , INVOICE_TAKETIME as 수령시간, INVOICE_TAKER as 수령인");
+				sb.append(" from returninv r inner join aptuser a on a.aptuser_id = r.aptuser_id and a.aptuser_perm=503");
+				getList(sb);
+			} else if (choice.getSelectedIndex() == 2) {
+				StringBuffer sb = new StringBuffer();
+				sb.append(
+						"select returninv_id as 상품, aptuser_name as 택배주인 , INVOICE_TAKETIME as 수령시간, INVOICE_TAKER as 수령인");
+				sb.append(" from returninv r inner join aptuser a on a.aptuser_id = r.aptuser_id and a.aptuser_id=2011");
+				getList(sb);
+			} else if (choice.getSelectedIndex() == 3) {
+				StringBuffer sb = new StringBuffer();
+				sb.append(
+						"select returninv_id as 상품, aptuser_name as 택배주인 , INVOICE_TAKETIME as 수령시간, INVOICE_TAKER as 수령인");
+				sb.append(
+						" from returninv r inner join aptuser a on a.aptuser_id = r.aptuser_id and r.invoice_takeflag ='N' ");
+				getList(sb);
+			} else if (choice.getSelectedIndex() == 4) {
+				StringBuffer sb = new StringBuffer();
+				sb.append(
+						"select returninv_id as 상품, aptuser_name as 택배주인 , INVOICE_TAKETIME as 수령시간, INVOICE_TAKER as 수령인");
+				sb.append(
+						" from returninv r inner join aptuser a on a.aptuser_id = r.aptuser_id and r.invoice_takeflag ='Y' ");
+				getList(sb);
+			}
+		}
+	}
+
 	public void actionPerformed(ActionEvent e) {
 		Object obj = e.getSource();
 		if (obj == bt_find) {
 
-		} else if (obj == bt_copy) {
-			copy();
 		} else if (obj == bt_xls) {
 			createExcel();
 		} else if (obj == rb_a) {
-			StringBuffer sb = new StringBuffer();
-			sb.append("select INVOICE_ID as 상품, aptuser_name as 택배주인 , INVOICE_TAKETIME as 수령시간, INVOICE_TAKER as 수령인");
-			sb.append(" from invoice i inner join aptuser a on a.aptuser_id = i.aptuser_id and a.aptuser_perm=503");
-			getList(sb);
+			choice.removeAll();
+			choice.addItem("▼목록을 선택하세요");
+			choice.addItem("전체 목록보기");
+			choice.addItem("내 목록보기");
+			choice.addItem("수령 전 목록보기");
+			choice.addItem("수령 완료 목록보기");
 		} else if (obj == rb_b) {
-			StringBuffer sb = new StringBuffer();
-			sb.append("select INVOICE_ID as 상품, aptuser_name as 택배주인 , INVOICE_TAKETIME as 수령시간, INVOICE_TAKER as 수령인");
-			sb.append(" from invoice i inner join aptuser a on a.aptuser_id = i.aptuser_id and a.aptuser_id=2011");
-			getList(sb);
-		} else if (obj == rb_c) {
-			StringBuffer sb = new StringBuffer();
-			sb.append("select INVOICE_ID as 상품, aptuser_name as 택배주인 , INVOICE_TAKETIME as 수령시간, INVOICE_TAKER as 수령인");
-			sb.append(
-					" from invoice i inner join aptuser a on a.aptuser_id = i.aptuser_id and i.invoice_takeflag ='Y' ");
-			getList(sb);
+			choice.removeAll();
+			choice.addItem("▼목록을 선택하세요");
+			choice.addItem("전체 목록보기");
+			choice.addItem("내 목록보기");
+			choice.addItem("반송 전 목록보기");
+			choice.addItem("반송 완료  목록보기");
 		}
 	}
 

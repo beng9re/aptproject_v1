@@ -7,8 +7,6 @@ import javax.swing.JComponent;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
-import javax.swing.text.BadLocationException;
-import javax.swing.text.Utilities;
 
 public class ChatMessage extends JPanel {
 	ChatClient client;
