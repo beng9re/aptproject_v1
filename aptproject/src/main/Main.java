@@ -8,6 +8,7 @@ import java.sql.Connection;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;
+import javax.swing.JRadioButton;
 
 import Edit.InvEditPan;
 import aptuser.RegistUser;
@@ -23,6 +24,8 @@ public class Main extends JFrame {
 	
 	JPanel pnl_content;
 	Menu menu;
+
+	
 	
 	//실행할 패널들을 미리 생성한다
 	Admin_InvoiceView admin_invoice; //물품목록(관리자용)
@@ -58,7 +61,7 @@ public class Main extends JFrame {
 		
 		//테스트 할 패널
 		////////////////////////////////////////////////////
-		pnl_content.add(admin_invoice , "invE");
+		pnl_content.add(user , "invE");
 		////////////////////////////////////////////////////
 		
 		add(menu, BorderLayout.WEST);

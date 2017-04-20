@@ -17,12 +17,10 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Connection;
-import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.ResultSetMetaData;
 import java.sql.SQLException;
-import java.sql.Time;
 import java.util.Vector;
 
 import javax.swing.ButtonGroup;
@@ -36,19 +34,17 @@ import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.EtchedBorder;
 
-import org.apache.poi.hslf.util.SystemTimeUtils;
-import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
-import org.apache.poi.ss.usermodel.Workbook;
 
 import db.DBManager;
 import dto.Aptuser;
 import dto.InvoiceCategory;
+import dto.Returninv;
 
 public class Admin_InvoiceView extends JPanel implements ActionListener {
-	JPanel p_north_radio, p_north, p_north_left, p_north_right, p_south;
+	JPanel p_north_radio, p_north, p_north_left, p_north_right, p_center, p_south;
 	JTable table;
 	JScrollPane scroll;
 	Choice choice;
@@ -59,16 +55,20 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 	Connection con;
 	AdminModel adminModel;
 	InvoiceModel invoiceModel;
+
 	JFileChooser chooser;
 
 	JRadioButton rb_allInvoice;
 	JRadioButton rb_invoice;
+	JRadioButton rb_breturn;
+	JRadioButton rb_areturn;
 	String tableName;
 
 	FileOutputStream fos;
 
 	Vector<Aptuser> user = new Vector<Aptuser>();
 	Vector<InvoiceCategory> invoice = new Vector<InvoiceCategory>();
+	Vector<Returninv> returninv = new Vector<Returninv>();
 
 	public Admin_InvoiceView() {
 		chooser = new JFileChooser();
@@ -76,38 +76,44 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 		p_north_radio = new JPanel();
 		p_north_left = new JPanel();
 		p_north_right = new JPanel();
+		p_center = new JPanel();
 		p_south = new JPanel();
 		table = new JTable();
 		scroll = new JScrollPane(table);
 		choice = new Choice();
 		bt_find = new JButton("조회");
-		bt_copy = new JButton("인쇄");
 		bt_xls = new JButton("엑셀파일로 내보내기");
-		t_input = new JTextField(10);
+		t_input = new JTextField(15);
 		rb_allInvoice = new JRadioButton("모든 택배 목록");
 		rb_invoice = new JRadioButton("수령 전 택배 목록");
+		rb_breturn = new JRadioButton("반송 전 물품");
+		rb_areturn = new JRadioButton("반송 후 물품");
 
 		ButtonGroup group = new ButtonGroup();
 
 		setLayout(new BorderLayout());
 		group.add(rb_allInvoice);
 		group.add(rb_invoice);
+		group.add(rb_breturn);
+		group.add(rb_areturn);
 
-		p_north_radio.setLayout(new GridLayout(2, 1));
+		p_north_radio.setLayout(new GridLayout(2, 2));
 		p_north_radio.add(rb_allInvoice);
+		p_north_radio.add(rb_breturn);
 		p_north_radio.add(rb_invoice);
+		p_north_radio.add(rb_areturn);
 
 		setLayout(new BorderLayout());
 
 		p_north_left.setLayout(new FlowLayout(FlowLayout.LEFT, 5, 10));
 		p_north_right.setLayout(new FlowLayout(FlowLayout.RIGHT, 5, 10));
+		p_south.setLayout(new FlowLayout(FlowLayout.RIGHT, 20, 10));
 
 		p_north_left.add(choice);
 		p_north_left.add(t_input);
-
 		p_north_right.add(bt_find);
-		p_north_right.add(bt_copy);
-		p_north_right.add(bt_xls);
+
+		p_south.add(bt_xls);
 
 		p_north.add(p_north_radio);
 		p_north.add(p_north_left);
@@ -115,18 +121,20 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 
 		p_north.setBorder(new EtchedBorder(EtchedBorder.RAISED));
 
-		p_south.add(scroll);
+		p_center.add(scroll);
 
 		scroll.setPreferredSize(new Dimension(680, 500));
-		choice.setPreferredSize(new Dimension(100, 30));
+		choice.setPreferredSize(new Dimension(150, 30));
 
 		p_north.setPreferredSize(new Dimension(700, 80));
+		p_south.setPreferredSize(new Dimension(700, 80));
 
-		bt_copy.addActionListener(this);
 		bt_find.addActionListener(this);
 		bt_xls.addActionListener(this);
 		rb_allInvoice.addActionListener(this);
 		rb_invoice.addActionListener(this);
+		rb_breturn.addActionListener(this);
+		rb_areturn.addActionListener(this);
 		table.addMouseListener(new MouseAdapter() {
 
 			public void mouseClicked(MouseEvent e) {
@@ -150,16 +158,20 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 			}
 		});
 
-		add(p_north, BorderLayout.NORTH);
 		p_north.setBackground(Color.PINK);
 		rb_allInvoice.setBackground(Color.PINK);
 		rb_invoice.setBackground(Color.PINK);
+		rb_breturn.setBackground(Color.PINK);
+		rb_areturn.setBackground(Color.PINK);
 		p_north_left.setBackground(Color.PINK);
 		p_north_right.setBackground(Color.PINK);
-		bt_copy.setBackground(Color.WHITE);
+		p_south.setBackground(Color.PINK);
+
 		bt_find.setBackground(Color.WHITE);
 		bt_xls.setBackground(Color.WHITE);
-		add(p_south, BorderLayout.CENTER);
+		add(p_center, BorderLayout.CENTER);
+		add(p_north, BorderLayout.NORTH);
+		add(p_south, BorderLayout.SOUTH);
 		setVisible(true);
 		setSize(700, 700);
 
@@ -206,6 +218,36 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 		}
 	}
 
+	public void getReturninv(String sql) {
+		PreparedStatement pstmt = null;
+		ResultSet rs = null;
+
+		try {
+			pstmt = con.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+
+			choice.removeAll();
+
+			ResultSetMetaData meta = rs.getMetaData();
+			for (int i = 1; i <= meta.getColumnCount(); i++) {
+				choice.add(meta.getColumnName(i));
+			}
+			while (rs.next()) {
+				Returninv dto = new Returninv();
+				dto.setReturninv_arr(rs.getString("retruninv_arr"));
+				dto.setReturninv_barcode(rs.getString("retruninv_barcode"));
+				dto.setReturninv_commennt(rs.getString("retruninv_comment"));
+				dto.setReturninv_date(rs.getString("retruninv_date"));
+				dto.setReturninv_dep(rs.getString("retruninv_dep"));
+				dto.setReturninv_id(rs.getString("retruninv_id"));
+				dto.setReturninv_time(rs.getString("retruninv_time"));
+				returninv.add(dto);
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		}
+	}
+
 	public void getInvoice(String sql) {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -243,7 +285,14 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 		} else if (rb_invoice.isSelected()) {
 			table.setModel(invoiceModel = new InvoiceModel(con, sql));
 			table.updateUI();
+		} else if (rb_breturn.isSelected()) {
+			table.setModel(invoiceModel = new InvoiceModel(con, sql));
+			table.updateUI();
+		} else if (rb_areturn.isSelected()) {
+			table.setModel(invoiceModel = new InvoiceModel(con, sql));
+			table.updateUI();
 		}
+
 	}
 
 	public void selectTable() {
@@ -264,8 +313,6 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 			selectTable();
 		} else if (obj == bt_xls) {
 			createExcel();
-		} else if (obj == bt_copy) {
-
 		} else if (obj == rb_allInvoice) {
 			tableName = "invoice";
 			String sql = "select * from invoice";
@@ -275,6 +322,17 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 			tableName = "invoice";
 			String sql = "select * from invoice where invoice_takeflag is null or invoice_takeflag='N'";
 			getList(sql);
+		} else if (obj == rb_breturn) {
+			tableName = "returninv";
+			String sql = "select * from returninv";
+			getReturninv(sql);
+			getList(sql);
+		}
+		else if (obj == rb_areturn) {
+			tableName = "returninv";
+			String sql = "select * from returninv";
+			getReturninv(sql);
+			getList(sql);
 		}
 	}
 
@@ -283,23 +341,25 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 		int col = 4;
 		String value = (String) table.getValueAt(row, col);
 		String column = invoiceModel.columnName.elementAt(col);
-		String date_col=invoiceModel.columnName.elementAt(5);
-				
-		String sql = "update " + tableName + " set " + column + "=" + "'" + value + "',"+ date_col + "= sysdate, invoice_takeflag='Y'";
+		String date_col = invoiceModel.columnName.elementAt(5);
+
+		String sql = "update " + tableName + " set " + column + "=" + "'" + value + "'," + date_col
+				+ "= sysdate, invoice_takeflag='Y'";
 		sql += " where invoice_id=" + table.getValueAt(row, 0);
-	
+
 		System.out.println(sql);
 		try {
 			pstmt = con.prepareStatement(sql);
 			int result = pstmt.executeUpdate();
-		
-			String re = "select * from invoice";
+
+			String re = "select * from invoice where invoice_takeflag is null or invoice_takeflag='N'";
 			invoiceModel.getList(re);
-			String a=(String)invoiceModel.getValueAt(row, 5);
+			String a = (String) invoiceModel.getValueAt(row, 5);
 			table.setValueAt(a, row, 5);
-			
-			if (result != 0 ) {
+
+			if (result != 0) {
 				JOptionPane.showConfirmDialog(this, "업데이트 완료");
+
 				table.updateUI();
 			}
 			System.out.println(sql);
