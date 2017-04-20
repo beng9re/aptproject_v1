@@ -11,6 +11,7 @@ import javax.swing.table.AbstractTableModel;
 public class db_Table extends AbstractTableModel{
 	Vector<String>colmn=new Vector<String>();
 	Vector<Vector> data=new Vector<Vector>();
+	Vector vec;
 	Connection con;
 	
 	
@@ -22,6 +23,7 @@ public class db_Table extends AbstractTableModel{
 		
 			
 		getList();
+		
 	
 	}
 	//동,호수를 가져오는 sql 문 
@@ -29,21 +31,23 @@ public class db_Table extends AbstractTableModel{
 		PreparedStatement pstmt=null;
 		ResultSet rs=null;
 		
-		String sql="select  COMPLEX_NAME as 동,UNIT_NAME as 호수 FROM complex,UNIT u WHERE complex.COMPLEX_ID=u.COMPLEX_ID";
+		String sql="select  c.COMPLEX_NAME as 동,u.UNIT_NAME as 호수 FROM complex c,UNIT u ";
+				sql+=" WHERE c.COMPLEX_ID=u.COMPLEX_ID ORDER BY c.COMPLEX_ID,u.UNIT_id asc";
+		
 		
 		try {
 			pstmt=con.prepareStatement(sql);
 			rs=pstmt.executeQuery();
 			
+			
 			while(rs.next()){
 				Vector vec=new Vector();
 				vec.add(rs.getString("동"));
 				vec.add(rs.getString("호수"));
-		
-				
-				data.add(vec);		
+				data.add(vec);
+				//System.out.print(vec.size());
 			}
-		
+			
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
