@@ -12,6 +12,7 @@ import javax.swing.JPanel;
 import Edit.InvEditPan;
 import aptuser.ModifyUser;
 import aptuser.RegistUser;
+import complex.regist.ComplexPanel;
 import db.DBManager;
 import viewer.Admin_InvoiceView;
 import viewer.Admin_UserView;
@@ -33,7 +34,11 @@ public class Main extends JFrame {
 	User user; //물품목록(사용자용)
 	InvEditPan invEdit; //물품등록
 	RegistUser regiUser; //회원등록
+<<<<<<< HEAD
+	ComplexPanel ComplexPanel;//건물등록
+=======
 	ModifyUser modUser; //회원정보수정
+>>>>>>> 72b6cbd02714618845470141529ec09b3703b7b5
 		
 	//테스트를 위해서 임시사용중인 생성자
 	public Main() {
@@ -54,6 +59,7 @@ public class Main extends JFrame {
 		invEdit = new InvEditPan();
 		admin_invoice=new Admin_InvoiceView();
 		admin_user=new Admin_UserView();
+		ComplexPanel=new ComplexPanel();
 		user= new User();
 		
 		menu = new Menu(this);
@@ -62,7 +68,11 @@ public class Main extends JFrame {
 		
 		//테스트 할 패널
 		////////////////////////////////////////////////////
+<<<<<<< HEAD
+		pnl_content.add(ComplexPanel , "invE");
+=======
 		pnl_content.add(user , "invE");
+>>>>>>> 72b6cbd02714618845470141529ec09b3703b7b5
 		////////////////////////////////////////////////////
 		
 		add(menu, BorderLayout.WEST);
