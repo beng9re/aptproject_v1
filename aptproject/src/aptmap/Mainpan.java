@@ -26,9 +26,14 @@ public class Mainpan  extends JPanel {
 	int pointx;
 	int pointy;
 	Vector<JButton> vcbu=new Vector<>();
+	public Mainpan() {
+		// TODO Auto-generated constructor stub
+	}
+	
 	public Mainpan(Mapmain main) {
+		
 		this.main=main;
-		url=getClass().getResource("/map.jpg");
+		url=getClass().getResource("/map.png");
 	 	System.out.println(url);
 		
 		try {
@@ -41,8 +46,8 @@ public class Mainpan  extends JPanel {
 		
 		setLayout(null);
 		
-		MapLabel lb1 = new MapLabel("gasdsada",200,100,50,20);
-		add(lb1);
+	
+	
 		
 		
 		
@@ -50,7 +55,18 @@ public class Mainpan  extends JPanel {
 		
 		
 		setPreferredSize(new Dimension(700, 700));
+		 getMapIcon();
 		
+	}
+	public void getMapIcon(){
+		
+		for(int i=0;i<main.mapIcon.size();i++){
+			
+			MapLabel lb1 = new MapLabel(this,main.mapIcon.get(i),Mapmain.ICONWITH,Mapmain.ICONHEIGHT);
+			System.out.println(lb1);
+			this.add(lb1);
+			this.updateUI();
+		}
 	}
 	@Override
 	public void paintComponent(Graphics g) {
@@ -63,9 +79,9 @@ public class Mainpan  extends JPanel {
 			Mainpan.this.removeAll();
 			pointx=e.getX();
 			pointy=e.getY();
-			MapLabel lb1 = new MapLabel("³×¾È³ç", pointx-10, pointy-5, 50, 20);
+			//MapLabel lb1 = new MapLabel("³×¾È³ç", pointx-10, pointy-5, 200, 200);
 			
-			Mainpan.this.add((JLabel)lb1);
+		
 			Mainpan.this.updateUI();
 		
 		};
