@@ -24,6 +24,7 @@ import java.util.Vector;
 import javax.swing.ButtonGroup;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
@@ -31,7 +32,9 @@ import javax.swing.border.LineBorder;
 import javax.swing.event.AncestorEvent;
 import javax.swing.event.AncestorListener;
 
-import complex.regist.table.ShowTable;
+
+import complex.regist.table.TableController;
+import complex.regist.table.db_Table;
 import db.DBManager;
 import dto.ComplexDto;
 
@@ -52,6 +55,8 @@ public class ComplexPanel extends JPanel implements ActionListener{
 	//동호수를 담기위한 변수
 	int a=0;
 
+	TableController controller;
+	
 	public ComplexPanel() {
 		con=manager.getConnection();
 		p_north = new JPanel();
@@ -67,7 +72,7 @@ public class ComplexPanel extends JPanel implements ActionListener{
 		ra_regist = new JRadioButton("건물등록");
 		t_path=new JTextField(20);
 		group = new ButtonGroup();
-
+		
 		// 라디오 그룹지정
 		group.add(ra_add);
 		group.add(ra_regist);
@@ -142,10 +147,15 @@ public class ComplexPanel extends JPanel implements ActionListener{
 			public void keyReleased(KeyEvent e) {
 				int key=e.getKeyCode();
 				if(key==KeyEvent.VK_ENTER){
-					System.out.println(mp.t_complex.getText());
-					mp.t_complex.setText("");
+					if(mp.t_complex.getText().toString().length()==0){
+						System.out.println("0이네요");
+					}else{
+						System.out.println("다시입력");
+					}
+					//regist();
 				}
-			}
+				}	
+			
 		});
 		
 		// add 하기
@@ -174,7 +184,7 @@ public class ComplexPanel extends JPanel implements ActionListener{
 		System.out.println("등록");
 		
 		registComplex();
-		//registUnit();
+		
 		
 	
 	}
@@ -183,8 +193,8 @@ public class ComplexPanel extends JPanel implements ActionListener{
 		PreparedStatement pstmt=null;
 		//등록했을때 동 데이터에 입력하기
 		String complex=mp.t_complex.getText();
+		System.out.println(complex);
 	
-		
 		String sql="INSERT INTO COMPLEX(complex_id,COMPLEX_NAME)VALUES (seq_complex.nextval,?)";
 		
 		try {
@@ -212,6 +222,7 @@ public class ComplexPanel extends JPanel implements ActionListener{
 			}
 		}
 		getComplex();
+		
 	}
 	//complex의 값 구해오는 메서드
 	public void getComplex(){
@@ -299,6 +310,9 @@ public class ComplexPanel extends JPanel implements ActionListener{
 				
 				if(sq>0){
 					System.out.println("동입력성공");
+					//TableController controller=new TableController();
+					
+					
 				}else{
 					System.out.println("동입력실패");
 				}
@@ -317,11 +331,11 @@ public class ComplexPanel extends JPanel implements ActionListener{
 				}
 			}
 		}
+			
 		}
-		
-		
-		
+		controller.upDate();
 	}
+			
 	
 	//취소 버튼 이벤트 메서드
 	public void cancle(){
@@ -334,7 +348,8 @@ public class ComplexPanel extends JPanel implements ActionListener{
 	
 	//테이블 확인 메서드
 	public void confirm(){
-		ShowTable sh_table=new ShowTable();
+		 controller=new TableController();
+		
 		
 	}
 	

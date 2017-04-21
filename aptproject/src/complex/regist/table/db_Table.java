@@ -28,12 +28,14 @@ public class db_Table extends AbstractTableModel{
 	}
 	//동,호수를 가져오는 sql 문 
 	public void getList(){
+		data.removeAll(data);//다지워야 업데이트가 되기에 
+
 		PreparedStatement pstmt=null;
 		ResultSet rs=null;
 		
-		String sql="select  c.COMPLEX_NAME as 동,u.UNIT_NAME as 호수 FROM complex c,UNIT u ";
+		String sql="select c.COMPLEX_NAME as 동,u.UNIT_NAME as 호수 FROM complex c,UNIT u ";
 				sql+=" WHERE c.COMPLEX_ID=u.COMPLEX_ID ORDER BY c.COMPLEX_ID,u.UNIT_id asc";
-		
+				
 		
 		try {
 			pstmt=con.prepareStatement(sql);
@@ -72,7 +74,16 @@ public class db_Table extends AbstractTableModel{
 		
 		
 	}
+
 	
+	@Override
+	public void setValueAt(Object Value, int row, int col) {
+		Vector vec=data.elementAt(row);
+		vec.set(col, Value);
+		
+		fireTableDataChanged();
+		
+	}
 	
 	@Override
 	public int getColumnCount() {
