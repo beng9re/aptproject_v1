@@ -14,15 +14,6 @@ public abstract class DBModel {
 	protected String colName[];
 	protected String sql;
 	protected ArrayList arrList = new ArrayList();
-	
-	//바인드 변수관련 설정을 하는 메서드
-	//바인드 변수를 사용하려면 오버라이딩 해야함
-	protected void setSQL() throws SQLException {
-		pstmt = conn.prepareStatement(sql);
-	}
-	
-	//dto로 부터 데이터를 받아오는 메서드
-	protected abstract void setTable(ResultSet rs) throws SQLException;
 
 	protected void init(String[] colName, String sql) {
 		this.colName = colName;
@@ -39,6 +30,15 @@ public abstract class DBModel {
 			exeUpdate();
 		}
 	}
+	
+	//바인드 변수관련 설정을 하는 메서드
+	//바인드 변수를 사용하려면 오버라이딩 해야함
+	protected void setSQL() throws SQLException {
+		pstmt = conn.prepareStatement(sql);
+	}
+	
+	//dto로 부터 데이터를 받아오는 메서드
+	protected abstract void setTable(ResultSet rs) throws SQLException;
 	
 	private void exeQuery() {
 		try {

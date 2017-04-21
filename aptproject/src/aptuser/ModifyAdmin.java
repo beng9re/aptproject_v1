@@ -1,17 +1,26 @@
 package aptuser;
 
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
+
 public class ModifyAdmin extends ModifyUser {
-	String[][] isEdit = { 
-		{"회원ID", "Y"}, {"바코드", "Y"}, {"비밀번호", "Y"}, {"비밀번호 확인", "Y"},
-		{"이름", "Y"}, {"연락처", "Y"}, {"등록일", "Y"}, {"주소", "Y"}
+	String[][] isEdit = {
+		{"회원ID", "N"}, {"바코드", "Y"}, {"비밀번호", "Y"}, {"비밀번호 확인", "Y"},
+		{"이름", "Y"}, {"연락처", "Y"}, {"등록일", "N"}, {"주소", "N"}
 	};
 	String titleStr = "관리자 정보";
-	String btnTxt = "수정";
+	String btnTxt = "수 정";
 	
 	public ModifyAdmin() {
-		//관리자가 아니면 실행하지 않는다
-		init(isEdit, titleStr, btnTxt);
+		init(isEdit, titleStr, btnTxt, true);
 		loadInfo();
+		
+		fieldData.get("바코드").addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				System.out.println("바코드입력창");
+			}
+		});
 	}
-	
+
 }

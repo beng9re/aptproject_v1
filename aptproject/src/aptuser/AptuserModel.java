@@ -40,7 +40,7 @@ public class AptuserModel extends DBModel {
 			dto.setAptuser_phone(rs.getString(colName[4]));
 			dto.setAptuser_regdate(rs.getString(colName[5]));
 			dto.setAptuser_live(rs.getString(colName[6]));
-			dto.setAptuser_perm(rs.getString(colName[7]));
+			dto.setAptuser_perm(rs.getInt(colName[7]));
 			dto.setAptuser_ip(rs.getString(colName[8]));
 			dto.setUnit_id(rs.getInt(colName[11]));
 			//주소 관련정보

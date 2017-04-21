@@ -34,18 +34,25 @@ public class AptuserByIDModel extends AptuserModel {
 				pstmt.setString(1, id);
 				break;
 			case "insert":
+				Aptuser insert_user = (Aptuser) arrList.get(0);
 				pstmt = conn.prepareStatement(sql);
+				pstmt.setString(1, insert_user.getAptuser_id());
+				pstmt.setString(2, insert_user.getAptuser_code());
+				pstmt.setString(3, insert_user.getAptuser_pw());
+				pstmt.setString(4, insert_user.getAptuser_name());
+				pstmt.setString(5, insert_user.getAptuser_phone());
+				pstmt.setInt(6, insert_user.getAptuser_perm());
+				pstmt.setInt(7, insert_user.getUnit_id());
 				
 				break;
 			case "update":
-				Aptuser user = (Aptuser) arrList.get(0);
+				Aptuser update_user = (Aptuser) arrList.get(0);
 				pstmt = conn.prepareStatement(sql);
-				pstmt.setString(1, user.getAptuser_pw());
-				pstmt.setString(2, user.getAptuser_code());
-				pstmt.setString(3, user.getAptuser_name());
-				pstmt.setString(4, user.getAptuser_phone());
-				pstmt.setString(5, user.getAptuser_live());
-				pstmt.setString(6, id);
+				pstmt.setString(1, update_user.getAptuser_code());
+				pstmt.setString(2, update_user.getAptuser_pw());
+				pstmt.setString(3, update_user.getAptuser_name());
+				pstmt.setString(4, update_user.getAptuser_phone());
+				pstmt.setString(5, id);
 				break;
 			case "delete":
 				pstmt = conn.prepareStatement(sql);
@@ -62,13 +69,13 @@ public class AptuserByIDModel extends AptuserModel {
 	
 	public void insertData() {
 		mode = "insert";
-		sql = "insert into aptuser values(aptuser_id,aptuser_pw,aptuser_name,aptuser_phone,林家贸府)";
+		sql = "insert into aptuser values(aptuser_id=?,aptuser_code=?,aptuser_pw=?,aptuser_name=?,aptuser_phone=?,aptuser_perm=?,unit_id=?)";
 		setQuery(sql, true);
 	}
 	
 	public void updateData() {
 		mode = "update";
-		sql = "update aptuser set aptuser_pw=?,aptuser_code=?,aptuser_name=?,aptuser_phone=?,aptuser_live=? where aptuser_id=?";
+		sql = "update aptuser set aptuser_code=?,aptuser_pw=?,aptuser_name=?,aptuser_phone=? where aptuser_id=?";
 		setQuery(sql, true);
 	}
 	
