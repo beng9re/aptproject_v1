@@ -1,10 +1,8 @@
-package login;
+package db;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
-
-import db.AptuserModel;
 
 public class LoginModel extends AptuserModel {
 	private String sql = "select * from aptuser where aptuser_id = ? and aptuser_pw = ?";

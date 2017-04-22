@@ -1,4 +1,4 @@
-package login;
+package main;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -24,7 +24,7 @@ import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
 import db.DBManager;
-import main.Main;
+import db.LoginModel;
 
 public class Login extends JFrame implements ActionListener {
 	private JPanel pnl_top, pnl_field, pnl_bot;
