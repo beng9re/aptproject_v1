@@ -24,10 +24,11 @@ import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 import javax.swing.text.JTextComponent;
 
+import db.AptuserModelByID;
 import db.DBManager;
 import dto.Aptuser;
 
-public abstract class UserInfo extends JPanel {
+public abstract class UserInfo extends JPanel implements ActionListener {
 	/*
 	 * 필드의 수정가능여부를 결정, 상속받은 클래스에서 정의 String[][] isEdit = { {"회원ID", "Y"},
 	 * {"바코드", "Y"}, {"비밀번호", "Y"}, {"비밀번호 확인", "Y"}, {"이름", "Y"}, {"연락처", "Y"},
@@ -42,11 +43,11 @@ public abstract class UserInfo extends JPanel {
 	String titleStr;
 	JLabel[] lbArr;
 	HashMap<String, Component> fieldData;
-	JButton btn_confirm;
+	JButton btn_barcode, btn_confirm;
 	String btnTxt;
 	Font font;
 
-	AptuserByIDModel model;
+	AptuserModelByID model;
 	ArrayList<Aptuser> aptuser;
 
 	// 프로그램 전체에서 id와 conn은 항상보유중이어야함 (main으로 부터 가져온다)
@@ -88,6 +89,7 @@ public abstract class UserInfo extends JPanel {
 		pnl_south = new JPanel();
 		title = new JLabel(titleStr, JLabel.CENTER);
 		lbArr = new JLabel[isEdit.length];
+		btn_barcode = new JButton("바코드 생성");
 		btn_confirm = new JButton(btnTxt);
 
 		// 패널 전체 레이아웃 설정
@@ -99,7 +101,9 @@ public abstract class UserInfo extends JPanel {
 		
 		// 화면에 표시될 입력필드를 생성한다
 		mkFields();
-
+		
+		pnl_south.add(btn_barcode);
+		pnl_south.add(Box.createHorizontalStrut(40));
 		pnl_south.add(btn_confirm);
 		add(pnl_center, BorderLayout.CENTER);
 		add(pnl_south, BorderLayout.SOUTH);
@@ -108,19 +112,17 @@ public abstract class UserInfo extends JPanel {
 		title.setFont(new Font("맑은 고딕", Font.BOLD, 24));
 		title.setPreferredSize(new Dimension(360, 55));
 		title.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 2));
+		btn_barcode.setBackground(Color.LIGHT_GRAY);
+		btn_barcode.setPreferredSize(new Dimension(140, 40));
 		btn_confirm.setBackground(Color.LIGHT_GRAY);
-		btn_confirm.setPreferredSize(new Dimension(120, 40));
+		btn_confirm.setPreferredSize(new Dimension(140, 40));
 		pnl_center.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
 		pnl_center.setPreferredSize(new Dimension(600, 500));
 		pnl_south.setBorder(BorderFactory.createEmptyBorder(20, 20, 40, 20));
 
 		// 리스너연결
-		btn_confirm.addActionListener(new ActionListener() {
-			@Override
-			public void actionPerformed(ActionEvent e) {
-				fieldCheck();
-			}
-		});
+		btn_barcode.addActionListener(this);
+		btn_confirm.addActionListener(this);
 
 		setPreferredSize(new Dimension(700, 700));
 	}
@@ -161,7 +163,7 @@ public abstract class UserInfo extends JPanel {
 	// 회원 정보 불러오기(가입할 때는 불러오지 않아도 된다)
 	public void loadInfo() {
 		// ID로 유저정보를 찾아서 가져온다
-		model = new AptuserByIDModel(conn, id);
+		model = new AptuserModelByID(conn, id);
 		aptuser = model.getData();
 
 		// 필드에 회원정보를 입력한다
@@ -210,6 +212,20 @@ public abstract class UserInfo extends JPanel {
 			return idDuChk();
 		}
 		return false;
+	}
+	
+	// 회원 식별 바코드 생성 메서드
+	private void mkBarcode() {
+		JOptionPane.showMessageDialog(this, "바코드 생성");
+	}
+	
+	@Override
+	public void actionPerformed(ActionEvent e) {
+		if (e.getSource()==btn_barcode) {
+			mkBarcode();
+		} else if (e.getSource()==btn_confirm) {
+			fieldCheck();
+		}
 	}
 
 	// 회원 등록에서만 @Override

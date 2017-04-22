@@ -4,7 +4,7 @@ import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import aptuser.AptuserModel;
+import db.AptuserModel;
 
 public class LoginModel extends AptuserModel {
 	private String sql = "select * from aptuser where aptuser_id = ? and aptuser_pw = ?";
@@ -12,7 +12,7 @@ public class LoginModel extends AptuserModel {
 	
 	public LoginModel(Connection conn) {
 		this.conn = conn;
-		setQuery(sql, false);
+		aptuserModel(sql, false);
 	}
 	
 	protected void setSQL() throws SQLException {

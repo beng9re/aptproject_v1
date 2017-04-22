@@ -1,10 +1,9 @@
-package aptuser;
+package db;
 
 import java.sql.Connection;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 
-import db.DBModel;
 import dto.Aptuser;
 
 public class AptuserModel extends DBModel {
@@ -17,13 +16,15 @@ public class AptuserModel extends DBModel {
 
 	public AptuserModel() {
 	}
-
+	
+	// 이 클래스를 직접 사용할 때의 생성자
 	public AptuserModel(Connection conn) {
 		this.conn = conn;
 		init(colName, sql);
 	}
-
-	protected void setQuery(String sql, boolean appendix) {
+	
+	// 이 클래스를 상속받아 사용할 때 초기화 기능 (DBModel의 init메서드 대용)
+	protected void aptuserModel(String sql, boolean appendix) {
 		this.sql = sql;
 		this.appendix = appendix;
 		init(colName, sql);

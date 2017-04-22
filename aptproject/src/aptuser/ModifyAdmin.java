@@ -14,13 +14,6 @@ public class ModifyAdmin extends ModifyUser {
 	public ModifyAdmin() {
 		init(isEdit, titleStr, btnTxt, true);
 		loadInfo();
-		
-		fieldData.get("바코드").addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				System.out.println("바코드입력창");
-			}
-		});
 	}
 
 }

@@ -6,24 +6,24 @@
  * 삭제 : deleteData()
  * 의 기능을 담당한다
  */
-package aptuser;
+package db;
 
 import java.sql.Connection;
 import java.sql.SQLException;
 
 import dto.Aptuser;
 
-public class AptuserByIDModel extends AptuserModel {
+public class AptuserModelByID extends AptuserModel {
 	private String dfSQL = "select * from aptuser A, (select * from complex C inner join unit U on C.complex_id = U.complex_id)"
 			+ " B where A.unit_id = B.unit_id and aptuser_id = ?";
 	private String sql = dfSQL;
 	private String id;
 	private String mode = "select";
 	
-	public AptuserByIDModel(Connection conn, String id) {
+	public AptuserModelByID(Connection conn, String id) {
 		this.conn = conn;
 		this.id = id;
-		setQuery(sql, true);
+		aptuserModel(sql, true);
 	}
 	
 	protected void setSQL() throws SQLException {
@@ -64,25 +64,26 @@ public class AptuserByIDModel extends AptuserModel {
 	public void selectData() {
 		mode = "select";
 		sql = dfSQL;
-		setQuery(sql, true);
+		aptuserModel(sql, true);
 	}
 	
 	public void insertData() {
 		mode = "insert";
-		sql = "insert into aptuser values(aptuser_id=?,aptuser_code=?,aptuser_pw=?,aptuser_name=?,aptuser_phone=?,aptuser_perm=?,unit_id=?)";
-		setQuery(sql, true);
+		sql = "insert into aptuser(aptuser_id,aptuser_code,aptuser_pw,aptuser_name,aptuser_phone,aptuser_perm,unit_id) "
+				+ "values(?,?,?,?,?,?,?)";
+		aptuserModel(sql, true);
 	}
 	
 	public void updateData() {
 		mode = "update";
 		sql = "update aptuser set aptuser_code=?,aptuser_pw=?,aptuser_name=?,aptuser_phone=? where aptuser_id=?";
-		setQuery(sql, true);
+		aptuserModel(sql, true);
 	}
 	
 	public void deleteData() {
 		mode = "delete";
 		sql = "delete from aptuser where aptuser_id = ?";
-		setQuery(sql, true);
+		aptuserModel(sql, true);
 	}
 	
 }
