@@ -26,7 +26,7 @@ import dto.Unit;
 
 public class RegistUser extends UserInfo implements ItemListener {
 	// 회원ID, 바코드, 비밀번호, 비밀번호확인, 이름, 연락처, 등록일, 주소
-	String[][] isEdit = { { "회원ID", "Y" }, { "바코드", "Y" }, { "비밀번호", "Y" }, { "비밀번호 확인", "Y" }, { "이름", "Y" },
+	String[][] isEdit = { { "회원ID", "Y" }, { "바코드", "N" }, { "비밀번호", "Y" }, { "비밀번호 확인", "Y" }, { "이름", "Y" },
 			{ "연락처", "Y" }, { "등록일", "Y" }, { "주소", "Y" } };
 	String titleStr = "회원등록";
 	String btnTxt = "등 록";
@@ -137,8 +137,8 @@ public class RegistUser extends UserInfo implements ItemListener {
 		}
 	}
 
-	// 회원ID 중복확인, 비어있는 필드확인에서 연속으로 실행 됨
-	protected boolean idDuChk() {
+	// 회원ID 중복확인, 주소입력 여부 확인 : 비어있는 필드확인에서 연속으로 실행 됨
+	protected boolean regFieldChk() {
 		String new_id = ((JTextField) fieldData.get("회원ID")).getText();
 		duChkModel = new AptuserModelByID(conn, new_id);
 		ArrayList<Aptuser> res_id = duChkModel.getData();

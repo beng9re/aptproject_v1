@@ -16,6 +16,7 @@ import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JButton;
+import javax.swing.JFileChooser;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
@@ -207,22 +208,46 @@ public abstract class UserInfo extends JPanel implements ActionListener {
 				return true;
 			}
 		}
-		// 회원 가입시 ID중복 확인
+		// 회원 가입 관련 필드 확인
 		if (!((JTextField) fieldData.get("회원ID")).getText().equals("") && !forUpdate) {
-			return idDuChk();
+			return regFieldChk();
 		}
 		return false;
 	}
 	
-	// 회원 식별 바코드 생성 메서드
+	/*
+	 * 바코드 생성 규칙
+	 * 
+	 */
 	private void mkBarcode() {
-		JOptionPane.showMessageDialog(this, "바코드 생성");
+		
+	}
+	
+	// 회원 식별 바코드 생성 메서드
+	private void barcodeOption() {
+		if (((JTextField) fieldData.get("바코드")).getText().equals("")) {
+			// 바코드 생성
+			mkBarcode();
+			JOptionPane.showMessageDialog(this, "바코드가 생성되었습니다");
+		} else {
+			// 바코드 재생성
+			int res = JOptionPane.showConfirmDialog(this, "바코드를 재생성 하시겠습니까?", "바코드 생성", JOptionPane.OK_CANCEL_OPTION);
+			if (res == JOptionPane.OK_OPTION) {
+				mkBarcode();
+			}
+		}
+		// 파일로 출력
+		int isFile = JOptionPane.showConfirmDialog(this, "바코드를 파일로 출력하시겠습니까?", "바코드 파일변환", JOptionPane.OK_CANCEL_OPTION);
+		if (isFile == JOptionPane.OK_OPTION) {
+			JFileChooser chooser = new JFileChooser();
+			chooser.showSaveDialog(this);
+		}
 	}
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource()==btn_barcode) {
-			mkBarcode();
+			barcodeOption();
 		} else if (e.getSource()==btn_confirm) {
 			fieldCheck();
 		}
@@ -231,8 +256,8 @@ public abstract class UserInfo extends JPanel implements ActionListener {
 	// 회원 등록에서만 @Override
 	abstract protected void mkBottomFields(JPanel pan, int i);
 	
-	// ID중복여부 체크, 필요에 따라 @Override
-	abstract protected boolean idDuChk();
+	// 추가 필드 체크(회원등록에서 사용), 필요에 따라 @Override
+	abstract protected boolean regFieldChk();
 
 	// 버튼을 눌렀을 때 동작내용
 	abstract protected void confirm();

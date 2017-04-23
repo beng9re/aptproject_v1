@@ -23,7 +23,7 @@ public class ModifyUser extends UserInfo {
 
 	// id중복확인 하지 않음(false)
 	@Override
-	protected boolean idDuChk() {
+	protected boolean regFieldChk() {
 		return false;
 	}
 
