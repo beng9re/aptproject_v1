@@ -112,7 +112,17 @@ public class Login extends JFrame implements ActionListener {
 		//DB에서 회원정보 조회해서 id pw 일치여부 확인 (admin//4321)
 		if (model.loginChk(txf_id.getText(), txf_pw.getPassword())) {
 			JOptionPane.showMessageDialog(this, "로그인 성공");
-			new Main(dbMgr, txf_id.getText());
+			goMain();
+		} else {
+			JOptionPane.showMessageDialog(this, "회원정보가 일치하지 않습니다");
+		}
+	}
+	
+	private void barcodeLogin() {
+		String barcode = JOptionPane.showInputDialog(this, "스캐너로 바코드를 읽어주세요");
+		if (model.barcodeChk(barcode)) {
+			JOptionPane.showMessageDialog(this, "로그인 성공");
+			goMain();
 		} else {
 			JOptionPane.showMessageDialog(this, "회원정보가 일치하지 않습니다");
 		}
@@ -124,11 +134,16 @@ public class Login extends JFrame implements ActionListener {
 			login();
 			
 		} else if (e.getSource() == btn_barcode) {
-			JOptionPane.showMessageDialog(Login.this, "바코드를 입력해주세요");
+			barcodeLogin();
 		}
 	}
 	
+	private void goMain() {
+		new Main(dbMgr, txf_id.getText());
+	}
+	
 	public void exit() {
+		dbMgr.disConnect(conn);
 		System.exit(0);
 	}
 	

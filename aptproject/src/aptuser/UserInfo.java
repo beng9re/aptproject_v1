@@ -8,9 +8,12 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.io.File;
 import java.sql.Connection;
+import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Random;
 
 import javax.swing.BorderFactory;
 import javax.swing.Box;
@@ -23,6 +26,7 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
+import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.JTextComponent;
 
 import db.AptuserModelByID;
@@ -78,7 +82,7 @@ public abstract class UserInfo extends JPanel implements ActionListener {
 
 	/*
 	 * 상속시 용도변경을 위한 생성자 대용 등록일 필드는 가입할 때 보여주지 않아도 되고, 대신 주소입력을 초이스로 만들어서 선택하게
-	 * (데이터는 CPUTModel로부터 가져온다)
+	 * (데이터는 Complex, Unit 으로부터 가져온다)
 	 */
 	public void init(String[][] isEdit, String titleStr, String btnTxt, boolean forUpdate) {
 		this.isEdit = isEdit;
@@ -201,7 +205,7 @@ public abstract class UserInfo extends JPanel implements ActionListener {
 	// 비밀번호 필드를 제외한 항목의 입력여부 확인
 	private boolean autoCheck() {
 		// 비어있는지 확인해야하는 필드
-		String[] nullChkField = { "회원ID", "바코드", "이름", "연락처" };
+		String[] nullChkField = { "회원ID", "이름", "연락처" };
 		for (String chkField : nullChkField) {
 			if (((JTextField) fieldData.get(chkField)).getText().equals("")) {
 				JOptionPane.showMessageDialog(this, chkField + "을(를) 입력해주세요");
@@ -216,31 +220,45 @@ public abstract class UserInfo extends JPanel implements ActionListener {
 	}
 	
 	/*
-	 * 바코드 생성 규칙
-	 * 
+	 * 바코드 생성 규칙 : 난수 4자리 + 시간기반 난수 8자리
+	 * 바코드필드는 unique제약이어서 중복검사를 해야하지만
+	 * 벼락맞을 확률아니면 중복안되므로 귀찮아서 생략
 	 */
-	private void mkBarcode() {
-		
+	private String mkBarcode() {
+		Random rand = new Random();
+		String randNum1 = String.format("%04d", rand.nextInt(10000));
+		String randNum2Temp = Long.toString(System.currentTimeMillis());
+		String randNum2 = randNum2Temp.substring(randNum2Temp.length()-10, randNum2Temp.length());
+		// 생성된 바코드를 필드에 출력
+		((JTextField) fieldData.get("바코드")).setText(randNum1+randNum2);
+		return randNum1+randNum2;
 	}
 	
 	// 회원 식별 바코드 생성 메서드
 	private void barcodeOption() {
+		String barcodeData = null;
 		if (((JTextField) fieldData.get("바코드")).getText().equals("")) {
 			// 바코드 생성
-			mkBarcode();
+			barcodeData = mkBarcode();
 			JOptionPane.showMessageDialog(this, "바코드가 생성되었습니다");
 		} else {
 			// 바코드 재생성
 			int res = JOptionPane.showConfirmDialog(this, "바코드를 재생성 하시겠습니까?", "바코드 생성", JOptionPane.OK_CANCEL_OPTION);
 			if (res == JOptionPane.OK_OPTION) {
-				mkBarcode();
+				barcodeData = mkBarcode();
 			}
 		}
 		// 파일로 출력
 		int isFile = JOptionPane.showConfirmDialog(this, "바코드를 파일로 출력하시겠습니까?", "바코드 파일변환", JOptionPane.OK_CANCEL_OPTION);
 		if (isFile == JOptionPane.OK_OPTION) {
 			JFileChooser chooser = new JFileChooser();
-			chooser.showSaveDialog(this);
+			chooser.setFileFilter(new FileNameExtensionFilter("PNG File", "png"));
+			int saveRes = chooser.showSaveDialog(this);
+			if (saveRes == JFileChooser.APPROVE_OPTION) {
+				File file = chooser.getSelectedFile();
+				String path = file.getAbsolutePath();
+				new MakeBarcode(this, barcodeData, path);
+			}
 		}
 	}
 	

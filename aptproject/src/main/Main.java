@@ -64,7 +64,7 @@ public class Main extends JFrame {
 		
 		//테스트 할 패널
 		////////////////////////////////////////////////////
-		pnl_content.add(new ModifyUser(), "invE");
+		pnl_content.add(new RegistUser(), "invE");
 //		pnl_content.add(new ComplexPanel(), "invE");
 		////////////////////////////////////////////////////
 		

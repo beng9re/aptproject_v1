@@ -3,7 +3,10 @@ package aptuser;
 import java.awt.image.BufferedImage;
 import java.io.File;
 import java.io.FileOutputStream;
-import java.io.OutputStream;
+import java.io.IOException;
+
+import javax.swing.JOptionPane;
+import javax.swing.JPanel;
 
 import org.krysalis.barcode4j.BarcodeClassResolver;
 import org.krysalis.barcode4j.DefaultBarcodeClassResolver;
@@ -13,43 +16,46 @@ import org.krysalis.barcode4j.tools.MimeTypes;
 
 public class MakeBarcode {
 
-	public MakeBarcode() {
+	public MakeBarcode(JPanel panel, String barcodeData, String path) {
+		// 바코드 종류와 기타옵션
 		String barcodeType = "code128";
-		String barcodeData = "admin";
-		final int dpi = 203;
+		final int dpi = 300;
 		boolean isAntiAliasing = false;
+		// 파일 출력관련 옵션
 		String fileFormat = "png";
+		String outputFile = path + "." + fileFormat;
 
-		String dir = "d:/";
-		String fileName = "barcodetest_" + barcodeType;
-		String outputFile = dir + fileName + "." + fileFormat;
-
+		// 파일출력 프로세스
+		FileOutputStream out = null;
 		try {
 			AbstractBarcodeBean bean = null;
-
 			BarcodeClassResolver resolver = new DefaultBarcodeClassResolver();
-			Class clazz = resolver.resolveBean(barcodeType);
-			bean = (AbstractBarcodeBean) clazz.newInstance();
+			Class cls = resolver.resolveBean(barcodeType);
+			bean = (AbstractBarcodeBean) cls.newInstance();
 			bean.doQuietZone(true);
 
 			// 파일로 출력준비
-			OutputStream out = new FileOutputStream(new File(outputFile));
-			try {
-				String mimeType = MimeTypes.expandFormat(fileFormat);
-				int imageType = BufferedImage.TYPE_BYTE_BINARY;
-				BitmapCanvasProvider canvas = new BitmapCanvasProvider(out, mimeType, dpi, imageType, isAntiAliasing,
-						0);
+			out = new FileOutputStream(new File(outputFile));
+			String mimeType = MimeTypes.expandFormat(fileFormat);
+			int imageType = BufferedImage.TYPE_BYTE_BINARY;
+			BitmapCanvasProvider canvas = new BitmapCanvasProvider(out, mimeType, dpi, imageType, isAntiAliasing, 0);
 
-				// 바코드 생성
-				bean.generateBarcode(canvas, barcodeData);
-				canvas.finish();
+			// 바코드 생성
+			bean.generateBarcode(canvas, barcodeData);
+			canvas.finish();
+			JOptionPane.showMessageDialog(panel, "바코드가 생성되었습니다");
 
-				System.out.println("바코드 파일 생성됨");
-			} finally {
-				out.close();
-			}
 		} catch (Exception e) {
 			e.printStackTrace();
+		} finally {
+			if (out != null) {
+				try {
+					out.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+
+			}
 		}
 	}
 

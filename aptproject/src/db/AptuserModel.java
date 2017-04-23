@@ -16,13 +16,13 @@ public class AptuserModel extends DBModel {
 
 	public AptuserModel() {
 	}
-	
+
 	// 이 클래스를 직접 사용할 때의 생성자
 	public AptuserModel(Connection conn) {
 		this.conn = conn;
 		init(colName, sql);
 	}
-	
+
 	// 이 클래스를 상속받아 사용할 때 초기화 기능 (DBModel의 init메서드 대용)
 	protected void aptuserModel(String sql, boolean appendix) {
 		this.sql = sql;
@@ -44,7 +44,7 @@ public class AptuserModel extends DBModel {
 			dto.setAptuser_perm(rs.getInt(colName[7]));
 			dto.setAptuser_ip(rs.getString(colName[8]));
 			dto.setUnit_id(rs.getInt(colName[11]));
-			//주소 관련정보
+			// 주소 관련정보
 			if (appendix) {
 				dto.setComplex_id(rs.getInt(colName[9]));
 				dto.setComplex_name(rs.getString(colName[10]));
