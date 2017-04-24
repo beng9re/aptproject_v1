@@ -8,6 +8,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.Connection;
@@ -26,10 +28,11 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JTree;
 import javax.swing.border.Border;
+import javax.swing.table.TableRowSorter;
 
 import db.DBManager;
-import dto.ComplexDto;
 import tree.TreeMain;
 
 public class SendMessage extends JFrame implements ActionListener{
@@ -40,29 +43,32 @@ public class SendMessage extends JFrame implements ActionListener{
 	
 	JPanel  p_south, p_center, p_north;
 	JTextArea   area;
-	Vector<ComplexDto>  complexList = new Vector<ComplexDto>();
-	Vector<Checkbox>  chkList = new Vector<Checkbox>();
 	JButton  bt_send, bt_search;
 	JTable   table;
 	JScrollPane  scroll, areaScroll;
 	CompUnitModel  model;
 	JTextField  t_input, t_title;
-	JLabel  la_title;
+	JLabel  la_title, la_explain;
+	JTree   tree;
+	
+	int frameWidth=600;
+	int frameHeight=500;
 	
 	public SendMessage(TreeMain treeMain) {
 		
 		this.treeMain = treeMain;
 		this.con = treeMain.con;
+		this.tree = treeMain.getTree();
 		
 		p_north = new JPanel();
 		p_center = new JPanel();
 		p_south = new JPanel();
 		
-		t_input = new JTextField(40);
+		t_input = new JTextField();
 		bt_search = new JButton("검색");
 		
 		la_title = new JLabel("제목");
-		t_title = new JTextField(40);
+		t_title = new JTextField();
 		area = new JTextArea();
 		areaScroll = new JScrollPane(area);
 		bt_send = new JButton("보내기");
@@ -70,16 +76,9 @@ public class SendMessage extends JFrame implements ActionListener{
 		table = new JTable();
 		scroll = new JScrollPane(table);
 		
+		la_explain = new JLabel("동 또는 호수 또는 사용자 명을 입력하시고 검색하세요");
+		
 		//la_title.setHorizontalAlignment(JLabel.LEFT);
-		
-		// color
-		p_north.setBackground(Color.PINK);
-		p_center.setBackground(Color.YELLOW);
-		
-		// size
-		p_south.setPreferredSize(new Dimension(700, 100));
-		p_north.setPreferredSize(new Dimension(700, 50));
-		areaScroll.setPreferredSize(new Dimension(550, 50));
 		
 		p_north.add(t_input);
 		p_north.add(bt_search);
@@ -107,6 +106,16 @@ public class SendMessage extends JFrame implements ActionListener{
 				}
 			}
 		});
+		t_input.addMouseListener(new MouseAdapter() {
+			public void mouseMoved(MouseEvent e) {
+				la_explain.setVisible(true);
+				la_explain.setLocation(e.getX(), e.getY());
+			}
+			public void mouseExited(MouseEvent e) {
+				//la_explain.setVisible(false);
+			}
+		
+		});
 		
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
@@ -114,15 +123,24 @@ public class SendMessage extends JFrame implements ActionListener{
 			}
 		});
 		
+		// size
+		t_input.setPreferredSize(new Dimension(frameWidth-200, 20));
+		p_north.setPreferredSize(new Dimension(frameWidth, 50));
+		p_south.setPreferredSize(new Dimension(frameWidth, 90));
+		t_title.setPreferredSize(new Dimension(frameWidth-216, 20));
+		areaScroll.setPreferredSize(new Dimension(frameWidth-110, 50));
+		
+		// color
+		p_north.setBackground(Color.PINK);
+		p_south.setBackground(Color.PINK);
+		
 		init();
 		
 		setTitle("쪽지 보내기");
 		setVisible(true);
-		int X=(this.treeMain.getX()+200+10);
-		int Y=(this.treeMain.getY()+30);
-		setBounds(X, Y, 700, 700);
-		//setLocationRelativeTo(null);
-		//setDefaultCloseOperation(EXIT_ON_CLOSE);
+		int X=this.treeMain.getX() +  this.tree.getWidth() + 20;
+		int Y=this.treeMain.getY() + this.tree.getY() + 40;
+		setBounds(X, Y, frameWidth, frameHeight);
 		
 	}
 	
@@ -131,82 +149,113 @@ public class SendMessage extends JFrame implements ActionListener{
 		
 		model = new CompUnitModel(con);
 		table.setModel(model);
+		table.setRowSorter(new TableRowSorter(model));
 		
 		table.updateUI();
 		
 	}
 	
 	public void close(){
-		//this.treeMain.menuObjList.remove(this);
+		this.treeMain.removeMenuOpenList(this);
 	}
 	
 	// 메세지 보내기
 	public void send(){
 		
-		//System.out.println(.length);
+		PreparedStatement pstmt=null;
+		ResultSet  rs = null;
+		StringBuffer  sql = new StringBuffer();
+
+		//선택된 row 들
 		int[] rows = table.getSelectedRows();
 		
+		// 보낼 호수를 선태했는지 check
 		if (rows.length ==0){
 			JOptionPane.showMessageDialog(this, "메세지 보낼 호수를 선택해 주세요?");
+			table.requestFocus();
 			return;
 		}
 		
-		PreparedStatement pstmt=null;
-		ResultSet  rs = null;
-		int msg_send_id=0;
-		String msg_content = area.getText();
+		// 제목 입력 여부 check
+		if (t_title.getText().trim().length()==0){
+			JOptionPane.showMessageDialog(this, "제목을 입력해 주세요");
+			t_title.requestFocus();
+			return;
+		}
+
+		// 메세지 입력 여부 체크
+		if (area.getText().trim().length()==0){
+			JOptionPane.showMessageDialog(this, "보내실 메세지를 입력해 주세요");
+			area.requestFocus();
+			return;
+		}		
 		
-		// msg_send_id 받아 놓기
-		String sql = "select seq_send_message.nextval msg_send_id from dual ";
 		try {
-			pstmt = con.prepareStatement(sql);
-			rs = pstmt.executeQuery();
-			
-			while (rs.next()){
-				msg_send_id = rs.getInt("msg_send_id");
-			}
+			// Connection Auto Commit 잠시 false
+			con.setAutoCommit(false);
 			
 			//보내는 쪽지
-			String send_user_id = "test"; // 임시로 사용. 나중에 로그인 아이디 받아 와야 함.
+			String send_user_id = "test1"; // 임시로 사용. 나중에 로그인 아이디 받아 와야 함.
 			String send_title = t_title.getText();
-			sql = " insert into send_message (msg_send_id, msg_sendtime, msg_send_content, send_user_id, msg_send_title) "
-			     + " values (?, sysdate, ?, ?, ?)"; 
-			pstmt = con.prepareStatement(sql);
-			pstmt.setInt(1, msg_send_id);
-			pstmt.setString(2, msg_content);
-			pstmt.setString(3, send_user_id);
-			pstmt.setString(4, send_title);
+			String msg_content = area.getText();
+			sql.append(" insert into send_message (msg_send_id, msg_send_user_id, msg_send_title, msg_send_content, msg_sendtime) ");
+			sql.append(" values (seq_send_message.nextval, ?, ?, ?, sysdate)");
+			pstmt = con.prepareStatement(sql.toString());
+			pstmt.setString(1, send_user_id);
+			pstmt.setString(2, send_title);
+			pstmt.setString(3, msg_content);
 			int result = pstmt.executeUpdate();
 			System.out.println("result = "+result);
 			
-			int user_id_col = model.findColumn("사용자ID");
+			// 받는 쪽지			
 			int count=0;
+			// send 메세지 등록 성공하면, 받는 쪽지 (recieve msg) 등록
 			if (result !=0){
-				// send 메세지 등록 성공하면, 받는 쪽지 (recieve msg) 등
+				
+				// recieve_message Insert 문 구성
+				sql.delete(0, sql.length());
+				sql.append("insert into recieve_message (msg_recieve_id, msg_send_id, msg_recv_user_id, msg_recieve_time) ");
+				sql.append(" values (seq_recieve_message.nextval, seq_send_message.currval, ?, sysdate)");
+				
+				// 사용자ID column index 얻기
+				int user_id_col = table.getColumn("사용자ID").getModelIndex();
+				
+				// 선택된 row 만큼 recieve_message insert
 				for (int i=0; i<rows.length;i++){
-					String sql_in = "insert into recieve_message (msg_recieve_id, msg_send_id, recieve_user_id, msg_recieve_time, msg_confirm_time) "
-							           + " values (seq_recieve_message.nextval, ?, ?, sysdate, null)";
-					pstmt = con.prepareStatement(sql_in);
-					pstmt.setInt(1, msg_send_id);
-					System.out.println("id = "+msg_send_id+", row = "+rows[i]+", col="+user_id_col);
-					String user_id = (String)table.getValueAt(rows[i], user_id_col);
-					System.out.println("user_id="+user_id);
-					pstmt.setString(2, user_id);
-					System.out.println(sql_in);
+					
+					// 받는 사람 user_id 얻기
+					String msg_recv_user_id = (String)table.getValueAt(rows[i], user_id_col);
+					
+					pstmt = con.prepareStatement(sql.toString());					
+					pstmt.setString(1, msg_recv_user_id);
 					int result1 = pstmt.executeUpdate();
-					System.out.println("result1="+result1);
 					count+=result1;
-					System.out.println(count);
 				}
+				System.out.println(count);
 				
 				if (count !=0){
-					JOptionPane.showMessageDialog(this, count+"건 insert");
+					JOptionPane.showMessageDialog(this, count+" 명에게 메세지가 송신되었습니다.");
+					t_title.setText("");
+					area.setText("");
 				}
 			}
 			
 		} catch (SQLException e) {
+			// Rollback;
+			try {
+				con.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
+			JOptionPane.showMessageDialog(this, "메세지 송신 중 에러가 발생했습니다.");
 			e.printStackTrace();
 		} finally {
+			// Commit;
+			try {
+				con.commit();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
 			if (rs!=null)
 				try {
 					rs.close();
@@ -219,6 +268,13 @@ public class SendMessage extends JFrame implements ActionListener{
 				} catch (SQLException e) {
 					e.printStackTrace();
 				}
+			
+			try {
+				// Connection AutoCommit true 로 다시 지정
+				con.setAutoCommit(true);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
 		}
 		
 	}

@@ -8,45 +8,47 @@ import java.util.Vector;
 
 import javax.swing.table.AbstractTableModel;
 
-public class CompUnitModel extends AbstractTableModel{
+public class SendMsgListModel extends AbstractTableModel{
 	
 	Connection con;
 	Vector<String> columnName;
 	Vector<Vector> data = new Vector<Vector>();
 	
-	public CompUnitModel(Connection con ) {
-		System.out.println("CompUnitModel");
+	public SendMsgListModel(Connection con, String send_user_id, String search ) {
+		System.out.println("SendMsgListModel");
 		this.con = con;
 		
 		columnName = new Vector<String>();
-		columnName.add("동");
-		columnName.add("호수");
-		columnName.add("사용자명");
-		columnName.add("사용자ID");
+		columnName.add("송신자명");
+		columnName.add("제목");
+		columnName.add("송신시간");
+		columnName.add("msg_send_content");
+		columnName.add("msg_send_id");
+		columnName.add("msg_send_user_id");
 		
-		getList("");
+		getList(send_user_id, search);
 	}
 	
-	public void getList(String search){
-		System.out.println("CompUnitModel - getList : "+search);
+	public void getList(String send_user_id, String search){
+		System.out.println("CompUnitModel - getList : "+send_user_id);
 		PreparedStatement pstmt=null;
 		ResultSet  rs=null;
 		
 		StringBuffer  sql = new StringBuffer();
-		sql.append(" select c.COMPLEX_NAME 동, u.UNIT_NAME 호수, a.APTUSER_NAME 사용자명, a.APTUSER_ID 사용자ID \n");
-		sql.append(" from   COMPLEX c, UNIT u, APTUSER a \n");
-		sql.append(" where  c.COMPLEX_ID = u.COMPLEX_ID \n");
-		sql.append(" and    a.UNIT_ID = u.UNIT_ID \n");
-		sql.append(" and (c.COMPLEX_NAME like ? or \n");
-		sql.append("         u.UNIT_NAME like ? or \n");
-		sql.append("         a.APTUSER_NAME like ? ) \n");
-		sql.append(" order by 1, 2 ");
-		
+		sql.append(" select u.aptuser_name 송신자명, s.msg_send_title 제목, s.msg_sendtime 송신시간 \n");
+		sql.append("          ,s.msg_send_content, s.msg_send_id, s.msg_send_user_id \n");
+		sql.append(" from   send_message s \n");
+		sql.append("          ,aptuser      u \n");
+		sql.append(" where s.msg_send_user_id = u.aptuser_id \n");
+		sql.append(" and     s.msg_send_user_id = ? \n");
+		sql.append(" and     (s.msg_send_title like ? or \n");
+		sql.append("             s.msg_send_content like ?) \n");
+		sql.append(" order by s.msg_send_id desc \n");		
 		System.out.println(sql.toString());
 		
 		try {
 			pstmt = con.prepareStatement(sql.toString());
-			pstmt.setString(1, "%"+search+"%");
+			pstmt.setString(1, send_user_id);
 			pstmt.setString(2, "%"+search+"%");
 			pstmt.setString(3, "%"+search+"%");
 			rs = pstmt.executeQuery();
@@ -54,14 +56,18 @@ public class CompUnitModel extends AbstractTableModel{
 			data.removeAll(data);
 			while (rs.next()){
 				Vector vec = new Vector();
-				vec.add(rs.getString("동"));
-				vec.add(rs.getString("호수"));
-				vec.add(rs.getString("사용자명"));
-				vec.add(rs.getString("사용자ID"));
+				vec.add(rs.getString("송신자명"));
+				vec.add(rs.getString("제목"));
+				vec.add(rs.getString("송신시간"));
+				vec.add(rs.getString("msg_send_content"));
+				vec.add(rs.getInt("msg_send_id"));
+				vec.add(rs.getString("msg_send_user_id"));
 				
 				data.add(vec);
 			}
+			System.out.println("SendMsgListModel -> getList -> OK : size = "+data.size());
 		} catch (SQLException e) {
+			System.out.println("SendMsgListModel -> getList -> SQLException : "+e.getMessage());
 			e.printStackTrace();
 		} finally {
 			if (rs!=null)

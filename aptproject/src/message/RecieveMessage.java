@@ -1,7 +1,10 @@
 package message;
 
 import java.awt.BorderLayout;
+import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -12,9 +15,11 @@ import java.awt.event.MouseListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.Connection;
+import java.sql.Date;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.time.LocalDate;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -24,6 +29,12 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
+import javax.swing.JTree;
+import javax.swing.table.DefaultTableCellRenderer;
+import javax.swing.table.TableCellRenderer;
+import javax.swing.table.TableRowSorter;
+
+import org.apache.poi.ss.usermodel.HorizontalAlignment;
 
 import db.DBManager;
 import tree.TreeMain;
@@ -32,38 +43,48 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 	
 	Connection con;	
 	TreeMain treeMain;
+	JTree tree;
 	
 	JPanel  p_south, p_center, p_north;
 	JTextArea   area;
 	JTable   table;
 	JScrollPane  scroll, areaScroll;
 	JTextField  t_input, t_title;
-	JLabel  la_title;
+	JLabel  la_title, la_new_msg_chk;
 	JButton  bt_search;
 	
 	RecieveMsgModel  model;
+	Thread  thread;
+	boolean threadFlag=false;
+	
+	int frameWidth=600;
+	int frameHeight=500;
 	
 	public RecieveMessage(TreeMain treeMain) {
 		this.treeMain = treeMain;
 		this.con = treeMain.con;
+		this.tree=this.treeMain.getTree();
 		
 		p_north = new JPanel();
 		p_center = new JPanel();
 		p_south = new JPanel();
 		
-		t_input = new JTextField(30);
+		t_input = new JTextField();
 		bt_search = new JButton("검색");
 		
 		table = new JTable();
 		scroll = new JScrollPane(table);
 		
 		la_title = new JLabel("제목");
-		t_title = new JTextField(40);
+		t_title = new JTextField();
 		area = new JTextArea();
 		areaScroll = new JScrollPane(area);
 		
+		la_new_msg_chk = new JLabel("");
+
 		p_north.add(t_input);
 		p_north.add(bt_search);
+		p_north.add(la_new_msg_chk);
 		
 		p_center.setLayout(new BorderLayout());
 		p_center.add(p_north, BorderLayout.NORTH);
@@ -73,11 +94,6 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 		p_south.add(t_title);
 		p_south.add(areaScroll);
 		
-		// size
-		p_south.setPreferredSize(new Dimension(700, 100));
-		p_north.setPreferredSize(new Dimension(700, 50));
-		areaScroll.setPreferredSize(new Dimension(550, 50));
-
 		add(p_center);
 		add(p_south, BorderLayout.SOUTH);
 		
@@ -114,13 +130,34 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 			}
 		});
 		
+		// size
+		t_input.setPreferredSize(new Dimension(frameWidth-200, 20));
+		p_north.setPreferredSize(new Dimension(frameWidth, 60));
+		p_south.setPreferredSize(new Dimension(frameWidth, 90));
+		t_title.setPreferredSize(new Dimension(frameWidth-160, 20));
+		areaScroll.setPreferredSize(new Dimension(frameWidth-110, 50));
+		
+		// font
+		la_new_msg_chk.setFont(new Font("굴림", Font.ITALIC, 13));
+		
+		// Editable
+		t_title.setEditable(false);
+		area.setEditable(false);
+		
+		// color
+		la_new_msg_chk.setForeground(Color.BLUE);
+		t_title.setBackground(Color.WHITE);
+		area.setBackground(Color.WHITE);
+		p_north.setBackground(Color.PINK);
+		p_south.setBackground(Color.PINK);
+		
 		init();
 		
 		setTitle("쪽지 수신함");
 		setVisible(true);
-		int X=(this.treeMain.getX()+200+10);
-		int Y=(this.treeMain.getY()+30);
-		setBounds(X, Y, 700, 700);
+		int X=this.treeMain.getX() + this.tree.getWidth() + 20;
+		int Y=this.treeMain.getY() + this.tree.getY() + 40;
+		setBounds(X, Y, frameWidth, frameHeight);
 		//setLocationRelativeTo(null);
 		
 	}
@@ -129,21 +166,46 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 		
 		model = new RecieveMsgModel(con);
 		table.setModel(model);
+		table.setRowSorter(new TableRowSorter(model));
 		
-		// content 컬럼 숨기기
+		// msg_send_content 컬럼 숨기기
 		table.getColumn("msg_send_content").setWidth(0);
 		table.getColumn("msg_send_content").setMinWidth(0);
 		table.getColumn("msg_send_content").setMaxWidth(0);
+/*		
+		// msg_recieve_id 컬럼 숨기기
+		table.getColumn("msg_recieve_id").setWidth(0);
+		table.getColumn("msg_recieve_id").setMinWidth(0);
+		table.getColumn("msg_recieve_id").setMaxWidth(0);
+*/		
+		// msg_send_user_id 컬럼 숨기기
+		table.getColumn("msg_send_user_id").setWidth(0);
+		table.getColumn("msg_send_user_id").setMinWidth(0);
+		table.getColumn("msg_send_user_id").setMaxWidth(0);
+		
+		// 확인여부 size 조정
+		table.getColumn("확인여부").setPreferredWidth(20);
+		// 확인여부 text 정렬 center
+		DefaultTableCellRenderer  cellRender = new DefaultTableCellRenderer();
+		cellRender.setHorizontalAlignment(JLabel.CENTER);
+		table.getColumn("확인여부").setCellRenderer(cellRender);
 		
 		table.updateUI();
+		
+		threadFlag=true;
+		thread = new Thread(this);
+		thread.start();
 		
 	}
 	
 	public void close(){
-		this.treeMain.menuObjList.remove(this);		
+		this.treeMain.removeMenuOpenList(this);
+		threadFlag=false;
 	}
 	
 	public void search(){
+		
+		System.out.println("search");
 		String srch = t_input.getText();
 		model.getList(srch);
 		table.updateUI();
@@ -153,8 +215,7 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 		Object obj = e.getSource();
 		if (obj==bt_search){
 			search();
-		}
-		
+		}		
 	}
 	
 	public void showMessage(){
@@ -169,7 +230,7 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 		
 		// title
 		col =  table.getColumn("제목").getModelIndex();
-		//System.out.println("제목="+col);
+		System.out.println("제목="+col);
 		String title = (String)table.getValueAt(row, col);
 		t_title.setText(title);
 		
@@ -180,31 +241,127 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 		area.setText(content);
 		
 		// 확인여부
-		//col = table.getColumn("확인여부").getModelIndex();
-		//System.out.println("확인여부="+col);
-		//String flag  = "Y";
-		//table.editCellAt(row, col);
-		//table.setValueAt(flag, row, col);
-		//model.setValueAt((Object)flag, row, col);
-		//model.setValueAt('Y', row, col);
-		//table.editingStopped(null);
+		col = table.getColumn("확인여부").getModelIndex();
+		String confirmFlag = (String)table.getValueAt(table.getSelectedRow(), col);
 		
-		col =  table.getColumn("msg_recieve_id").getModelIndex();
-		System.out.println("msg_recieve_id="+col + "value="+table.getValueAt(row, col));
-		int msg_recieve_id=Integer.parseInt((String)table.getValueAt(row, col));
+		// 미확인 인 경우만 Update
+		if (confirmFlag.equalsIgnoreCase("N")){		
+			
+			// msg_recieve_id
+			col =  table.getColumn("msg_recieve_id").getModelIndex();
+			System.out.println("msg_recieve_id="+col + "value="+table.getValueAt(row, col));
+			int msg_recieve_id=Integer.parseInt((String)table.getValueAt(row, col));
+			
+			StringBuffer sql = new StringBuffer();
+			sql.append("update recieve_message ");
+			sql.append("set       msg_confirm_flag = 'Y' ");
+			sql.append("          ,msg_confirm_time=sysdate ");
+			sql.append("where  msg_recieve_id = ? ");
+			//String sql="update recieve_message ";
+			try {
+				pstmt = con.prepareStatement(sql.toString());
+				pstmt.setInt(1, msg_recieve_id);
+				int result = pstmt.executeUpdate();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			} finally {
+				if (pstmt!=null)
+					try {
+						pstmt.close();
+					} catch (SQLException e) {
+						e.printStackTrace();
+					}
+			}
+			// table 데이터 다시 조회
+			model.getList(t_input.getText());
+			table.updateUI();
+		}
+
+	}
+	
+	public void checkNewMsg(){
+		System.out.println("checkNewMsg");
+		PreparedStatement  pstmt=null;
+		ResultSet  rs=null;
+		String sql;
 		
-		StringBuffer sql = new StringBuffer();
-		sql.append("update recieve_message ");
-		sql.append("set       msg_confirm_flag = 'Y' ");
-		sql.append("where  msg_recieve_id = ? ");
-		//String sql="update recieve_message ";
+		int msg_recieve_id;
+		int chk_msg_recieve_id;
+		int findRow;
+		int rowCount;
+		
+		// 현재 선택된 row 의 msg_recieve_id 값 얻어 놓기
+		int id_col=table.getColumn("msg_recieve_id").getModelIndex();
+		int sel_msg_recieve_id=-1;
+		int currSelectedRow=table.getSelectedRow();
+		if (currSelectedRow!=-1){
+			sel_msg_recieve_id=Integer.parseInt((String)table.getValueAt(currSelectedRow, id_col));
+		}
+		
+		// 미확인 메세지 건수, 마지막 id
+		sql = "select count(*) cnt, max(r.msg_recieve_id) max_msg_recieve_id from recieve_message r where NVL(r.msg_confirm_flag,'N')='N' ";
 		try {
-			pstmt = con.prepareStatement(sql.toString());
-			pstmt.setInt(1, msg_recieve_id);
-			int result = pstmt.executeUpdate();
+			pstmt = con.prepareStatement(sql);
+			rs = pstmt.executeQuery();
+			if (rs.next()){
+				
+				if (rs.getInt("cnt")!=0){
+					la_new_msg_chk.setText("(신규 메세지가 존재합니다.)");
+					
+					// 최종 미수신 id
+					int max_msg_recieve_id = rs.getInt("max_msg_recieve_id");
+					
+					findRow=-1;
+					rowCount = table.getRowCount();
+					for (int i=0; i<rowCount; i++){
+						msg_recieve_id =Integer.parseInt((String)table.getValueAt(i, id_col));
+						// 현재 조회된 것 중에 최종 미수신 메세지가 있는지 체크
+						if (max_msg_recieve_id==msg_recieve_id){
+							findRow=i;
+							break;
+						}
+					}
+					
+					// 현재 조회된 것 중에 최종 미수신 메세지가 없는 경우.
+					if (findRow==-1){
+						// 현재 선택된 row 체크
+						int selectedRow = table.getSelectedRow();
+						// 재조회
+						search();
+						
+						// 현재 선택된 row 가 있는 경우. 조회 후 해당 row 찾아서 선택해 준다.
+						if (selectedRow !=-1){
+							msg_recieve_id =Integer.parseInt((String)table.getValueAt(selectedRow, id_col));
+							findRow=-1;
+							for (int i=0; i<table.getRowCount(); i++){
+								chk_msg_recieve_id=Integer.parseInt((String)table.getValueAt(i, id_col));
+								if (chk_msg_recieve_id==msg_recieve_id) {
+									findRow = i;
+									break;
+								}
+							}
+							
+							// 선택되었던 id 값을 가진 row 를 찾은 경우. 해당 row 로 선택
+							if (findRow!=-1){
+								System.out.println("findRow = "+findRow);
+								table.setRowSelectionInterval(findRow, findRow);
+							}
+							
+						}
+					}
+				} else {
+					la_new_msg_chk.setText("");
+				}
+			}
 		} catch (SQLException e) {
 			e.printStackTrace();
 		} finally {
+			if (rs!=null)
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 			if (pstmt!=null)
 				try {
 					pstmt.close();
@@ -212,20 +369,20 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 					e.printStackTrace();
 				}
 		}
-		model.getList(t_input.getText());
-		table.updateUI();
-
+		
 	}
 
 	public void run() {
-		while (true){
+		while (threadFlag){			
+			try {
+				thread.sleep(500);
+				checkNewMsg();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 			
 		}
 		
 	}
-	
-//	public static void main(String[] args) {
-//		new RecieveMessage();
-//	}
-
 }

@@ -23,6 +23,7 @@ public class RecieveMsgModel extends AbstractTableModel{
 		columnName.add("제목");
 		columnName.add("수신시간");
 		columnName.add("확인여부");
+		columnName.add("확인시간");
 		columnName.add("msg_recieve_id");
 		columnName.add("msg_send_user_id");
 		columnName.add("msg_send_content");
@@ -36,14 +37,15 @@ public class RecieveMsgModel extends AbstractTableModel{
 		ResultSet  rs=null;
 		
 		StringBuffer  sql = new StringBuffer();
-		sql.append(" select u.user_name 송신자명, s.msg_send_title 제목, r.msg_recieve_time 수신시간 \n");
-		sql.append("        , msg_confirm_flag 확인여부, r.msg_recieve_id, s.msg_send_user_id, s.msg_send_content \n");  // 
+		sql.append(" select u.aptuser_name 송신자명, s.msg_send_title 제목, r.msg_recieve_time 수신시간 \n");
+		sql.append("         , nvl(r.msg_confirm_flag,'N') 확인여부, r.msg_confirm_time 확인시간 \n");
+		sql.append("         , r.msg_recieve_id, s.msg_send_user_id, s.msg_send_content \n");  // 
 		sql.append(" from  recieve_message r \n");
 		sql.append("         ,send_message    s \n");
-		sql.append("         ,apt_user             u \n");
+		sql.append("         ,aptuser              u \n");
 		sql.append(" where r.msg_send_id = s.msg_send_id \n");
-		sql.append(" and    u.user_id        = s.msg_send_user_id \n");
-		sql.append(" and   (u.user_name like ? or  \n");
+		sql.append(" and    u.aptuser_id     = s.msg_send_user_id \n");
+		sql.append(" and   (u.aptuser_name like ? or  \n");
 		sql.append("            s.msg_send_title like ? )  \n");
 		sql.append(" order by r.msg_recieve_time desc ");
 		
@@ -62,13 +64,16 @@ public class RecieveMsgModel extends AbstractTableModel{
 				vec.add(rs.getString("제목"));
 				vec.add(rs.getString("수신시간"));
 				vec.add(rs.getString("확인여부"));
+				vec.add(rs.getString("확인시간"));
 				vec.add(rs.getString("msg_recieve_id"));
 				vec.add(rs.getString("msg_send_user_id"));
 				vec.add(rs.getString("msg_send_content"));
 				
 				data.add(vec);
 			}
+			System.out.println("RecieveMsgModel -> getList -> OK");
 		} catch (SQLException e) {
+			System.out.println("RecieveMsgModel -> getList -> SQLException : "+e.getMessage());
 			e.printStackTrace();
 		} finally {
 			if (rs!=null)
