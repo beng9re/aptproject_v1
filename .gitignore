@@ -5,3 +5,4 @@ desktop.ini
 *.classpath
 *.project
 *.prefs
+aptproject/src/db/DBManager.java
