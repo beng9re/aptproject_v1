@@ -17,6 +17,7 @@ import java.util.Vector;
 import javax.swing.JButton;
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
@@ -33,7 +34,6 @@ import dto.MenuDto;
 import message.RecieveMessage;
 import message.SendMessage;
 import message.SendMessageList;
-//import viewer.Admin;
 import viewer.Admin_InvoiceView;
 import viewer.Admin_UserView;
 import viewer.User;
@@ -42,6 +42,7 @@ import aptuser.ModifyAdmin;
 import aptuser.ModifyUser;
 import aptuser.RegistUser;
 import chat.ChatClient;
+import complex.regist.ComplexPanel;
 
 public class TreeMain extends JFrame implements TreeSelectionListener, ActionListener{
 	
@@ -312,6 +313,12 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		// Title 초기화
 		this.setTitle("");
 		
+		// 등록된 Panel 모두  Visible=false
+		for (int i=0; i<panelList.size(); i++){
+			panelList.get(i).setVisible(false);
+			System.out.println(i+" : visible false");
+		}
+		
 		// 선택된 메뉴 node check
 		DefaultMutableTreeNode  node = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
 		
@@ -328,7 +335,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 			}
 		}
 		// dto 에 없는 경우 skip
-		//System.out.println("dtoIndex="+dtoIndex + ", menuName = "+menuName);
+		System.out.println("dtoIndex="+dtoIndex + ", menuName = "+menuName);
 		if (dtoIndex==-1) return;
 		
 		// menuDto 에서 해당 메뉴의 className 가져오기
@@ -336,7 +343,10 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		//System.out.println("className = "+className);
 		
 		// className 이 없는 경우, 최종 메뉴가 아니므로 (상위 메뉴 이므로) skip
-		if (className==null) return;
+		if (className==null){ 
+			JOptionPane.showMessageDialog(this, "화면의 Class 가 등록되지 않았습니다.");
+			return;
+		}
 
 		// menuType 이 Frame 인지 Panel 인지 체크하여 open 
 		String menuType = menuDtoList.get(dtoIndex).getMenu_type();
@@ -380,6 +390,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 			// open 되기 전이면, new 하여 open 하고, menuOpenList 에 추가한다.
 			if (className.equalsIgnoreCase("ChatClient")){
 				// 채팅
+				System.out.println("ChatClient -------------------");
 				ChatClient  chatClient = new ChatClient();
 				menuOpenList.add(chatClient);
 				
@@ -403,12 +414,18 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	}
 	
 	// Panel menu open
-	public void panelOpen(String className, String menuName){
+	public void panelOpen(String className, String menuName){		
+		
+		// p_center 재정비
+		setTitle("");
+		p_center.updateUI();
+		
 		//System.out.println("panelOpen");
 		JPanel  curPanel = new JPanel();
 		
 		// 이미 열려 있는 menu 인치 체크
 		int index=findOpenClassIndex(className);
+		System.out.println(menuName + ", "+className + ", open index = "+index);
 				
 	    // 열려 있지 않은 경우, 해당 Panel 을 new 한다.
 	    if (index==-1){
@@ -418,56 +435,89 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	    		InvEditPan invEditPan = new InvEditPan();
 	    		curPanel = invEditPan;				
 	    	} else if (className.equalsIgnoreCase("Admin_InvoiceView")){
+	    		// 관리자물품목록
 	    		Admin_InvoiceView adminInvoice = new Admin_InvoiceView();
+	    		System.out.println("adminInvoice = "+adminInvoice);
 	    		curPanel = adminInvoice;	
 	    	} else if (className.equalsIgnoreCase("RetunPan")){
+	    		// 반송등록
 	    		RetunPan returnPan = new RetunPan();
 	    		curPanel = returnPan;	
 	    	} else if (className.equalsIgnoreCase("User")){
+	    		// 사용자물품목록
 	    		User userPan = new User();
 	    		curPanel = userPan;	
 	    	} else if (className.equalsIgnoreCase("RegistUser")){
+	    		// 회원등록
 	    		RegistUser registUser = new RegistUser();
-	    		//curPanel = registUser;	
+	    		curPanel = registUser;	
 	    	} else if (className.equalsIgnoreCase("Admin_UserView")){
+	    		// 회원목록
 	    		Admin_UserView adminUserView = new Admin_UserView();
 	    		curPanel = adminUserView;	
 	    	} else if (className.equalsIgnoreCase("ModifyAdmin")){
+	    		// 관리자정보수정
 	    		ModifyAdmin modifyAdmin = new ModifyAdmin();
-	    		//curPanel = modifyAdmin;	
+	    		curPanel = modifyAdmin;	
 	    	} else if (className.equalsIgnoreCase("ModifyUser")){
+	    		// 회원정보수정
 	    		ModifyUser midifyUser = new ModifyUser();
-	    		//curPanel = midifyUser;	
+	    		curPanel = midifyUser;	
 	    	} else if (className.equalsIgnoreCase("ComplexPanel")){
-	    		//ComplexPanel complexPanel = new ComplexPanel();
-	    		//curPanel = complexPanel;	
+	    		// 동호수 등록
+	    		ComplexPanel complexPanel = new ComplexPanel();
+	    		curPanel = complexPanel;	
+	    	} else {
+	    		System.out.println("menu 없음.");
+	    		curPanel=null;
 	    	}
 	    	
-	    	setTitle(menuName);
-	    	
-	    	p_center.add(curPanel);
-	    	
-	    	// 생성된 Panel 을 menuOpenList 에 추가
-	    	menuOpenList.add(curPanel);
-	    	
-	    	// 생성된 Panel 을 panelList 에 추가
-			panelList.add(curPanel);
-			
+	    	if (curPanel!=null){
+		    	p_center.add(curPanel);
+		    	
+		    	// 생성된 Panel 을 menuOpenList 에 추가
+		    	menuOpenList.add(curPanel);
+		    	
+		    	// 생성된 Panel 을 panelList 에 추가
+				panelList.add(curPanel);
+	    	}
+				
 			// menuOpenList 에 추가 되었으므로, 최종 index 로 체크
 	    	index = findOpenClassIndex(className);
 	    }
 	    
-	    //System.out.println("get index = "+index);
+	    System.out.println("get index = "+index);
 	    //System.out.println("panelList.size() = "+panelList.size());
 	    
+	    // index 가 -1 이 아닌 경우, 즉 Panel 이 존재하는 경우 해당 Panel visible=true
+	    if (index!=-1){
+	    	for (int i=0; i<panelList.size(); i++){
+	    		if (panelList.get(i)==menuOpenList.get(index)){
+	    			// panel 사이즈 p_center 의 사이즈로 만들기
+					panelList.get(i).setPreferredSize(new Dimension(centerWidth, centerHeight));
+					// panel 보이기
+					panelList.get(i).setVisible(true);
+					// Title 변경
+					setTitle(menuName);
+	    		}
+	    	}
+	    } else {
+	    	JOptionPane.showMessageDialog(this, "화면이 존재하지 않습니다.");
+	    }
+/*	    
 	    // 현재 선택된 Panel 만 Visible=true 하고 나머지 Visible=false
 	    for (int i=0; i<panelList.size(); i++){
-			if (panelList.get(i)==menuOpenList.get(index)){
-				//System.out.println("same index = "+i);
-				// panel 사이즈 p_center 의 사이즈로 만들기
-				panelList.get(i).setPreferredSize(new Dimension(centerWidth, centerHeight));
-				// panel 보이기
-				panelList.get(i).setVisible(true);
+			
+	    	if (index!=-1){
+	    		if (panelList.get(i)==menuOpenList.get(index)){
+					//System.out.println("same index = "+i);
+					// panel 사이즈 p_center 의 사이즈로 만들기
+					panelList.get(i).setPreferredSize(new Dimension(centerWidth, centerHeight));
+					// panel 보이기
+					panelList.get(i).setVisible(true);
+					// Title 변경
+					setTitle(menuName);
+	    		}
 			} else {
 				// panel 숨기기
 				panelList.get(i).setVisible(false);
@@ -475,8 +525,9 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		}
 	    // p_center 재정비
 		p_center.updateUI();
+*/	
 	}
-	
+
 	public void actionPerformed(ActionEvent e) {
 		Object obj = e.getSource();
 		if (obj==bt_exit){
