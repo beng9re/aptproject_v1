@@ -36,7 +36,6 @@ public class SendMessageList extends JFrame implements ActionListener , Runnable
 	
 	Connection con;	
 	TreeMain treeMain;
-	JTree tree;
 	
 	JPanel  p_south, p_center, p_north, p_center_center, p_center_south;
 	JTextArea   area;
@@ -62,7 +61,6 @@ public class SendMessageList extends JFrame implements ActionListener , Runnable
 	public SendMessageList(TreeMain treeMain) {
 		this.treeMain = treeMain;
 		this.con = treeMain.getConnection();
-		this.tree=this.treeMain.getTree();
 		this.userId = this.treeMain.getUserId();
 		
 		p_north = new JPanel();
@@ -167,10 +165,7 @@ public class SendMessageList extends JFrame implements ActionListener , Runnable
 		
 		setTitle("쪽지 송신함");
 		setVisible(true);
-		int X=this.treeMain.getX() + this.tree.getWidth() + 20;
-		int Y=this.treeMain.getY() + this.tree.getY() + 40;
-		setBounds(X, Y, frameWidth, frameHeight);
-		//setLocationRelativeTo(null);
+		setSize(frameWidth, frameHeight);
 		
 	}
 	

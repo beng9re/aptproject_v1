@@ -6,10 +6,14 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Font;
 import java.awt.Graphics;
 import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.WindowAdapter;
+import java.awt.event.WindowEvent;
+import java.awt.event.WindowListener;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -59,14 +63,18 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	int westWidth=200;
 	int centerWidth=700;
 	int centerHeight=700;
+	
 	String userId="";
 	String userName="";
+	boolean  adminFlag=false;
 	
 	JTree  tree;
 	JScrollPane  scroll;	
 	JPanel  p_west, p_center, p_west_center, p_west_south;
 	JLabel  la_welcom;
 	JButton  bt_exit;
+	
+	Object currObject=new Object();
 	
 	DefaultMutableTreeNode  root;
 	Vector<Object>  menuOpenList = new Vector<Object>();
@@ -88,7 +96,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		tree = new JTree(root);
 		scroll = new JScrollPane(tree);
 		
-		la_welcom = new JLabel(" 님 환영합니다");
+		la_welcom = new JLabel("");
 		bt_exit = new JButton("종료");
 
 		// root menu menuDtoList 에 추가
@@ -105,6 +113,12 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		//System.out.println(p_west_center.getHeight());
 		p_west_south.setPreferredSize(new Dimension(westWidth, winHeight-treeScrollHeight-50));
 		la_welcom.setPreferredSize(new Dimension(westWidth-10, 50));
+		bt_exit.setPreferredSize(new Dimension(100, 30));
+		la_welcom.setPreferredSize(new Dimension(westWidth-10, 50));
+		
+		// la_welcom text Bold, 가운데 정렬
+		la_welcom.setFont(new Font("Default", Font.BOLD, 15));
+		la_welcom.setHorizontalAlignment(JLabel.CENTER);
 		
 		p_west_center.setLayout(new BorderLayout());
 		p_west_center.add(scroll);
@@ -121,9 +135,6 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		
 		add(p_west, BorderLayout.WEST);
 		add(p_center);
-		
-		// Tree 구성 작업
-		makeTree();
 		
 		// 리스너 연결.
 		tree.addTreeSelectionListener(this);
@@ -144,17 +155,17 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		PreparedStatement pstmt=null;
 		ResultSet  rs=null;
 		
-		// Chat Server
-		ChatServer server=  new ChatServer();
-
 		// UserName 조회
-		String sql = "select aptuser_name from aptuser where aptuser_id = ? ";
+		String sql = "select aptuser_name, nvl(aptuser_perm,0) aptuser_perm from aptuser where aptuser_id = ? ";
 		try {
 			pstmt = con.prepareStatement(sql);
 			pstmt.setString(1, userId);
 			rs = pstmt.executeQuery();
 			if (rs.next()){
 				userName = rs.getString("aptuser_name");
+				if (rs.getInt("aptuser_perm")==9){
+					adminFlag = true;
+				}
 			}
 		} catch (SQLException e) {
 			JOptionPane.showMessageDialog(this, "사용자명 조회시 Error 발생 ");
@@ -174,6 +185,15 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 				}
 		}
 		la_welcom.setText(userName+" 님 환영합니다");
+
+		// Tree 구성 작업
+		makeTree();
+
+		// 관리자인 경우 Chat Server 생성
+		if (adminFlag){
+			ChatServer server=  new ChatServer();
+		}
+		
 	}
 	
 	public Connection getConnection(){
@@ -190,14 +210,10 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		
 		System.exit(0);
 	}
-	
-	public JTree getTree(){
-		return tree;
-	}
-	
+
 	// Tree 구성 작업
 	public void makeTree(){
-		System.out.println("makeTree");
+		//System.out.println("makeTree");
 		
 		PreparedStatement  pstmt=null;
 		ResultSet  rs=null;
@@ -207,8 +223,9 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		// 상위 메뉴
 		StringBuffer  sql=new StringBuffer();
 		sql.append(" select m.menu_id, m.menu_level, m.menu_up_level_id, m.menu_name \n");
-		sql.append("         , m.menu_class_name, m.menu_type, m.order_seq, m.admin_role_flag \n");
-		sql.append("         , m.user_role_flag, NVL(m.menu_use_flag,'Y') menu_use_flag \n");
+		sql.append("         , m.menu_class_name, m.menu_type, m.order_seq \n");
+		sql.append("         , nvl(m.admin_role_flag,'N') admin_role_flag, nvl(m.user_role_flag,'N') user_role_flag \n");
+		sql.append("         , nvl(m.menu_use_flag,'Y') menu_use_flag \n");
 		sql.append("         , (select count(*) from menulist s \n");
 		sql.append("	           where  s.MENU_UP_LEVEL_ID = m.menu_id) subcnt \n");
 		sql.append(" from   menulist m \n");
@@ -219,8 +236,9 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		// 하위 메뉴
 		StringBuffer  sqlSub=new StringBuffer();
 		sqlSub.append(" select m.menu_id, m.menu_level, m.menu_up_level_id, m.menu_name \n");
-		sqlSub.append("         , m.menu_class_name, m.menu_type, m.order_seq, m.admin_role_flag \n");
-		sqlSub.append("         , m.user_role_flag, NVL(m.menu_use_flag,'Y') menu_use_flag \n");
+		sqlSub.append("         , m.menu_class_name, m.menu_type, m.order_seq \n");
+		sqlSub.append("         , nvl(m.admin_role_flag,'N') admin_role_flag, nvl(m.user_role_flag,'N') user_role_flag \n");
+		sqlSub.append("         , nvl(m.menu_use_flag,'Y') menu_use_flag \n");
 		sqlSub.append(" from   menulist m \n");
 		sqlSub.append(" where m.menu_up_level_id = ? \n" );
 		sqlSub.append(" order by m.order_seq \n");
@@ -238,8 +256,6 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 				DefaultMutableTreeNode  node=null;
 				node = new DefaultMutableTreeNode(menu);
 				
-				root.add(node);
-				
 				// node 를 menuDtoList 에 추가
 				MenuDto menuDto = new MenuDto();
 				menuDto.setMenu_id(rs.getInt("menu_id"));
@@ -252,8 +268,14 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 				menuDto.setAdmin_role_flag(rs.getString("admin_role_flag"));
 				menuDto.setUser_role_flag(rs.getString("user_role_flag"));
 				menuDto.setMenu_use_flag(rs.getString("menu_use_flag"));		
-				menuDtoList.add(menuDto);
 				
+				// Admin 유저이고 admin 권한 화면인 경우, 또는 admin 유저가 아니고, 유저 권한이 있는 화면 인 경우. 메뉴 추가
+				if ((adminFlag==true && rs.getString("admin_role_flag").equalsIgnoreCase("Y")) ||
+					 (adminFlag==false && rs.getString("user_role_flag").equalsIgnoreCase("Y"))	) {
+					
+					root.add(node);
+					menuDtoList.add(menuDto);				
+				}
 				
 				// SubMenu 생성
 				if (rs.getInt("subcnt")!=0){
@@ -267,7 +289,6 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 						// Menu node 추가
 						DefaultMutableTreeNode  nodeSub=null;
 						nodeSub = new DefaultMutableTreeNode(rsSub.getString("menu_name"));
-						node.add(nodeSub);
 						
 						// node 를 menuDtoList 에 추가
 						MenuDto menuSubDto = new MenuDto();
@@ -281,7 +302,15 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 						menuSubDto.setAdmin_role_flag(rsSub.getString("admin_role_flag"));
 						menuSubDto.setUser_role_flag(rsSub.getString("user_role_flag"));
 						menuSubDto.setMenu_use_flag(rsSub.getString("menu_use_flag"));		
-						menuDtoList.add(menuSubDto);
+
+						// Admin 유저이고 admin 권한 화면인 경우, 또는 admin 유저가 아니고, 유저 권한이 있는 화면 인 경우. 메뉴 추가
+						if ((adminFlag==true && rsSub.getString("admin_role_flag").equalsIgnoreCase("Y")) ||
+							 (adminFlag==false && rsSub.getString("user_role_flag").equalsIgnoreCase("Y"))	) {
+							
+							node.add(nodeSub);
+							menuDtoList.add(menuSubDto);
+						}
+						
 						//System.out.println("getMenu_name="+menuSubDto.getMenu_name());
 					}
 				}
@@ -323,6 +352,33 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 			r++;
 		}
 		
+		// 초기 선택 화면 지정
+		String firstMenuClasssName="";
+		if (adminFlag){ // 관리자
+			firstMenuClasssName = "Admin_InvoiceView";  // 관리자물품목록			
+		} else {
+			firstMenuClasssName = "User"; // 사용자물품목록
+		}
+		
+		// 초기화면 TreeIndex 찾기
+		int defaulTreeIndex=-1;
+		String chkClassName="";
+		for (int i=0; i<menuDtoList.size(); i++){
+			chkClassName = menuDtoList.get(i).getMenu_class_name();
+			if (chkClassName!=null){
+				//System.out.println("chkClassName = "+chkClassName);
+				if (chkClassName.equalsIgnoreCase(firstMenuClasssName)){
+					defaulTreeIndex = i;
+					//System.out.println("defaultSelectRow = "+defaulTreeIndex);
+				}
+			}
+		}
+		
+		// 초기 선택 화면이 있는 경우, 그 화면 선택
+		if (defaulTreeIndex!=-1){
+			tree.setSelectionInterval(defaulTreeIndex, defaulTreeIndex);
+		}
+		
 	}
 
 	// Tree 선택시 수행
@@ -347,7 +403,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		// 등록된 Panel 모두  Visible=false
 		for (int i=0; i<panelList.size(); i++){
 			panelList.get(i).setVisible(false);
-			System.out.println(i+" : visible false");
+			//System.out.println(i+" : visible false");
 		}
 		
 		// 선택된 메뉴 node check
@@ -366,7 +422,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 			}
 		}
 		// dto 에 없는 경우 skip
-		System.out.println("dtoIndex="+dtoIndex + ", menuName = "+menuName);
+		//System.out.println("dtoIndex="+dtoIndex + ", menuName = "+menuName);
 		if (dtoIndex==-1) return;
 		
 		// menuDto 에서 해당 메뉴의 className 가져오기
@@ -375,7 +431,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		
 		// className 이 없는 경우, 최종 메뉴가 아니므로 (상위 메뉴 이므로) skip
 		if (className==null){ 
-			JOptionPane.showMessageDialog(this, "화면의 Class 가 등록되지 않았습니다.");
+			JOptionPane.showMessageDialog(this, menuName+" 화면의 Class 가 등록되지 않았습니다.");
 			return;
 		}
 
@@ -410,6 +466,11 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	
 	// Frame menu open
 	public void frameOpen(String className){
+		
+		// Frame 이 열릴 위치
+		int openFrameX = this.getX()+westWidth+20;
+		int openFramY = this.getY()+40;
+		
 		//System.out.println("frameOpen");
 		// 이미 열려 있는 menu 인치 체크
 		int index=findOpenClassIndex(className);
@@ -419,27 +480,38 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 			((JFrame)menuOpenList.get(index)).toFront();
 		} else {
 			// open 되기 전이면, new 하여 open 하고, menuOpenList 에 추가한다.
+			currObject=null;
 			if (className.equalsIgnoreCase("ChatClient")){
 				// 채팅
-				System.out.println("ChatClient -------------------");
+				//System.out.println("ChatClient -------------------");
 				ChatClient  chatClient = new ChatClient();
 				menuOpenList.add(chatClient);
+				currObject=chatClient;
 				
 			} else if (className.equalsIgnoreCase("SendMessage")){  
 				// 쪽지 보내기
 				SendMessage  send = new SendMessage(this);
 				menuOpenList.add(send);
+				currObject=send;
 				
 			} else if (className.equalsIgnoreCase("SendMessageList")){  
 				// 쪽지 송신함
 				SendMessageList sendMsgList = new SendMessageList(this);
 				menuOpenList.add(sendMsgList);
+				currObject=sendMsgList;
 				
 			} else if (className.equalsIgnoreCase("RecieveMessage")){  
 				// 쪽지 수신함
 				RecieveMessage  recm = new RecieveMessage(this);
-				menuOpenList.add(recm);				
-			}			
+				menuOpenList.add(recm);		
+				currObject=recm;
+			}
+			
+			// 추가된 Frame 의 위치를 현재 treeFrame 의 위치에 맞게 조정한다.
+			if (currObject!=null){
+				((JFrame)currObject).setLocation(openFrameX, openFramY);
+			}
+			
 		}
 		
 	}
@@ -456,7 +528,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		
 		// 이미 열려 있는 menu 인치 체크
 		int index=findOpenClassIndex(className);
-		System.out.println(menuName + ", "+className + ", open index = "+index);
+		//System.out.println(menuName + ", "+className + ", open index = "+index);
 				
 	    // 열려 있지 않은 경우, 해당 Panel 을 new 한다.
 	    if (index==-1){
@@ -468,7 +540,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	    	} else if (className.equalsIgnoreCase("Admin_InvoiceView")){
 	    		// 관리자물품목록
 	    		Admin_InvoiceView adminInvoice = new Admin_InvoiceView();
-	    		System.out.println("adminInvoice = "+adminInvoice);
+	    		//System.out.println("adminInvoice = "+adminInvoice);
 	    		curPanel = adminInvoice;	
 	    	} else if (className.equalsIgnoreCase("RetunPan")){
 	    		// 반송등록
@@ -499,7 +571,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	    		ComplexPanel complexPanel = new ComplexPanel();
 	    		curPanel = complexPanel;	
 	    	} else {
-	    		System.out.println("menu 없음.");
+	    		//System.out.println("menu 없음.");
 	    		curPanel=null;
 	    	}
 	    	
@@ -517,7 +589,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	    	index = findOpenClassIndex(className);
 	    }
 	    
-	    System.out.println("get index = "+index);
+	    //System.out.println("get index = "+index);
 	    //System.out.println("panelList.size() = "+panelList.size());
 	    
 	    // index 가 -1 이 아닌 경우, 즉 Panel 이 존재하는 경우 해당 Panel visible=true

@@ -49,7 +49,6 @@ public class SendMessage extends JFrame implements ActionListener{
 	CompUnitModel  model;
 	JTextField  t_input, t_title;
 	JLabel  la_title, la_explain;
-	JTree   tree;
 	
 	int frameWidth=600;
 	int frameHeight=500;
@@ -58,7 +57,6 @@ public class SendMessage extends JFrame implements ActionListener{
 		
 		this.treeMain = treeMain;
 		this.con = treeMain.getConnection();
-		this.tree = treeMain.getTree();
 		
 		p_north = new JPanel();
 		p_center = new JPanel();
@@ -138,9 +136,7 @@ public class SendMessage extends JFrame implements ActionListener{
 		
 		setTitle("쪽지 보내기");
 		setVisible(true);
-		int X=this.treeMain.getX() +  this.tree.getWidth() + 20;
-		int Y=this.treeMain.getY() + this.tree.getY() + 40;
-		setBounds(X, Y, frameWidth, frameHeight);
+		setSize(frameWidth, frameHeight);
 		
 	}
 	
@@ -157,6 +153,7 @@ public class SendMessage extends JFrame implements ActionListener{
 	
 	public void close(){
 		this.treeMain.removeMenuOpenList(this);
+		dispose();
 	}
 	
 	// 메세지 보내기
