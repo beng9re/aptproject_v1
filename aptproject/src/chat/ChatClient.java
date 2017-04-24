@@ -15,10 +15,6 @@ import java.awt.event.AdjustmentEvent;
 import java.awt.event.AdjustmentListener;
 import java.awt.event.KeyAdapter;
 import java.awt.event.KeyEvent;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
-import java.awt.event.MouseWheelEvent;
-import java.awt.event.MouseWheelListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.io.IOException;
@@ -40,7 +36,7 @@ public class ChatClient extends JFrame {
 	JTextField txf_input;
 	JButton btn_send;
 	boolean scrollFlag = true;
-	
+
 	Socket socket;
 	ChatClientThread thread;
 	String id = "admin";
@@ -49,31 +45,32 @@ public class ChatClient extends JFrame {
 		pnl_south = new JPanel();
 		pnl_chat = new JPanel();
 		txa = new JTextArea();
-		scroll = new JScrollPane(pnl_chat,JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		scroll = new JScrollPane(pnl_chat, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS,
+				JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		txf_input = new JTextField();
 		btn_send = new JButton("전송");
-		
+
 		pnl_south.add(txf_input);
 		pnl_south.add(btn_send);
-		
+
 		add(scroll);
 		add(pnl_south, BorderLayout.SOUTH);
-		
+
 		scroll.getVerticalScrollBar().setUnitIncrement(15);
 		pnl_chat.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 		pnl_chat.setLayout(new BoxLayout(pnl_chat, BoxLayout.PAGE_AXIS));
-//		pnl_chat.setMaximumSize(new Dimension(270, Integer.MAX_VALUE));
+		// pnl_chat.setMaximumSize(new Dimension(270, Integer.MAX_VALUE));
 		txf_input.setPreferredSize(new Dimension(210, 30));
 		btn_send.setBackground(Color.LIGHT_GRAY);
-		
-		//스크롤 항상 최하단 고정
-		scroll.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {  
-		    public void adjustmentValueChanged(AdjustmentEvent e) { 
-		    	if (scrollFlag) {
-		    		e.getAdjustable().setValue(e.getAdjustable().getMaximum());
-		    		scrollFlag = false;
-		    	}
-		    }
+
+		// 스크롤 항상 최하단 고정
+		scroll.getVerticalScrollBar().addAdjustmentListener(new AdjustmentListener() {
+			public void adjustmentValueChanged(AdjustmentEvent e) {
+				if (scrollFlag) {
+					e.getAdjustable().setValue(e.getAdjustable().getMaximum());
+					scrollFlag = false;
+				}
+			}
 		});
 		// 텍스트필드에서 엔터키와 전송연결
 		txf_input.addKeyListener(new KeyAdapter() {
@@ -93,18 +90,10 @@ public class ChatClient extends JFrame {
 		// 소켓연결, 쓰레드 종료를 위해 윈도우리스너 사용
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
-				// 쓰레드 종료
+				// flag 값으로 쓰레드 종료하고, 동시에 서버의 쓰레드와 스트림버퍼도 닫는다
 				thread.flag = false;
-				// 접속종료
-				if (socket != null) {
-					try {
-						socket.close();
-					} catch (IOException e1) {
-						e1.printStackTrace();
-					}
-				}
-				//채팅창 종료 (전체 프로세스가 꺼질 수 있으므로 다른방법 찾아볼것)
-				System.exit(0);
+				// 채팅창 종료 (전체 프로세스가 꺼질 수 있으므로 다른방법 찾아볼것)
+				ChatClient.this.dispose();
 			}
 		});
 
@@ -123,11 +112,10 @@ public class ChatClient extends JFrame {
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 	}
 
 	public void send() {
-		thread.send(txf_input.getText());
+		thread.send("chat", txf_input.getText());
 		txf_input.setText("");
 	}
 

@@ -12,6 +12,8 @@ import javax.swing.JPanel;
 import Edit.InvEditPan;
 import aptuser.ModifyUser;
 import aptuser.RegistUser;
+import chat.ChatClient;
+import chat.ChatServer;
 import complex.regist.ComplexPanel;
 import db.DBManager;
 import viewer.Admin_InvoiceView;
@@ -64,7 +66,11 @@ public class Main extends JFrame {
 		
 		//테스트 할 패널
 		////////////////////////////////////////////////////
-		pnl_content.add(new RegistUser(), "invE");
+<<<<<<< HEAD
+		pnl_content.add(admin_user, "invE");
+=======
+		pnl_content.add(new ModifyUser(), "invE");
+>>>>>>> 25faaeaef7a5b37e8bb4eca75c4fe0f7075b4683
 //		pnl_content.add(new ComplexPanel(), "invE");
 		////////////////////////////////////////////////////
 		
@@ -93,21 +99,20 @@ public class Main extends JFrame {
 	//작동하는 버튼에 연결된 JFrame
 	/////////////////////////////////////////////////////////////
 	public void list() {
-		if (admin_invoice==null) {
-			admin_invoice = new Admin_InvoiceView();
-		}
-//		regiUser = new RegistUser();
+		new ChatClient();
 	}
 	
 	//종료를 위한 메서드 Menu에 있는 종료에서도 함께 사용
 	public void exit() {
-//		dbMgr.disconnect();
+//		dbMgr.disConnect(conn);
 		System.exit(0);
 	}
 	
 	//프로그램 작동은 로그인을 통해 이루어지므로 마지막에 메인메서드는 제거
 	public static void main(String[] args) {
 		new Main();
+		new ChatServer();
+		new ChatClient();
 	}
 
 }
