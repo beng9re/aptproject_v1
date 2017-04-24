@@ -13,7 +13,7 @@ import javax.swing.JTextField;
 import javax.swing.border.LineBorder;
 
 public class MiddlePanel extends JPanel{
-	JLabel la_complex, la_unit, la_floor,la_1,la_2;
+	JLabel la_complex, la_unit, la_floor,la_1,la_2,la_info;
 	JTextField t_complex, t_unit1,t_unit2,t_floor1,t_floor2;
 	
 
@@ -23,13 +23,14 @@ public class MiddlePanel extends JPanel{
 		la_unit = new JLabel("라인");
 		la_1=new JLabel("~");
 		la_2=new JLabel("~");
+		la_info=new JLabel("동,호수를 올바르게 입력해주세요");
 		t_floor1=new JTextField("1",10);
 		t_floor2=new JTextField(10);
 		t_complex = new JTextField(20);
 		t_unit1 = new JTextField("1",10);
 		t_unit2=new JTextField(10);
 		setLayout(null);
-
+		
 		// 위치 지정
 		la_complex.setBounds(20, 60, 50, 50);
 		t_complex.setBounds(60, 70, 200, 30);
@@ -41,7 +42,7 @@ public class MiddlePanel extends JPanel{
 		t_unit1.setBounds(60, 150, 90, 30);
 		la_2.setBounds(155, 135, 50, 50);
 		t_unit2.setBounds(170, 150, 90, 30);
-		
+		la_info.setBounds(35,200,300,30);
 		
 		
 		
@@ -55,7 +56,8 @@ public class MiddlePanel extends JPanel{
 		
 		la_1.setFont(new Font("맑은 고딕", Font.BOLD, 20));
 		la_2.setFont(new Font("맑은 고딕", Font.BOLD, 20));
-		
+		la_info.setFont(new Font("맑은 고딕", Font.BOLD, 15));
+		la_info.setForeground(Color.red);
 
 		t_complex.setBorder(new LineBorder(Color.orange, 5));
 		t_unit1.setBorder(new LineBorder(Color.orange, 5));
@@ -73,6 +75,7 @@ public class MiddlePanel extends JPanel{
 		add(t_unit1);
 		add(la_2);
 		add(t_unit2);
+		add(la_info);
 
 		setPreferredSize(new Dimension(300, 300));
 		setBackground(Color.white);

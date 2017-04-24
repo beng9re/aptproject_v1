@@ -33,6 +33,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.EtchedBorder;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableRowSorter;
 
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
@@ -40,10 +42,10 @@ import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
 import db.DBManager;
 import dto.Aptuser;
-import dto.InvoiceCategory;
+import dto.Invoice;
 
 public class Admin_UserView extends JPanel implements ActionListener {
-	JPanel p_north, p_north_left, p_north_right, p_center,p_south;
+	JPanel p_north, p_north_left, p_north_right, p_center, p_south;
 	JTable table;
 	JScrollPane scroll;
 	Choice choice;
@@ -63,7 +65,7 @@ public class Admin_UserView extends JPanel implements ActionListener {
 	FileOutputStream fos;
 
 	Vector<Aptuser> user = new Vector<Aptuser>();
-	Vector<InvoiceCategory> invoice = new Vector<InvoiceCategory>();
+	Vector<Invoice> invoice = new Vector<Invoice>();
 
 	public Admin_UserView() {
 		chooser = new JFileChooser();
@@ -147,11 +149,11 @@ public class Admin_UserView extends JPanel implements ActionListener {
 		bt_copy.setBackground(Color.WHITE);
 		bt_find.setBackground(Color.WHITE);
 		bt_xls.setBackground(Color.WHITE);
-		
+
 		add(p_north, BorderLayout.NORTH);
 		add(p_center, BorderLayout.CENTER);
 		add(p_south, BorderLayout.SOUTH);
-		
+
 		setVisible(true);
 		setSize(700, 700);
 		init();
@@ -166,7 +168,7 @@ public class Admin_UserView extends JPanel implements ActionListener {
 	public void getUser() {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		String sql = "select * from aptuser";
+		String sql = "select aptuser_id 주민ID,aptuser_name 이름 ,aptuser_phone 전화번호, aptuser_regdate 등록날짜, aptuser_live 거주여부, aptuser_perm 먼대,unit_id 동호수  from aptuser order by unit_id asc";
 
 		try {
 			pstmt = con.prepareStatement(sql);
@@ -181,15 +183,13 @@ public class Admin_UserView extends JPanel implements ActionListener {
 
 			while (rs.next()) {
 				Aptuser dto = new Aptuser();
-				dto.setAptuser_code(rs.getString("aptuser_code"));
-				dto.setAptuser_id(rs.getString("aptuser_id"));
-				dto.setAptuser_ip(rs.getString("aptuser_ip"));
-				dto.setAptuser_live(rs.getString("aptuser_live"));
-				dto.setAptuser_name(rs.getString("aptuser_name"));
-				dto.setAptuser_perm(rs.getInt("aptuser_perm"));
-				dto.setAptuser_phone(rs.getString("aptuser_phone"));
-				dto.setAptuser_pw(rs.getString("aptuser_pw"));
-				dto.setAptuser_regdate(rs.getString("aptuser_regdate"));
+				dto.setAptuser_id(rs.getString("주민ID"));
+				dto.setAptuser_ip(rs.getString("이름"));
+				dto.setAptuser_live(rs.getString("전화번호"));
+				dto.setAptuser_name(rs.getString("등록날짜"));
+				dto.setAptuser_perm(rs.getInt("먼대"));
+				dto.setAptuser_phone(rs.getString("거주여부"));
+				dto.setAptuser_regdate(rs.getString("동호수"));
 				user.add(dto);
 			}
 		} catch (SQLException e) {
@@ -198,15 +198,36 @@ public class Admin_UserView extends JPanel implements ActionListener {
 	}
 
 	public void getList() {
-
 		table.setModel(adminModel = new AdminModel(con));
+		table.setRowSorter(new TableRowSorter(adminModel));
+		JTableHeader header = table.getTableHeader();
+		header.setBackground(Color.PINK);
 		table.updateUI();
 	}
 
 	public void selectTable() {
 		String msg = t_input.getText();
 		String data = choice.getSelectedItem();
-		String sql = "select * from " + tableName + " where " + data + "= '" + msg + "' ";
+		String option = null;
+
+		if (data.equals("주민ID")) {
+			option = "aptuser_id";
+		} else if (data.equals("이름")) {
+			option = "aptuser_name";
+		} else if (data.equals("전화번호")) {
+			option = "aptuser_phone";
+		} else if (data.equals("등록날짜")) {
+			option = "aptuser_regdate";
+		} else if (data.equals("거주여부")) {
+			option = "aptuser_live";
+		} else if (data.equals("먼대")) {
+			option = "aptuser_perm";
+		} else if (data.equals("동호수")) {
+			option = "unit_id";
+		}
+
+		String sql = "select aptuser_id 주민ID,aptuser_name 이름 ,aptuser_phone 전화번호, aptuser_regdate 등록날짜, aptuser_live 거주여부, aptuser_perm 먼대,unit_id 동호수 from "
+				+ tableName + " where " + option + "= '" + msg + "' order by unit_id asc";
 		adminModel.getList(sql);
 
 		table.updateUI();
@@ -231,10 +252,27 @@ public class Admin_UserView extends JPanel implements ActionListener {
 		PreparedStatement pstmt = null;
 
 		String value = (String) table.getValueAt(row, col);
-		String column = adminModel.columnName.elementAt(col);
+		String data = choice.getItem(col);
+		String option = null;
 
-		String sql = "update " + tableName + " set " + column + "=" + "'" + value + "' ";
-		sql += "where aptuser_id=" + table.getValueAt(row, 0);
+		if (data.equals("주민ID")) {
+			option = "aptuser_id";
+		} else if (data.equals("이름")) {
+			option = "aptuser_name";
+		} else if (data.equals("전화번호")) {
+			option = "aptuser_phone";
+		} else if (data.equals("등록날짜")) {
+			option = "aptuser_regdate";
+		} else if (data.equals("거주여부")) {
+			option = "aptuser_live";
+		} else if (data.equals("먼대")) {
+			option = "aptuser_perm";
+		} else if (data.equals("동호수")) {
+			option = "unit_id";
+		}
+
+		String sql = "update " + tableName + " set " + option + "=" + "'" + value + "' ";
+		sql += "where aptuser_id=" + "'" + table.getValueAt(row, 0) + "'";
 
 		try {
 			pstmt = con.prepareStatement(sql);
