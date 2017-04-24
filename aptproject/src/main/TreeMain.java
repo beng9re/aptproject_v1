@@ -1,4 +1,4 @@
-package tree;
+package main;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
@@ -6,6 +6,8 @@ import java.awt.Component;
 import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
+import java.awt.Graphics;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.sql.Connection;
@@ -22,6 +24,7 @@ import javax.swing.JPanel;
 import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
+import javax.swing.border.Border;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
@@ -42,21 +45,22 @@ import aptuser.ModifyAdmin;
 import aptuser.ModifyUser;
 import aptuser.RegistUser;
 import chat.ChatClient;
+import chat.ChatServer;
 import complex.regist.ComplexPanel;
 
 public class TreeMain extends JFrame implements TreeSelectionListener, ActionListener{
 	
-	DBManager  instance=null;
-	public Connection  con=null;
+	DBManager  instance;
+	Connection  con=null;
 	
-	int winWidth=950;
-	int winHeight = 750;
-	int treeHeight=520;
+	int winWidth=900;
+	int winHeight = 700;
+	int treeScrollHeight=520;
 	int westWidth=200;
 	int centerWidth=700;
 	int centerHeight=700;
-	String userName="사용자";
-	String userId="test1";
+	String userId="";
+	String userName="";
 	
 	JTree  tree;
 	JScrollPane  scroll;	
@@ -69,10 +73,11 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	Vector<MenuDto> menuDtoList = new Vector<MenuDto>();
 	Vector<JPanel> panelList = new Vector<JPanel>();
 	
-	public TreeMain() {
-		// Connection con, String userId
-		//this.con = con;
-		//this.userId = userId;
+	public TreeMain(DBManager  instance, String userId) {
+
+		this.instance = instance;
+		this.con = instance.getConnection();
+		this.userId = userId;
 		
 		p_west = new JPanel();
 		p_west_center = new JPanel();
@@ -83,7 +88,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		tree = new JTree(root);
 		scroll = new JScrollPane(tree);
 		
-		la_welcom = new JLabel(userName+" 님 환영합니다");
+		la_welcom = new JLabel(" 님 환영합니다");
 		bt_exit = new JButton("종료");
 
 		// root menu menuDtoList 에 추가
@@ -94,12 +99,11 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 
 		scroll.setBackground(Color.YELLOW);		
 		
-		// Size
-		
-		scroll.setPreferredSize(new Dimension(westWidth, treeHeight));
-		p_west_center.setPreferredSize(new Dimension(westWidth, treeHeight));
+		// Size		
+		scroll.setPreferredSize(new Dimension(westWidth, treeScrollHeight));
+		p_west_center.setPreferredSize(new Dimension(westWidth, treeScrollHeight));
 		//System.out.println(p_west_center.getHeight());
-		p_west_south.setPreferredSize(new Dimension(westWidth, winHeight-treeHeight-50));
+		p_west_south.setPreferredSize(new Dimension(westWidth, winHeight-treeScrollHeight-50));
 		la_welcom.setPreferredSize(new Dimension(westWidth-10, 50));
 		
 		p_west_center.setLayout(new BorderLayout());
@@ -118,9 +122,6 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		add(p_west, BorderLayout.WEST);
 		add(p_center);
 		
-		// 초기 작업
-		init();
-		
 		// Tree 구성 작업
 		makeTree();
 		
@@ -134,19 +135,49 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		setLocationRelativeTo(null);
 		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
+		// 초기 작업
+		init();
+		
 	}
 	
 	public void init(){
-		// instance 
-		if (instance==null){			
-			instance = DBManager.getInstance();
-		}
+		PreparedStatement pstmt=null;
+		ResultSet  rs=null;
 		
-		// Connection
-		if (con==null){
-			con = instance.getConnection();
+		// Chat Server
+		ChatServer server=  new ChatServer();
+
+		// UserName 조회
+		String sql = "select aptuser_name from aptuser where aptuser_id = ? ";
+		try {
+			pstmt = con.prepareStatement(sql);
+			pstmt.setString(1, userId);
+			rs = pstmt.executeQuery();
+			if (rs.next()){
+				userName = rs.getString("aptuser_name");
+			}
+		} catch (SQLException e) {
+			JOptionPane.showMessageDialog(this, "사용자명 조회시 Error 발생 ");
+			e.printStackTrace();
+		} finally {
+			if (rs!=null)
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			if (pstmt!=null)
+				try {
+					pstmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
 		}
-		
+		la_welcom.setText(userName+" 님 환영합니다");
+	}
+	
+	public Connection getConnection(){
+		return con;
 	}
 	
 	public String getUserId(){
@@ -504,28 +535,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	    } else {
 	    	JOptionPane.showMessageDialog(this, "화면이 존재하지 않습니다.");
 	    }
-/*	    
-	    // 현재 선택된 Panel 만 Visible=true 하고 나머지 Visible=false
-	    for (int i=0; i<panelList.size(); i++){
-			
-	    	if (index!=-1){
-	    		if (panelList.get(i)==menuOpenList.get(index)){
-					//System.out.println("same index = "+i);
-					// panel 사이즈 p_center 의 사이즈로 만들기
-					panelList.get(i).setPreferredSize(new Dimension(centerWidth, centerHeight));
-					// panel 보이기
-					panelList.get(i).setVisible(true);
-					// Title 변경
-					setTitle(menuName);
-	    		}
-			} else {
-				// panel 숨기기
-				panelList.get(i).setVisible(false);
-			}
-		}
-	    // p_center 재정비
-		p_center.updateUI();
-*/	
+
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -534,10 +544,10 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 			close();
 		}
 	}
-
+/*
 	public static void main(String[] args) {
-		new TreeMain();
+		new TreeMain(con);
 
 	}
-
+*/
 }

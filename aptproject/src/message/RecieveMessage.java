@@ -37,7 +37,7 @@ import javax.swing.table.TableRowSorter;
 import org.apache.poi.ss.usermodel.HorizontalAlignment;
 
 import db.DBManager;
-import tree.TreeMain;
+import main.TreeMain;
 
 public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 	
@@ -59,11 +59,13 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 	
 	int frameWidth=600;
 	int frameHeight=500;
+	String userId;
 	
 	public RecieveMessage(TreeMain treeMain) {
 		this.treeMain = treeMain;
-		this.con = treeMain.con;
+		this.con = treeMain.getConnection();
 		this.tree=this.treeMain.getTree();
+		this.userId = treeMain.getUserId();
 		
 		p_north = new JPanel();
 		p_center = new JPanel();
@@ -164,7 +166,7 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 	
 	public void init(){
 		
-		model = new RecieveMsgModel(con);
+		model = new RecieveMsgModel(con, userId);
 		table.setModel(model);
 		table.setRowSorter(new TableRowSorter(model));
 		
@@ -250,7 +252,7 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 			// msg_recieve_id
 			col =  table.getColumn("msg_recieve_id").getModelIndex();
 			System.out.println("msg_recieve_id="+col + "value="+table.getValueAt(row, col));
-			int msg_recieve_id=Integer.parseInt((String)table.getValueAt(row, col));
+			int msg_recieve_id=(Integer)table.getValueAt(row, col);
 			
 			StringBuffer sql = new StringBuffer();
 			sql.append("update recieve_message ");
@@ -290,12 +292,15 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 		int findRow;
 		int rowCount;
 		
-		// 현재 선택된 row 의 msg_recieve_id 값 얻어 놓기
-		int id_col=table.getColumn("msg_recieve_id").getModelIndex();
-		int sel_msg_recieve_id=-1;
+		
+		int msg_recieve_id_col=table.getColumn("msg_recieve_id").getModelIndex();
+		System.out.println("msg_recieve_id_col="+msg_recieve_id_col);
 		int currSelectedRow=table.getSelectedRow();
+		// 현재 선택된 row 의 msg_recieve_id 값 얻어 놓기
+		int sel_msg_recieve_id=-1;
 		if (currSelectedRow!=-1){
-			sel_msg_recieve_id=Integer.parseInt((String)table.getValueAt(currSelectedRow, id_col));
+			sel_msg_recieve_id=(Integer)table.getValueAt(currSelectedRow, msg_recieve_id_col);
+			System.out.println("currSelectedRow = "+currSelectedRow + ", sel_msg_recieve_id = "+sel_msg_recieve_id);
 		}
 		
 		// 미확인 메세지 건수, 마지막 id
@@ -311,31 +316,29 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 					// 최종 미수신 id
 					int max_msg_recieve_id = rs.getInt("max_msg_recieve_id");
 					
+					// 현재 조회된 것 중에 최종 미수신 메세지가 있는지 체크
 					findRow=-1;
 					rowCount = table.getRowCount();
 					for (int i=0; i<rowCount; i++){
-						msg_recieve_id =Integer.parseInt((String)table.getValueAt(i, id_col));
-						// 현재 조회된 것 중에 최종 미수신 메세지가 있는지 체크
+						System.out.println("row="+i+", col="+msg_recieve_id_col);
+						msg_recieve_id =(Integer)table.getValueAt(i, msg_recieve_id_col);
 						if (max_msg_recieve_id==msg_recieve_id){
 							findRow=i;
 							break;
 						}
 					}
 					
-					// 현재 조회된 것 중에 최종 미수신 메세지가 없는 경우.
+					// 현재 조회된 것 중에 최종 미수신 메세지가 없는 경우. 재조회
 					if (findRow==-1){
-						// 현재 선택된 row 체크
-						int selectedRow = table.getSelectedRow();
 						// 재조회
 						search();
 						
 						// 현재 선택된 row 가 있는 경우. 조회 후 해당 row 찾아서 선택해 준다.
-						if (selectedRow !=-1){
-							msg_recieve_id =Integer.parseInt((String)table.getValueAt(selectedRow, id_col));
+						if (currSelectedRow !=-1){
 							findRow=-1;
 							for (int i=0; i<table.getRowCount(); i++){
-								chk_msg_recieve_id=Integer.parseInt((String)table.getValueAt(i, id_col));
-								if (chk_msg_recieve_id==msg_recieve_id) {
+								chk_msg_recieve_id=(Integer)table.getValueAt(i, msg_recieve_id_col);
+								if (chk_msg_recieve_id==sel_msg_recieve_id) {
 									findRow = i;
 									break;
 								}
@@ -345,6 +348,7 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 							if (findRow!=-1){
 								System.out.println("findRow = "+findRow);
 								table.setRowSelectionInterval(findRow, findRow);
+								// showMessage();
 							}
 							
 						}

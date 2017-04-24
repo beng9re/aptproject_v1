@@ -30,9 +30,9 @@ import javax.swing.table.DefaultTableCellRenderer;
 import javax.swing.table.TableCellRenderer;
 import javax.swing.table.TableRowSorter;
 
-import tree.TreeMain;
+import main.TreeMain;
 
-public class SendMessageList extends JFrame implements ActionListener {
+public class SendMessageList extends JFrame implements ActionListener , Runnable{
 	
 	Connection con;	
 	TreeMain treeMain;
@@ -56,9 +56,12 @@ public class SendMessageList extends JFrame implements ActionListener {
 	int frameWidth=600;
 	int frameHeight=500;
 	
+	boolean threadFlag=false;
+	Thread  thread;
+	
 	public SendMessageList(TreeMain treeMain) {
 		this.treeMain = treeMain;
-		this.con = treeMain.con;
+		this.con = treeMain.getConnection();
 		this.tree=this.treeMain.getTree();
 		this.userId = this.treeMain.getUserId();
 		
@@ -144,8 +147,6 @@ public class SendMessageList extends JFrame implements ActionListener {
 			}
 		});
 		
-		init();
-		
 		// size
 		t_input.setPreferredSize(new Dimension(frameWidth-200, 20));
 		p_north.setPreferredSize(new Dimension(frameWidth, 45));
@@ -161,6 +162,8 @@ public class SendMessageList extends JFrame implements ActionListener {
 		// Color
 		p_north.setBackground(Color.PINK);
 		p_center_south.setBackground(Color.PINK);
+		
+		init();
 		
 		setTitle("쪽지 송신함");
 		setVisible(true);
@@ -222,6 +225,7 @@ public class SendMessageList extends JFrame implements ActionListener {
 			msg_send_id = -1;
 		}
 		System.out.println("msg_send_id ="+msg_send_id);
+		
 		// 제목, 내용 보여주기.
 		showMessage();		
 		
@@ -244,10 +248,15 @@ public class SendMessageList extends JFrame implements ActionListener {
 
 		tableList.updateUI();
 		
+		threadFlag=true;
+		thread = new Thread(this);
+		thread.start();
 	}
 	
 	public void close(){
 		this.treeMain.removeMenuOpenList(this);
+		threadFlag=false;
+		dispose();
 	}
 	
 	public void search(){
@@ -309,11 +318,19 @@ public class SendMessageList extends JFrame implements ActionListener {
 		tableList.updateUI();
 	}
 	
+	public void reSearch(){
+		
+	}
+	
 	public void actionPerformed(ActionEvent e) {
 		Object obj = e.getSource();
 		if (obj==bt_search){
 			search();
 		}		
+	}
+
+	public void run() {
+		
 	}
 	
 

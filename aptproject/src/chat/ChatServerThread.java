@@ -36,7 +36,7 @@ public class ChatServerThread extends Thread {
 			String reqType = jsonObj.get("requestType").toString();
 			if (reqType.equals("chat")) {
 				msg = jsonObj.get("message").toString();
-				send(msg);
+				send(jsonObj.get("user_id").toString(), msg);
 			} else if (reqType.equals("disconnect")) {
 				flag = false;
 			}
@@ -46,9 +46,9 @@ public class ChatServerThread extends Thread {
 		}
 	}
 
-	private void send(String msg) {
+	private void send(String user_id, String msg) {
 		try {
-			buffW.write(msg + "\n");
+			buffW.write(ChatProtocol.toJSON("chat", user_id, msg) + "\n");
 			buffW.flush();
 		} catch (IOException e) {
 			e.printStackTrace();
