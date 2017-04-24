@@ -29,6 +29,8 @@ import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
+import main.TreeMain;
+
 public class ChatClient extends JFrame {
 	JPanel pnl_south, pnl_chat;
 	JTextArea txa;
@@ -39,11 +41,14 @@ public class ChatClient extends JFrame {
 
 	Socket socket;
 	ChatClientThread thread;
-	String id = "admin";
+	TreeMain main;
+	String id;
 
 	// 생성할 때 접속중인 회원의 id를 받아온다
-	public ChatClient() {
-//		this.id = id;
+	public ChatClient(TreeMain main) {
+		this.main = main;
+		this.id = main.getUserID();
+		
 		pnl_south = new JPanel();
 		pnl_chat = new JPanel();
 		txa = new JTextArea();
@@ -61,7 +66,6 @@ public class ChatClient extends JFrame {
 		scroll.getVerticalScrollBar().setUnitIncrement(15);
 		pnl_chat.setBorder(BorderFactory.createEmptyBorder(10, 20, 10, 20));
 		pnl_chat.setLayout(new BoxLayout(pnl_chat, BoxLayout.PAGE_AXIS));
-		// pnl_chat.setMaximumSize(new Dimension(270, Integer.MAX_VALUE));
 		txf_input.setPreferredSize(new Dimension(210, 30));
 		btn_send.setBackground(Color.LIGHT_GRAY);
 
@@ -94,7 +98,8 @@ public class ChatClient extends JFrame {
 			public void windowClosing(WindowEvent e) {
 				// flag 값으로 쓰레드 종료하고, 동시에 서버의 쓰레드와 스트림버퍼도 닫는다
 				thread.flag = false;
-				// 채팅창 종료 (전체 프로세스가 꺼질 수 있으므로 다른방법 찾아볼것)
+				// 채팅창 종료
+				main.removeMenuOpenList(ChatClient.this);
 				ChatClient.this.dispose();
 			}
 		});
@@ -112,7 +117,7 @@ public class ChatClient extends JFrame {
 	public void connect() {
 		try {
 			// aptuser테이블에 있는 관리자 ip를 얻어와서 접속한다
-			socket = new Socket("localhost", 7777);
+			socket = new Socket(main.getSeverIP(), 7777);
 			thread = new ChatClientThread(socket, this);
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -122,10 +127,6 @@ public class ChatClient extends JFrame {
 	public void send() {
 		thread.send("chat", txf_input.getText());
 		txf_input.setText("");
-	}
-
-	public static void main(String[] args) {
-		new ChatClient();
 	}
 
 }

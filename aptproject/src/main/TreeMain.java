@@ -2,22 +2,17 @@ package main;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
-import java.awt.Container;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.Graphics;
-import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.awt.event.WindowListener;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -25,25 +20,13 @@ import javax.swing.JFrame;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
-import javax.swing.JRootPane;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
-import javax.swing.border.Border;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
-import javax.swing.tree.TreeNode;
-import javax.swing.tree.TreePath;
 
 import Edit.InvEditPan;
-import db.DBManager;
-import dto.MenuDto;
-import message.RecieveMessage;
-import message.SendMessage;
-import message.SendMessageList;
-import viewer.Admin_InvoiceView;
-import viewer.Admin_UserView;
-import viewer.User;
 import Edit.RetunPan;
 import aptuser.ModifyAdmin;
 import aptuser.ModifyUser;
@@ -51,11 +34,21 @@ import aptuser.RegistUser;
 import chat.ChatClient;
 import chat.ChatServer;
 import complex.regist.ComplexPanel;
+import db.AptuserModelByID;
+import db.DBManager;
+import dto.Aptuser;
+import dto.MenuDto;
+import message.RecieveMessage;
+import message.SendMessage;
+import message.SendMessageList;
+import viewer.Admin_InvoiceView;
+import viewer.Admin_UserView;
+import viewer.User;
 
 public class TreeMain extends JFrame implements TreeSelectionListener, ActionListener{
 	
-	DBManager  instance;
-	Connection  con=null;
+	private DBManager  instance;
+	private Connection  con;
 	
 	int winWidth=900;
 	int winHeight = 700;
@@ -64,9 +57,11 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	int centerWidth=700;
 	int centerHeight=700;
 	
-	String userId="";
-	String userName="";
-	boolean  adminFlag=false;
+	private String userID;
+	private String userName;
+	private boolean  adminFlag=false;
+	private String serverIP;
+	private ChatServer chatServer;
 	
 	JTree  tree;
 	JScrollPane  scroll;	
@@ -81,11 +76,11 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	Vector<MenuDto> menuDtoList = new Vector<MenuDto>();
 	Vector<JPanel> panelList = new Vector<JPanel>();
 	
-	public TreeMain(DBManager  instance, String userId) {
+	public TreeMain(DBManager  instance, String userID) {
 
 		this.instance = instance;
 		this.con = instance.getConnection();
-		this.userId = userId;
+		this.userID = userID;
 		
 		p_west = new JPanel();
 		p_west_center = new JPanel();
@@ -139,12 +134,18 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		// 리스너 연결.
 		tree.addTreeSelectionListener(this);
 		bt_exit.addActionListener(this);
+		// 프로그램 종료를 위한 윈도우 리스너
+		this.addWindowListener(new WindowAdapter() {
+			@Override
+			public void windowClosing(WindowEvent e) {
+				close();
+			}
+		});
 		
 		setTitle("***** 환영합니다 *****");
 		setVisible(true);
 		setSize(winWidth, winHeight);
 		setLocationRelativeTo(null);
-		setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
 		// 초기 작업
 		init();
@@ -152,46 +153,29 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	}
 	
 	public void init(){
-		PreparedStatement pstmt=null;
-		ResultSet  rs=null;
+		// aptuser테이블에서 데이터를 갖고오는 모델을 생성한다
+		AptuserModelByID aptuser = new AptuserModelByID(con, userID);
+		ArrayList<Aptuser> userList = aptuser.getData();
 		
 		// UserName 조회
-		String sql = "select aptuser_name, nvl(aptuser_perm,0) aptuser_perm from aptuser where aptuser_id = ? ";
-		try {
-			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, userId);
-			rs = pstmt.executeQuery();
-			if (rs.next()){
-				userName = rs.getString("aptuser_name");
-				if (rs.getInt("aptuser_perm")==9){
-					adminFlag = true;
-				}
-			}
-		} catch (SQLException e) {
-			JOptionPane.showMessageDialog(this, "사용자명 조회시 Error 발생 ");
-			e.printStackTrace();
-		} finally {
-			if (rs!=null)
-				try {
-					rs.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			if (pstmt!=null)
-				try {
-					pstmt.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
+		userName = userList.get(0).getAptuser_name();
+		
+		// 접속한 회원의 권한을 조회하고 Main의 권한변수에 대입한다
+		if (userList.get(0).getAptuser_perm()==9){
+			adminFlag = true;
 		}
 		la_welcom.setText(userName+" 님 환영합니다");
+	
+		// 관리자 IP를 가지고 온다 (채팅 클라이언트에서 서버에 접속할 때 사용)
+		aptuser.selectData("admin");
+		serverIP = ((Aptuser)aptuser.getData().get(0)).getAptuser_ip();
 
 		// Tree 구성 작업
 		makeTree();
 
-		// 관리자인 경우 Chat Server 생성
-		if (adminFlag){
-			ChatServer server=  new ChatServer();
+		// 서버관리자(admin)인 경우 Chat Server 생성
+		if (userID.equalsIgnoreCase("admin")){
+			chatServer=  new ChatServer(this);
 		}
 		
 	}
@@ -200,14 +184,20 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		return con;
 	}
 	
-	public String getUserId(){
-		return userId;
+	public String getUserID(){
+		return userID;
 	}
 	
+	public String getSeverIP() {
+		return serverIP;
+	}
+	
+	// 프로그램 종료를 위한 메서드
 	public void close(){
-		
+		if (chatServer!=null) {
+			chatServer.close(); 
+		}
 		instance.disConnect(con);
-		
 		System.exit(0);
 	}
 
@@ -484,7 +474,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 			if (className.equalsIgnoreCase("ChatClient")){
 				// 채팅
 				//System.out.println("ChatClient -------------------");
-				ChatClient  chatClient = new ChatClient();
+				ChatClient  chatClient = new ChatClient(this);
 				menuOpenList.add(chatClient);
 				currObject=chatClient;
 				
@@ -616,6 +606,8 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 			close();
 		}
 	}
+
+//	TreeMain은 단독 실행되지 않고 login에서 생성됨
 /*
 	public static void main(String[] args) {
 		new TreeMain(con);

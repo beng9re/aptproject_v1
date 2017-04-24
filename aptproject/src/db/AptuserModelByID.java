@@ -61,7 +61,8 @@ public class AptuserModelByID extends AptuserModel {
 		}
 	}
 
-	public void selectData() {
+	public void selectData(String id) {
+		this.id = id;
 		mode = "select";
 		sql = dfSQL;
 		aptuserModel(sql, true);

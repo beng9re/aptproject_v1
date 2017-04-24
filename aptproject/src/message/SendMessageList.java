@@ -61,7 +61,7 @@ public class SendMessageList extends JFrame implements ActionListener , Runnable
 	public SendMessageList(TreeMain treeMain) {
 		this.treeMain = treeMain;
 		this.con = treeMain.getConnection();
-		this.userId = this.treeMain.getUserId();
+		this.userId = this.treeMain.getUserID();
 		
 		p_north = new JPanel();
 		p_center = new JPanel();

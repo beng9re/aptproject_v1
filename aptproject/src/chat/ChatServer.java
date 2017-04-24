@@ -10,13 +10,19 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-public class ChatServer extends Thread {
-	ServerSocket server;
-	Socket socket;
-	int port = 7777;
-	boolean flag = true;
+import main.TreeMain;
 
-	public ChatServer() {
+public class ChatServer extends Thread {
+	private TreeMain main;
+	
+	private ServerSocket server;
+	private Socket socket;
+	private int port = 7777;
+	private boolean flag = true;
+
+	public ChatServer(TreeMain main) {
+		this.main = main;
+		
 		try {
 			server = new ServerSocket(port);
 			System.out.println("서버생성");
@@ -27,6 +33,10 @@ public class ChatServer extends Thread {
 		}
 
 	}
+	
+	public void close()	{
+		flag = false;
+	}
 
 	@Override
 	public void run() {
@@ -34,16 +44,12 @@ public class ChatServer extends Thread {
 			try {
 				socket = server.accept();
 				System.out.println("접속자 확인");
-				// 같은소켓으로 관리자가 사용할 클라이언트도 하나 생성한다
 				ChatServerThread thread = new ChatServerThread(socket);
+				
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
-	}
-
-	public static void main(String[] args) {
-		new ChatServer();
 	}
 
 }

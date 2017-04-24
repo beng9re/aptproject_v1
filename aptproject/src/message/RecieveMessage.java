@@ -63,7 +63,7 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 	public RecieveMessage(TreeMain treeMain) {
 		this.treeMain = treeMain;
 		this.con = treeMain.getConnection();
-		this.userId = treeMain.getUserId();
+		this.userId = treeMain.getUserID();
 		
 		p_north = new JPanel();
 		p_center = new JPanel();
