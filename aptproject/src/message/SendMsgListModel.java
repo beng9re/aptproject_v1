@@ -44,7 +44,7 @@ public class SendMsgListModel extends AbstractTableModel{
 		sql.append(" and     (s.msg_send_title like ? or \n");
 		sql.append("             s.msg_send_content like ?) \n");
 		sql.append(" order by s.msg_send_id desc \n");		
-		System.out.println(sql.toString());
+		System.out.println("SendMsgListModel : \n"+sql.toString());
 		
 		try {
 			pstmt = con.prepareStatement(sql.toString());

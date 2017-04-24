@@ -11,12 +11,14 @@ import javax.swing.table.AbstractTableModel;
 public class RecieveMsgModel extends AbstractTableModel{
 	
 	Connection con;
+	String userId;
 	Vector<String> columnName;
 	Vector<Vector> data = new Vector<Vector>();
 	
-	public RecieveMsgModel(Connection con ) {
+	public RecieveMsgModel(Connection con, String userId ) {
 		System.out.println("CompUnitModel");
 		this.con = con;
+		this.userId = userId;
 		
 		columnName = new Vector<String>();
 		columnName.add("송신자명");
@@ -45,16 +47,19 @@ public class RecieveMsgModel extends AbstractTableModel{
 		sql.append("         ,aptuser              u \n");
 		sql.append(" where r.msg_send_id = s.msg_send_id \n");
 		sql.append(" and    u.aptuser_id     = s.msg_send_user_id \n");
+		sql.append(" and    r.msg_recv_user_id = ? \n");
 		sql.append(" and   (u.aptuser_name like ? or  \n");
 		sql.append("            s.msg_send_title like ? )  \n");
 		sql.append(" order by r.msg_recieve_time desc ");
 		
 		System.out.println(sql.toString());
+		System.out.println("userId = "+userId);
 		
 		try {
 			pstmt = con.prepareStatement(sql.toString());
-			pstmt.setString(1, "%"+search+"%");
+			pstmt.setString(1, userId);
 			pstmt.setString(2, "%"+search+"%");
+			pstmt.setString(3, "%"+search+"%");
 			rs = pstmt.executeQuery();
 
 			data.removeAll(data);
@@ -65,7 +70,7 @@ public class RecieveMsgModel extends AbstractTableModel{
 				vec.add(rs.getString("수신시간"));
 				vec.add(rs.getString("확인여부"));
 				vec.add(rs.getString("확인시간"));
-				vec.add(rs.getString("msg_recieve_id"));
+				vec.add(rs.getInt("msg_recieve_id"));
 				vec.add(rs.getString("msg_send_user_id"));
 				vec.add(rs.getString("msg_send_content"));
 				
