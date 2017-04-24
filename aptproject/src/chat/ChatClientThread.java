@@ -13,6 +13,7 @@ import java.net.Socket;
 
 import javax.swing.Box;
 
+import org.json.simple.JSONObject;
 import org.json.simple.parser.JSONParser;
 
 public class ChatClientThread extends Thread {
@@ -22,7 +23,6 @@ public class ChatClientThread extends Thread {
 
 	BufferedReader buffR;
 	BufferedWriter buffW;
-	JSONParser parser;
 
 	public ChatClientThread(Socket socket, ChatClient client) {
 		this.socket = socket;
@@ -30,7 +30,6 @@ public class ChatClientThread extends Thread {
 		try {
 			buffR = new BufferedReader(new InputStreamReader(socket.getInputStream()));
 			buffW = new BufferedWriter(new OutputStreamWriter(socket.getOutputStream()));
-			parser = new JSONParser();
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
@@ -41,8 +40,16 @@ public class ChatClientThread extends Thread {
 		try {
 			client.scrollFlag = true;
 			String msg = buffR.readLine();
-
-			ChatMessage chatbox = new ChatMessage(client, msg);
+			
+			// 들어온 메시지를 파싱하여 자신의 메시지와 타인의 메시지를 구분하여 출력
+			JSONObject jsonObj = ChatProtocol.parsing(msg);
+			msg = jsonObj.get("message").toString();
+			ChatMessage chatbox = null;
+			if (jsonObj.get("user_id").equals(client.id)) {
+				chatbox = new ChatMessage(client, msg, true);
+			} else {
+				chatbox = new ChatMessage(client, msg, false);
+			}
 			client.pnl_chat.add(chatbox);
 			client.pnl_chat.add(Box.createHorizontalGlue());
 			client.pnl_chat.revalidate();

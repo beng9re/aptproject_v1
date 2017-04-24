@@ -1,5 +1,6 @@
 package chat;
 
+import java.awt.Color;
 import java.awt.Dimension;
 
 import javax.swing.BoxLayout;
@@ -12,15 +13,23 @@ public class ChatMessage extends JPanel {
 	ChatClient client;
 	JLabel user_id;
 	JTextArea content;
+	float alignf;
 
-	public ChatMessage(ChatClient client, String msg) {
+	public ChatMessage(ChatClient client, String msg, boolean isEcho) {
 		this.client = client;
 		user_id = new JLabel(client.id);
 		content = new JTextArea(msg);
+		
+		if (!isEcho) {
+			alignf = JComponent.LEFT_ALIGNMENT;
+		} else if (isEcho) {
+			alignf = JComponent.RIGHT_ALIGNMENT;
+			content.setBackground(Color.YELLOW);
+		}
 
 		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		user_id.setAlignmentX(JComponent.RIGHT_ALIGNMENT);
-		content.setAlignmentX(JComponent.RIGHT_ALIGNMENT);
+		user_id.setAlignmentX(alignf);
+		content.setAlignmentX(alignf);
 
 		// 글자수에 따라 크기 다르게
 		int height = (int) ((Math.ceil(msg.getBytes().length / 28) + 1) * 20);

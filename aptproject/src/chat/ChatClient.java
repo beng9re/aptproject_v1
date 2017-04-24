@@ -41,7 +41,9 @@ public class ChatClient extends JFrame {
 	ChatClientThread thread;
 	String id = "admin";
 
+	// 생성할 때 접속중인 회원의 id를 받아온다
 	public ChatClient() {
+//		this.id = id;
 		pnl_south = new JPanel();
 		pnl_chat = new JPanel();
 		txa = new JTextArea();
@@ -105,8 +107,11 @@ public class ChatClient extends JFrame {
 		setVisible(true);
 	}
 
+	// 접속유형 (관리자 답변용, 회원 문의용)에 따라 소켓생성여부를 다르게하고
+	// 관리자를 위한 별도의 ChatClient를 생성한다(받아온 socket으로 생성함)
 	public void connect() {
 		try {
+			// aptuser테이블에 있는 관리자 ip를 얻어와서 접속한다
 			socket = new Socket("localhost", 7777);
 			thread = new ChatClientThread(socket, this);
 		} catch (IOException e) {
