@@ -184,39 +184,39 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 		this.con = manager.getConnection();
 	}
 
-	public void getUser() {
-		PreparedStatement pstmt = null;
-		ResultSet rs = null;
-		String sql = "select * from aptuser";
-
-		try {
-			pstmt = con.prepareStatement(sql);
-			rs = pstmt.executeQuery();
-
-			choice.removeAll();
-
-			ResultSetMetaData meta = rs.getMetaData();
-			for (int i = 1; i <= meta.getColumnCount(); i++) {
-				choice.add(meta.getColumnName(i));
-			}
-
-			while (rs.next()) {
-				Aptuser dto = new Aptuser();
-				dto.setAptuser_code(rs.getString("aptuser_code"));
-				dto.setAptuser_id(rs.getString("aptuser_id"));
-				dto.setAptuser_ip(rs.getString("aptuser_ip"));
-				dto.setAptuser_live(rs.getString("aptuser_live"));
-				dto.setAptuser_name(rs.getString("aptuser_name"));
-				dto.setAptuser_perm(rs.getString("aptuser_perm"));
-				dto.setAptuser_phone(rs.getString("aptuser_phone"));
-				dto.setAptuser_pw(rs.getString("aptuser_pw"));
-				dto.setAptuser_regdate(rs.getString("aptuser_regdate"));
-				user.add(dto);
-			}
-		} catch (SQLException e) {
-			e.printStackTrace();
-		}
-	}
+//	public void getUser() {
+//		PreparedStatement pstmt = null;
+//		ResultSet rs = null;
+//		String sql = "select * from aptuser";
+//
+//		try {
+//			pstmt = con.prepareStatement(sql);
+//			rs = pstmt.executeQuery();
+//
+//			choice.removeAll();
+//
+//			ResultSetMetaData meta = rs.getMetaData();
+//			for (int i = 1; i <= meta.getColumnCount(); i++) {
+//				choice.add(meta.getColumnName(i));
+//			}
+//
+//			while (rs.next()) {
+//				Aptuser dto = new Aptuser();
+//				dto.setAptuser_code(rs.getString("aptuser_code"));
+//				dto.setAptuser_id(rs.getString("aptuser_id"));
+//				dto.setAptuser_ip(rs.getString("aptuser_ip"));
+//				dto.setAptuser_live(rs.getString("aptuser_live"));
+//				dto.setAptuser_name(rs.getString("aptuser_name"));
+//				dto.setAptuser_perm(rs.getString("aptuser_perm"));
+//				dto.setAptuser_phone(rs.getString("aptuser_phone"));
+//				dto.setAptuser_pw(rs.getString("aptuser_pw"));
+//				dto.setAptuser_regdate(rs.getString("aptuser_regdate"));
+//				user.add(dto);
+//			}
+//		} catch (SQLException e) {
+//			e.printStackTrace();
+//		}
+//	}
 
 	public void getReturninv(String sql) {
 		PreparedStatement pstmt = null;

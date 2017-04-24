@@ -186,7 +186,7 @@ public class Admin_UserView extends JPanel implements ActionListener {
 				dto.setAptuser_ip(rs.getString("aptuser_ip"));
 				dto.setAptuser_live(rs.getString("aptuser_live"));
 				dto.setAptuser_name(rs.getString("aptuser_name"));
-				dto.setAptuser_perm(rs.getString("aptuser_perm"));
+				dto.setAptuser_perm(rs.getInt("aptuser_perm"));
 				dto.setAptuser_phone(rs.getString("aptuser_phone"));
 				dto.setAptuser_pw(rs.getString("aptuser_pw"));
 				dto.setAptuser_regdate(rs.getString("aptuser_regdate"));
