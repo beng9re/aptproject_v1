@@ -1,12 +1,13 @@
 package dto;
 
-public class InvoiceCategory {
+public class Invoice {
 	private String invoice_id;
 	private String invoice_arrtime;
-	private String invoice_code;
+	private String invoice_barcode;
 	private String invoice_takeflag;
 	private String invoice_taker;
 	private String invoice_taketime;
+	private String aptuser_id;
 	
 	public String getInvoice_id() {
 		return invoice_id;
@@ -20,11 +21,11 @@ public class InvoiceCategory {
 	public void setInvoice_arrtime(String invoice_arrtime) {
 		this.invoice_arrtime = invoice_arrtime;
 	}
-	public String getInvoice_code() {
-		return invoice_code;
+	public String getInvoice_barcode() {
+		return invoice_barcode;
 	}
-	public void setInvoice_code(String invoice_code) {
-		this.invoice_code = invoice_code;
+	public void setInvoice_barcode(String invoice_code) {
+		this.invoice_barcode = invoice_code;
 	}
 	public String getInvoice_takeflag() {
 		return invoice_takeflag;
@@ -44,4 +45,11 @@ public class InvoiceCategory {
 	public void setInvoice_taketime(String invoice_taketime) {
 		this.invoice_taketime = invoice_taketime;
 	}
+	public String getAptuser_id() {
+		return aptuser_id;
+	}
+	public void setAptuser_id(String aptuser_id) {
+		this.aptuser_id = aptuser_id;
+	}
+	
 }

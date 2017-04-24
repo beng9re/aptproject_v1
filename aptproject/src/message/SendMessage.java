@@ -33,7 +33,7 @@ import javax.swing.border.Border;
 import javax.swing.table.TableRowSorter;
 
 import db.DBManager;
-import tree.TreeMain;
+import main.TreeMain;
 
 public class SendMessage extends JFrame implements ActionListener{
 	
@@ -57,7 +57,7 @@ public class SendMessage extends JFrame implements ActionListener{
 	public SendMessage(TreeMain treeMain) {
 		
 		this.treeMain = treeMain;
-		this.con = treeMain.con;
+		this.con = treeMain.getConnection();
 		this.tree = treeMain.getTree();
 		
 		p_north = new JPanel();

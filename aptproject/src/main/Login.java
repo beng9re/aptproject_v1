@@ -139,7 +139,8 @@ public class Login extends JFrame implements ActionListener {
 	}
 
 	private void goMain() {
-		new Main(dbMgr, txf_id.getText());
+//		new Main(dbMgr, txf_id.getText());
+		new TreeMain(dbMgr, txf_id.getText());
 		dispose();
 	}
 

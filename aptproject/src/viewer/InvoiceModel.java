@@ -60,7 +60,6 @@ public class InvoiceModel extends AbstractTableModel {
 
 	
 	public Object getValueAt(int row, int col) {
-
 		return data.elementAt(row).elementAt(col);
 	}
 

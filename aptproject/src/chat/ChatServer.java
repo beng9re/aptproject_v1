@@ -34,6 +34,7 @@ public class ChatServer extends Thread {
 			try {
 				socket = server.accept();
 				System.out.println("접속자 확인");
+				// 같은소켓으로 관리자가 사용할 클라이언트도 하나 생성한다
 				ChatServerThread thread = new ChatServerThread(socket);
 			} catch (IOException e) {
 				e.printStackTrace();

@@ -33,14 +33,17 @@ import javax.swing.JScrollPane;
 import javax.swing.JTable;
 import javax.swing.JTextField;
 import javax.swing.border.EtchedBorder;
+import javax.swing.table.JTableHeader;
+import javax.swing.table.TableRowSorter;
 
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.hssf.util.HSSFColor.PINK;
 
 import db.DBManager;
 import dto.Aptuser;
-import dto.InvoiceCategory;
+import dto.Invoice;
 import dto.Returninv;
 
 public class Admin_InvoiceView extends JPanel implements ActionListener {
@@ -67,8 +70,10 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 	FileOutputStream fos;
 
 	Vector<Aptuser> user = new Vector<Aptuser>();
-	Vector<InvoiceCategory> invoice = new Vector<InvoiceCategory>();
+	Vector<Invoice> invoice = new Vector<Invoice>();
 	Vector<Returninv> returninv = new Vector<Returninv>();
+
+	Boolean boxflag;
 
 	public Admin_InvoiceView() {
 		chooser = new JFileChooser();
@@ -139,13 +144,14 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 
 			public void mouseClicked(MouseEvent e) {
 				int row = table.getSelectedRow();
+			
 				if (rb_invoice.isSelected()) {
 					String name = JOptionPane.showInputDialog("수령인의 성함을 기입해 주세요");
 					if (name != null) {
-						invoiceModel.setValueAt(name, row, 4);
+						invoiceModel.setValueAt(name, row, 3);
 						tableChanged(row);
 					}
-				}
+				}		
 			}
 		});
 
@@ -184,40 +190,6 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 		this.con = manager.getConnection();
 	}
 
-//	public void getUser() {
-//		PreparedStatement pstmt = null;
-//		ResultSet rs = null;
-//		String sql = "select * from aptuser";
-//
-//		try {
-//			pstmt = con.prepareStatement(sql);
-//			rs = pstmt.executeQuery();
-//
-//			choice.removeAll();
-//
-//			ResultSetMetaData meta = rs.getMetaData();
-//			for (int i = 1; i <= meta.getColumnCount(); i++) {
-//				choice.add(meta.getColumnName(i));
-//			}
-//
-//			while (rs.next()) {
-//				Aptuser dto = new Aptuser();
-//				dto.setAptuser_code(rs.getString("aptuser_code"));
-//				dto.setAptuser_id(rs.getString("aptuser_id"));
-//				dto.setAptuser_ip(rs.getString("aptuser_ip"));
-//				dto.setAptuser_live(rs.getString("aptuser_live"));
-//				dto.setAptuser_name(rs.getString("aptuser_name"));
-//				dto.setAptuser_perm(rs.getString("aptuser_perm"));
-//				dto.setAptuser_phone(rs.getString("aptuser_phone"));
-//				dto.setAptuser_pw(rs.getString("aptuser_pw"));
-//				dto.setAptuser_regdate(rs.getString("aptuser_regdate"));
-//				user.add(dto);
-//			}
-//		} catch (SQLException e) {
-//			e.printStackTrace();
-//		}
-//	}
-
 	public void getReturninv(String sql) {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -234,14 +206,15 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 			}
 			while (rs.next()) {
 				Returninv dto = new Returninv();
-				dto.setReturninv_arr(rs.getString("retruninv_arr"));
-				dto.setReturninv_barcode(rs.getString("retruninv_barcode"));
-				dto.setReturninv_commennt(rs.getString("retruninv_comment"));
-				dto.setReturninv_date(rs.getString("retruninv_date"));
-				dto.setReturninv_dep(rs.getString("retruninv_dep"));
-				dto.setReturninv_id(rs.getString("retruninv_id"));
-				dto.setReturninv_time(rs.getString("retruninv_time"));
+				dto.setReturninv_arr(rs.getString("반송ID"));
+				dto.setReturninv_barcode(rs.getString("등록시간"));
+				dto.setReturninv_commennt(rs.getString("반송날짜"));
+				dto.setReturninv_date(rs.getString("메모"));
+				dto.setReturninv_dep(rs.getString("입고시간"));
+				dto.setReturninv_id(rs.getString("출고시간"));
+				dto.setReturninv_time(rs.getString("반송바코드"));
 				returninv.add(dto);
+
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -264,14 +237,16 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 			}
 
 			while (rs.next()) {
-				InvoiceCategory dto = new InvoiceCategory();
-				dto.setInvoice_arrtime(rs.getString("invoice_arrtime"));
-				dto.setInvoice_code(rs.getString("invoice_code"));
-				dto.setInvoice_id(rs.getString("invoice_id"));
-				dto.setInvoice_takeflag(rs.getString("invoice_takeflag"));
-				dto.setInvoice_taker(rs.getString("invoice_taker"));
-				dto.setInvoice_taketime(rs.getString("invoice_taketime"));
+				Invoice dto = new Invoice();
+				dto.setInvoice_barcode(rs.getString("송장바코드"));
+				dto.setInvoice_id(rs.getString("송장ID"));
+				dto.setInvoice_arrtime(rs.getString("등록시간"));
+				dto.setInvoice_takeflag(rs.getString("수령여부"));
+				dto.setInvoice_taker(rs.getString("수령인"));
+				dto.setInvoice_taketime(rs.getString("수령시간"));
+				dto.setAptuser_id(rs.getString("회원ID"));
 				invoice.add(dto);
+
 			}
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -292,17 +267,63 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 			table.setModel(invoiceModel = new InvoiceModel(con, sql));
 			table.updateUI();
 		}
-
+		table.setRowSorter(new TableRowSorter(invoiceModel));
+		JTableHeader header = table.getTableHeader();
+		header.setBackground(Color.PINK);
 	}
 
 	public void selectTable() {
 		String msg = t_input.getText();
 		String data = choice.getSelectedItem();
-		String sql = "select * from " + tableName + " where " + data + "= '" + msg + "' ";
-		if (rb_allInvoice.isSelected()) {
-			invoiceModel.getList(sql);
-		} else if (rb_invoice.isSelected()) {
-			invoiceModel.getList(sql);
+		String option = null;
+
+		if (boxflag == true) {
+			if (data.equals("송장ID")) {
+				option = "invoice_id";
+			} else if (data.equals("송장바코드")) {
+				option = "invoice_barcode";
+			} else if (data.equals("등록시간")) {
+				option = "invoice_arrtime";
+			} else if (data.equals("수령인")) {
+				option = "invoice_taker";
+			} else if (data.equals("수령시간")) {
+				option = "invoice_taketime";
+			} else if (data.equals("수령여부")) {
+				option = "invoice_takeflag";
+			} else if (data.equals("회원ID")) {
+				option = "aptuser_id";
+			}
+			String sql = "select invoice_id as 송장ID, invoice_barcode as 송장바코드, invoice_arrtime as 등록시간, invoice_taker as 수령인, invoice_taketime as 수령시간, invoice_takeflag as 수령여부, aptuser_id as 회원ID from "
+					+ tableName + " where " + option + "= '" + msg + "' order by invoice_arrtime desc";
+			if (rb_allInvoice.isSelected()) {
+				invoiceModel.getList(sql);
+			} else if (rb_invoice.isSelected()) {
+				invoiceModel.getList(sql);
+			}
+		}
+		else if (boxflag == false) {
+			if (data.equals("반송ID")) {
+				option = "returninv_id";
+			} else if (data.equals("등록시간")) {
+				option = "returninv_time";
+			} else if (data.equals("반송날짜")) {
+				option = "returninv_date";
+			} else if (data.equals("메모")) {
+				option = "returninv_comment";
+			} else if (data.equals("입고시간")) {
+				option = "returninv_arr";
+			} else if (data.equals("출고시간")) {
+				option = "returninv_dep";
+			} else if (data.equals("반송바코드")) {
+				option = "returninv_barcode";
+			}
+			String sql = "select returninv_id as 반송ID,returninv_time 등록시간, returninv_date 반송날짜,returninv_comment 메모, returninv_arr 입고시간, returninv_dep 출고시간, returninv_barcode 반송바코드    from "
+					+ tableName + " where " + option + "= '" + msg + "' order by returninv_arr desc";
+			if (rb_allInvoice.isSelected()) {
+				invoiceModel.getList(sql);
+			} else if (rb_invoice.isSelected()) {
+				invoiceModel.getList(sql);
+			}
 		}
 		table.updateUI();
 	}
@@ -314,37 +335,40 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 		} else if (obj == bt_xls) {
 			createExcel();
 		} else if (obj == rb_allInvoice) {
+			boxflag = true;
 			tableName = "invoice";
-			String sql = "select * from invoice";
+			String sql = "select invoice_id as 송장ID, invoice_barcode as 송장바코드, invoice_arrtime as 등록시간, invoice_taker as 수령인, invoice_taketime as 수령시간, invoice_takeflag as 수령여부, aptuser_id as 회원ID from invoice order by invoice_arrtime desc";
 			getInvoice(sql);
 			getList(sql);
 		} else if (obj == rb_invoice) {
+			boxflag = true;
 			tableName = "invoice";
-			String sql = "select * from invoice where invoice_takeflag is null or invoice_takeflag='N'";
+			String sql = "select invoice_id as 송장ID, invoice_barcode as 송장바코드, invoice_arrtime as 등록시간, invoice_taker as 수령인, invoice_taketime as 수령시간, invoice_takeflag as 수령여부, aptuser_id as 회원ID from invoice where invoice_takeflag is null or invoice_takeflag='N' order by invoice_arrtime desc";
+			getInvoice(sql);
 			getList(sql);
 		} else if (obj == rb_breturn) {
+			boxflag = false;
 			tableName = "returninv";
-			String sql = "select * from returninv";
+			String sql = "select returninv_id as 반송ID,returninv_time 등록시간, returninv_date 반송날짜,returninv_comment 메모, returninv_arr 입고시간, returninv_dep 출고시간, returninv_barcode 반송바코드    from returninv order by returninv_arr desc";
+			getReturninv(sql);
+			getList(sql);
+		} else if (obj == rb_areturn) {
+			boxflag = false;
+			tableName = "returninv";
+			String sql = "select returninv_id as 반송ID,returninv_time 등록시간, returninv_date 반송날짜,returninv_comment 메모, returninv_arr 입고시간 , returninv_dep 출고시간, returninv_barcode 반송바코드    from returninv where returninv_dep is not null order by returninv_arr desc";
 			getReturninv(sql);
 			getList(sql);
 		}
-		else if (obj == rb_areturn) {
-			tableName = "returninv";
-			String sql = "select * from returninv";
-			getReturninv(sql);
-			getList(sql);
-		}
+		
 	}
 
 	public void tableChanged(int row) {
 		PreparedStatement pstmt = null;
-		int col = 4;
+		int col = 3;
 		String value = (String) table.getValueAt(row, col);
-		String column = invoiceModel.columnName.elementAt(col);
-		String date_col = invoiceModel.columnName.elementAt(5);
-
-		String sql = "update " + tableName + " set " + column + "=" + "'" + value + "'," + date_col
-				+ "= sysdate, invoice_takeflag='Y'";
+		
+		
+		String sql = "update " + tableName + " set invoice_taker =" + "'" + value + "', invoice_taketime= sysdate, invoice_takeflag='Y'";
 		sql += " where invoice_id=" + table.getValueAt(row, 0);
 
 		System.out.println(sql);
@@ -352,19 +376,19 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 			pstmt = con.prepareStatement(sql);
 			int result = pstmt.executeUpdate();
 
-			String re = "select * from invoice where invoice_takeflag is null or invoice_takeflag='N'";
+			String re = "select * from "+tableName;
 			invoiceModel.getList(re);
-			String a = (String) invoiceModel.getValueAt(row, 5);
-			table.setValueAt(a, row, 5);
+			String a = (String) invoiceModel.getValueAt(row, 4);
+			table.setValueAt(a, row, 4);
 
 			if (result != 0) {
 				JOptionPane.showConfirmDialog(this, "업데이트 완료");
 
 				table.updateUI();
 			}
-			System.out.println(sql);
+	
 		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
+
 			e1.printStackTrace();
 		} finally {
 			if (pstmt != null) {
