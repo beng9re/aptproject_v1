@@ -32,11 +32,11 @@ public class Login extends JFrame implements ActionListener {
 	private JTextField txf_id;
 	private JPasswordField txf_pw;
 	private JButton btn_login, btn_barcode;
-	
+
 	private DBManager dbMgr = DBManager.getInstance();
 	private Connection conn;
 	private LoginModel model;
-	
+
 	public Login() {
 		pnl_top = new JPanel();
 		pnl_field = new JPanel();
@@ -47,26 +47,26 @@ public class Login extends JFrame implements ActionListener {
 		txf_pw = new JPasswordField(15);
 		btn_barcode = new JButton("바코드 로그인");
 		btn_login = new JButton("로그인");
-		
+
 		pnl_field.setLayout(new GridLayout(3, 2));
 		pnl_bot.setLayout(new FlowLayout(FlowLayout.RIGHT));
-		
-		//패널, 프레임에 추가
+
+		// 패널, 프레임에 추가
 		pnl_field.add(lb_id);
 		pnl_field.add(txf_id);
 		pnl_field.add(Box.createVerticalStrut(10));
 		pnl_field.add(Box.createVerticalStrut(10));
 		pnl_field.add(lb_pw);
 		pnl_field.add(txf_pw);
-		
+
 		pnl_top.add(pnl_field);
 		pnl_bot.add(btn_barcode);
 		pnl_bot.add(btn_login);
-		
+
 		add(pnl_top);
 		add(pnl_bot, BorderLayout.SOUTH);
-		
-		//style 관련 설정
+
+		// style 관련 설정
 		btn_barcode.setBackground(Color.LIGHT_GRAY);
 		btn_login.setBackground(Color.LIGHT_GRAY);
 		pnl_top.setBorder(BorderFactory.createEmptyBorder(20, 10, 5, 70));
@@ -74,14 +74,14 @@ public class Login extends JFrame implements ActionListener {
 		pnl_bot.setBorder(BorderFactory.createEmptyBorder(5, 10, 20, 40));
 		lb_id.setHorizontalAlignment(JLabel.CENTER);
 		lb_pw.setHorizontalAlignment(JLabel.CENTER);
-		
-		//리스너 연결
+
+		// 리스너 연결
 		btn_barcode.addActionListener(this);
 		btn_login.addActionListener(this);
 		txf_pw.addKeyListener(new KeyAdapter() {
 			@Override
 			public void keyPressed(KeyEvent e) {
-				if (e.getKeyCode()==KeyEvent.VK_ENTER) {
+				if (e.getKeyCode() == KeyEvent.VK_ENTER) {
 					login();
 				}
 			}
@@ -92,24 +92,24 @@ public class Login extends JFrame implements ActionListener {
 				exit();
 			}
 		});
-		
-		//프레임(윈도우) 설정
+
+		// 프레임(윈도우) 설정
 		setTitle("로그인");
-		setSize(300,200);
+		setSize(300, 200);
 		setLocationRelativeTo(null);
 		setResizable(false);
 		setVisible(true);
-		
+
 		connect();
 	}
-	
+
 	private void connect() {
 		conn = dbMgr.getConnection();
 		model = new LoginModel(conn);
 	}
-	
+
 	private void login() {
-		//DB에서 회원정보 조회해서 id pw 일치여부 확인 (admin//4321)
+		// DB에서 회원정보 조회해서 id pw 일치여부 확인 (admin//4321)
 		if (model.loginChk(txf_id.getText(), txf_pw.getPassword())) {
 			JOptionPane.showMessageDialog(this, "로그인 성공");
 			goMain();
@@ -117,7 +117,7 @@ public class Login extends JFrame implements ActionListener {
 			JOptionPane.showMessageDialog(this, "회원정보가 일치하지 않습니다");
 		}
 	}
-	
+
 	private void barcodeLogin() {
 		String barcode = JOptionPane.showInputDialog(this, "스캐너로 바코드를 읽어주세요");
 		if (model.barcodeChk(barcode)) {
@@ -127,26 +127,27 @@ public class Login extends JFrame implements ActionListener {
 			JOptionPane.showMessageDialog(this, "회원정보가 일치하지 않습니다");
 		}
 	}
-	
+
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		if (e.getSource() == btn_login) {
 			login();
-			
+
 		} else if (e.getSource() == btn_barcode) {
 			barcodeLogin();
 		}
 	}
-	
+
 	private void goMain() {
 		new Main(dbMgr, txf_id.getText());
+		dispose();
 	}
-	
-	public void exit() {
+
+	private void exit() {
 		dbMgr.disConnect(conn);
 		System.exit(0);
 	}
-	
+
 	public static void main(String[] args) {
 		new Login();
 	}

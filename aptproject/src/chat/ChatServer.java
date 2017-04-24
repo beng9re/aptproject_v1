@@ -15,19 +15,19 @@ public class ChatServer extends Thread {
 	Socket socket;
 	int port = 7777;
 	boolean flag = true;
-	
+
 	public ChatServer() {
 		try {
 			server = new ServerSocket(port);
 			System.out.println("서버생성");
 			start();
-			
+
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-		
+
 	}
-	
+
 	@Override
 	public void run() {
 		while (flag) {
@@ -40,10 +40,9 @@ public class ChatServer extends Thread {
 			}
 		}
 	}
-	
+
 	public static void main(String[] args) {
 		new ChatServer();
-		new ChatClient();
 	}
 
 }
