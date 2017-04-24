@@ -16,7 +16,7 @@ public class ListModel extends AbstractTableModel{
 
 	public ListModel(Connection con) {
 		this.con = con;
-		getList("select * from aptuser");
+		getList("select select aptuser_id 주민ID,aptuser_name 이름 ,aptuser_phone 전화번호, aptuser_regdate 등록날짜, aptuser_live 거주여부, aptuser_perm 먼대,unit_id 동호수  from aptuser from aptuser");
 	}
 
 	public void getList(String sql) {
