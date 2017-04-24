@@ -59,18 +59,18 @@ public class Main extends JFrame {
 		admin_invoice=new Admin_InvoiceView();
 		admin_user=new Admin_UserView();
 		user= new User();
-		
+	
 		menu = new Menu(this);
 		pnl_content = new JPanel();
 		pnl_content.setLayout(new CardLayout());
-		
+		ComplexPanel=new ComplexPanel();
 		//테스트 할 패널
 		////////////////////////////////////////////////////
-<<<<<<< HEAD
-		pnl_content.add(admin_user, "invE");
-=======
+//<<<<<<< HEAD
+		pnl_content.add(ComplexPanel, "invE");
+//=======
 		pnl_content.add(new ModifyUser(), "invE");
->>>>>>> 25faaeaef7a5b37e8bb4eca75c4fe0f7075b4683
+//>>>>>>> 25faaeaef7a5b37e8bb4eca75c4fe0f7075b4683
 //		pnl_content.add(new ComplexPanel(), "invE");
 		////////////////////////////////////////////////////
 		
