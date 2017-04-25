@@ -272,11 +272,7 @@ public class SendMessageList extends JFrame implements ActionListener , Runnable
 			msg_send_id = -1;
 		}
 		
-		// 제목, 내용 보여주기
-		showMessage();
 		
-		// 수신자 List
-		showRecvList();
 		
 	}
 	
@@ -323,9 +319,9 @@ public class SendMessageList extends JFrame implements ActionListener , Runnable
 		PreparedStatement pstmt=null;
 		ResultSet  rs=null;
 		StringBuffer sql=new StringBuffer();
-		int max_msg_send_id=-1;
-		int currSelRow=table.getSelectedRow();
-		int currSelMsgSendId=-1;
+		int max_msg_send_id=-1; // 최종 송신 메세지의 msg_send_id
+		int currSelRow=table.getSelectedRow(); // 현재 선택된 row
+		int currSelMsgSendId=-1; // 현재 선택된 msg_send_id
 		
 		// 최종 송신 메세지 id check
 		sql.append(" select nvl(max(s.msg_send_id),-1) max_msg_send_id \n");
@@ -371,14 +367,28 @@ public class SendMessageList extends JFrame implements ActionListener , Runnable
 		// 현재 table 에 조회되어 있는 경우는 중단
 		if (existFlag) return;
 		
-		//currMsgSendId = table.getValueAt(row, column)
+		// 현재 선택된 row 가 있는 경우, 해당 row 의 msg_send_id 값 체크
+		if (currSelRow!=-1){
+			currSelMsgSendId = (Integer)table.getValueAt(currSelRow, colIndexOfSendId);
+		}
+		
+		// 재조회
+		
 
 	}
 	
 	public void actionPerformed(ActionEvent e) {
 		Object obj = e.getSource();
 		if (obj==bt_search){
+			
+			// 송신 메세지 리스트 조회
 			search();
+			
+			// 제목, 내용 보여주기
+			showMessage();
+			
+			// 수신자 List
+			showRecvList();
 		}		
 	}
 
