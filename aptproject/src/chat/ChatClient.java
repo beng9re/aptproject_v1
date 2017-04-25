@@ -44,11 +44,20 @@ public class ChatClient extends JFrame {
 	TreeMain main;
 	String id;
 
+	// 상속을 위한 생성자
+	public ChatClient() {
+	}
+	
 	// 생성할 때 접속중인 회원의 id를 받아온다
 	public ChatClient(TreeMain main) {
 		this.main = main;
 		this.id = main.getUserID();
 		
+		// 초기생성
+		init();
+	}
+	
+	public void init() {
 		pnl_south = new JPanel();
 		pnl_chat = new JPanel();
 		txa = new JTextArea();
@@ -93,6 +102,16 @@ public class ChatClient extends JFrame {
 				send();
 			}
 		});
+		
+		// 연결관련 초기화 설정
+		// 연결기능 없이 화면만 사용할 서버측 클라이언트에서는 오버라이드
+		connect();
+		
+		// 프레임 관련 설정
+		initFrame();
+	}
+
+	public void connect() {
 		// 소켓연결, 쓰레드 종료를 위해 윈도우리스너 사용
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
@@ -104,17 +123,8 @@ public class ChatClient extends JFrame {
 			}
 		});
 
-		connect();
-
-		setTitle("대화");
-		setBounds(100, 100, 300, 400);
-		setResizable(false);
-		setVisible(true);
-	}
-
-	// 접속유형 (관리자 답변용, 회원 문의용)에 따라 소켓생성여부를 다르게하고
-	// 관리자를 위한 별도의 ChatClient를 생성한다(받아온 socket으로 생성함)
-	public void connect() {
+		// 접속유형 (관리자 답변용, 회원 문의용)에 따라 소켓생성여부를 다르게하고
+		// 관리자를 위한 별도의 ChatClient를 생성한다(받아온 socket으로 생성함)
 		try {
 			// aptuser테이블에 있는 관리자 ip를 얻어와서 접속한다
 			socket = new Socket(main.getSeverIP(), 7777);
@@ -123,10 +133,17 @@ public class ChatClient extends JFrame {
 			e.printStackTrace();
 		}
 	}
+	
+	public void initFrame() {
+		setBounds(100, 100, 300, 500);
+		setResizable(false);
+		setTitle("관리자와 대화");
+		setVisible(true);
+	}
 
 	public void send() {
 		thread.send("chat", txf_input.getText());
 		txf_input.setText("");
 	}
-
+	
 }

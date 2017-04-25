@@ -16,6 +16,7 @@ import java.awt.event.WindowEvent;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
+import java.sql.SQLException;
 
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -243,6 +244,7 @@ public class SendMessageList extends JFrame implements ActionListener , Runnable
 
 		tableList.updateUI();
 		
+		// 신규 송신 메세지 체크 thread
 		threadFlag=true;
 		thread = new Thread(this);
 		thread.start();
@@ -270,12 +272,15 @@ public class SendMessageList extends JFrame implements ActionListener , Runnable
 			msg_send_id = -1;
 		}
 		
+		// 제목, 내용 보여주기
 		showMessage();
 		
+		// 수신자 List
 		showRecvList();
 		
 	}
 	
+	// 제목, 내용 보여주기
 	public void showMessage(){
 		
 		int col;
@@ -301,6 +306,7 @@ public class SendMessageList extends JFrame implements ActionListener , Runnable
 		
 	}
 	
+	// 선택된 송신 메세지의 수신자 리스트 조회
 	public void showRecvList(){
 		int row=table.getSelectedRow();
 		if (row!=-1){
@@ -313,8 +319,60 @@ public class SendMessageList extends JFrame implements ActionListener , Runnable
 		tableList.updateUI();
 	}
 	
-	public void reSearch(){
+	public void checkNewSendMsg(){
+		PreparedStatement pstmt=null;
+		ResultSet  rs=null;
+		StringBuffer sql=new StringBuffer();
+		int max_msg_send_id=-1;
+		int currSelRow=table.getSelectedRow();
+		int currSelMsgSendId=-1;
 		
+		// 최종 송신 메세지 id check
+		sql.append(" select nvl(max(s.msg_send_id),-1) max_msg_send_id \n");
+		sql.append(" from   send_message s \n");
+		sql.append(" where s.msg_send_user_id = ? \n");		
+		try {
+			pstmt=con.prepareStatement(sql.toString());
+			pstmt.setString(1, userId);
+			rs = pstmt.executeQuery();
+			if (rs.next()){
+				max_msg_send_id = rs.getInt("max_msg_send_id");
+			}
+		} catch (SQLException e) {
+			e.printStackTrace();
+		} finally {
+			if (rs!=null)
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			if (pstmt!=null)
+				try {
+					pstmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+		}
+		
+		// 최종 메세지가 없는 경우(데이터가 없는 경우) 진행 중단
+		if (max_msg_send_id==-1) return;
+		
+		// 최종 메세지가 현재 조회된 table 에 존재하는치 체크
+		boolean existFlag=false;
+		for (int i=0; i<table.getRowCount(); i++){
+			int msg_send_id = (Integer)table.getValueAt(i, colIndexOfSendId);
+			if (msg_send_id==max_msg_send_id){
+				existFlag=true;
+				break;
+			}
+		}
+		
+		// 현재 table 에 조회되어 있는 경우는 중단
+		if (existFlag) return;
+		
+		//currMsgSendId = table.getValueAt(row, column)
+
 	}
 	
 	public void actionPerformed(ActionEvent e) {
@@ -325,7 +383,9 @@ public class SendMessageList extends JFrame implements ActionListener , Runnable
 	}
 
 	public void run() {
-		
+		while (threadFlag){
+			
+		}
 	}
 	
 

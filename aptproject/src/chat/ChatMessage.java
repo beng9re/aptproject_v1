@@ -3,6 +3,7 @@ package chat;
 import java.awt.Color;
 import java.awt.Dimension;
 
+import javax.swing.Box;
 import javax.swing.BoxLayout;
 import javax.swing.JComponent;
 import javax.swing.JLabel;
@@ -11,25 +12,34 @@ import javax.swing.JTextArea;
 
 public class ChatMessage extends JPanel {
 	ChatClient client;
+	JPanel pnl_id, pnl_content;
 	JLabel user_id;
 	JTextArea content;
-	float alignf;
 
-	public ChatMessage(ChatClient client, String msg, boolean isEcho) {
+	public ChatMessage(ChatClient client, String id, String msg, boolean isEcho) {
 		this.client = client;
-		user_id = new JLabel(client.id);
+		pnl_id = new JPanel();
+		pnl_content = new JPanel();
+		user_id = new JLabel(id);
 		content = new JTextArea(msg);
 		
+		pnl_id.setLayout(new BoxLayout(pnl_id, BoxLayout.X_AXIS));
+		pnl_content.setLayout(new BoxLayout(pnl_content, BoxLayout.X_AXIS));
+		setLayout(new BoxLayout(this, BoxLayout.PAGE_AXIS));
+		
 		if (!isEcho) {
-			alignf = JComponent.LEFT_ALIGNMENT;
+			pnl_id.add(user_id);
+			pnl_id.add(Box.createHorizontalGlue());
+			pnl_content.add(content);
+			pnl_content.add(Box.createHorizontalGlue());
+			
 		} else if (isEcho) {
-			alignf = JComponent.RIGHT_ALIGNMENT;
+			pnl_id.add(Box.createHorizontalGlue());
+			pnl_id.add(user_id);
+			pnl_content.add(Box.createHorizontalGlue());
+			pnl_content.add(content);
 			content.setBackground(Color.YELLOW);
 		}
-
-		setLayout(new BoxLayout(this, BoxLayout.Y_AXIS));
-		user_id.setAlignmentX(alignf);
-		content.setAlignmentX(alignf);
 
 		// 글자수에 따라 크기 다르게
 		int height = (int) ((Math.ceil(msg.getBytes().length / 28) + 1) * 20);
@@ -38,8 +48,8 @@ public class ChatMessage extends JPanel {
 		content.setEditable(false);
 		content.setLineWrap(true);
 
-		add(user_id);
-		add(content);
+		add(pnl_id);
+		add(pnl_content);
 	}
 
 }
