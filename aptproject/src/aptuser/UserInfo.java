@@ -10,7 +10,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.sql.Connection;
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -30,7 +29,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.JTextComponent;
 
 import db.AptuserModelByID;
-import db.DBManager;
 import dto.Aptuser;
 
 public abstract class UserInfo extends JPanel implements ActionListener {
