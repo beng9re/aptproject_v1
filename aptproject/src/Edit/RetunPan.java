@@ -148,7 +148,7 @@ public class RetunPan extends JPanel implements ActionListener{
 		/////////////////////////////////////////////////////////////////////////////
 		//이벤트 구현부분///////////////////////////////////////////////////////////
 		
-		
+		tf_id.addMouseListener(invoiceClick);
 		tf_takeTime.addMouseListener(TakerClick);
 		bt_regist.addActionListener(this);
 		bt_reset.addActionListener(this);
@@ -180,6 +180,11 @@ public class RetunPan extends JPanel implements ActionListener{
 		
 		
 	}
+	MouseListener invoiceClick=new MouseAdapter() {
+		public void mouseClicked(java.awt.event.MouseEvent e) {
+			new PopUpTable(con, "admin");
+		};
+	};
 	
 	MouseListener TakerClick =new MouseAdapter() {
 		public void mouseClicked(java.awt.event.MouseEvent e) {
