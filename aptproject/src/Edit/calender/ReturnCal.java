@@ -159,7 +159,5 @@ public ReturnCal(RetunPan rp) {
 	 }
  }
  
-	public static void main(String[] args) {
-		new ReturnCal(new RetunPan());
-	}
+	
 }

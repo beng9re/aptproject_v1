@@ -33,6 +33,8 @@ public class Postbox extends JPanel implements MouseListener{
 	String name;
 	Connection con;
 	Vector vec=new Vector();
+	PostInfo pi;
+	Vector<PostInfo> ps=new Vector<>();
 	//º¤ÅÍÀÇ °ª
 	 
 	/*
@@ -99,6 +101,9 @@ public class Postbox extends JPanel implements MouseListener{
 	}
 	
 	
+
+	
+	
 	
 	@Override
 	protected void paintComponent(Graphics g) {
@@ -106,7 +111,16 @@ public class Postbox extends JPanel implements MouseListener{
 	}
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		System.out.println(vec.get(0));
+		
+		for (int i = 0; i < ps.size(); i++) {
+			if(this.pi==ps.get(i)){
+				
+			}
+			
+		}
+		new PostInfo(vec);
+	
+	
 		
 	}
 	@Override
