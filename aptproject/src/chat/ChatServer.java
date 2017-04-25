@@ -16,9 +16,9 @@ import javax.swing.JPanel;
 
 import main.TreeMain;
 
-public class ChatServer extends JPanel implements Runnable {
+public class ChatServer extends JPanel {
 	private TreeMain main;
-	private Thread thread;
+	private Thread mainThread;
 	private ServerSocket server;
 	private Socket socket;
 	private int port = 7777;
@@ -26,7 +26,6 @@ public class ChatServer extends JPanel implements Runnable {
 
 	public ChatServer(TreeMain main) {
 		this.main = main;
-		thread = new Thread();
 		
 		setBackground(Color.GRAY);
 		setPreferredSize(new Dimension(700, 700));
@@ -39,7 +38,26 @@ public class ChatServer extends JPanel implements Runnable {
 		try {
 			server = new ServerSocket(port);
 			System.out.println("서버생성");
-			thread.start();
+			
+			// thread가 두 개 존재하여 인터페이스로 구현하면 작동안하므로 내부익명으로
+			mainThread = new Thread() {
+				@Override
+				public void run() {
+					while (flag) {
+						try {
+							System.out.println("접속대기");
+							socket = server.accept();
+							System.out.println("접속자 확인");
+							ServerSideChatClient serverChat = new ServerSideChatClient();
+							ChatServerThread thread = new ChatServerThread(socket, serverChat);
+							
+						} catch (IOException e) {
+							e.printStackTrace();
+						}
+					}
+				}
+			};
+			mainThread.start();
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -47,22 +65,11 @@ public class ChatServer extends JPanel implements Runnable {
 	}
 	
 	public void close()	{
+		// 접속자를 받는 thread를 닫는다
 		flag = false;
+		
+		//소켓을 전부 반환받는다
+		
 	}
 
-	@Override
-	public void run() {
-		while (flag) {
-			try {
-				socket = server.accept();
-				System.out.println("접속자 확인");
-				ServerSideChatClient serverChat = new ServerSideChatClient();
-				ChatServerThread thread = new ChatServerThread(socket, serverChat);
-				
-			} catch (IOException e) {
-				e.printStackTrace();
-			}
-		}
-	}
-	
 }

@@ -10,15 +10,21 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseListener;
+import java.awt.geom.Area;
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
 import Edit.calender.ReturnCal;
+import db.DBManager;
 
 
 
@@ -34,10 +40,6 @@ public class RetunPan extends JPanel implements ActionListener{
 	JTextField tf_id,tf_code;
 
 	public JTextField tf_takeTime;
-
-	JTextField tf_re;
-	
-	//날짜는 달력으로 할지 고민중
 	
 	JTextArea rple;
 	
@@ -56,11 +58,10 @@ public class RetunPan extends JPanel implements ActionListener{
 	
 	
 	String date;
-	/**
-	 * 
-	 */
-	public RetunPan() {
-		
+	
+	Connection con;
+	public RetunPan(Connection con) {
+		this.con=con;
 		
 		gbl=new GridBagLayout();
 		gdc=new GridBagConstraints();
@@ -99,9 +100,8 @@ public class RetunPan extends JPanel implements ActionListener{
 		tf_code.setPreferredSize(new Dimension(20,30));
 
 		tf_takeTime.setPreferredSize(new Dimension(20,30));
-		
-		tf_re=new JTextField(20);
-		tf_re.setPreferredSize(new Dimension(20,100));
+		tf_takeTime.setEditable(false);
+	
 		
 		
 		bt_regist=new JButton("입력");
@@ -150,6 +150,8 @@ public class RetunPan extends JPanel implements ActionListener{
 		
 		
 		tf_takeTime.addMouseListener(TakerClick);
+		bt_regist.addActionListener(this);
+		bt_reset.addActionListener(this);
 		
 		//////////////////////////////////////////////////////////////////
 		
@@ -161,6 +163,7 @@ public class RetunPan extends JPanel implements ActionListener{
 	
 		
 		setSize(700,700);
+		System.out.println(this.getLocale());
 	}
 	public void print(){
 
@@ -190,12 +193,83 @@ public class RetunPan extends JPanel implements ActionListener{
 		};
 	};
 	
+	public void regist(){
+		System.out.println("등록");
+		PreparedStatement pstmt=null;
+		
+		
+		StringBuffer sql=new StringBuffer();
+		sql.append("INSERT INTO RETURNINV ");
+		sql.append("(RETURNINV_ID,RETURNINV_DATE, RETURNINV_COMMENT, RETURNINV_BARCODE, INVOICEINV_ID)");
+		sql.append(" values (seq_RETURNINV.nextval,?,?,?,?)");
+		
+		try {
+			pstmt=con.prepareStatement(sql.toString());
+			pstmt.setString(1,tf_takeTime.getText());
+			pstmt.setString(2,rple.getText());
+			int code=0;
+			try {
+				code = Integer.parseInt(tf_code.getText());
+			} catch (NumberFormatException e) {
+				JOptionPane.showMessageDialog(this, "바코드에  숫자를 입력해주세요!");
+				tf_code.setText(null);
+				tf_code.requestFocus();
+			}
+			pstmt.setInt(3, code);
+			
+			pstmt.setInt(4,Integer.parseInt(tf_id.getText()));
+			int reset=pstmt.executeUpdate();
+			if(reset==1){
+				System.out.println("등록성공");
+			}
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally{
+			try {
+				if(pstmt!=null)pstmt.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+	
+		
+	
+		
+		
+		
+		
+		//INSERT INTO RETURNINV 
+		//(RETURNINV_ID,  RETURNINV_DATE, RETURNINV_COMMENT,   RETURNINV_BARCODE, INVOICEINV_ID)
+		
+		
+	}
+	
+	public void reset(){
+	
+		System.out.println("초기화");
+		tf_id.setText(null);
+		tf_code.setText(null);
+	
+		tf_takeTime.setText("  클릭해주세요");
+		
+		
+		
+		
+	}
 	
 	
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
-		// TODO Auto-generated method stub
+		Object obj=e.getSource();
+		if(obj==bt_regist){
+			regist();
+		}else if(obj==bt_reset){
+			reset();
+		}
+		
 		
 	}
 	
