@@ -172,9 +172,9 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		serverIP = ((Aptuser)aptuser.getData().get(0)).getAptuser_ip();
 
 		// 서버관리자(admin)인 경우 Chat Server 생성
-		if (userID.equalsIgnoreCase("admin")){
-			chatServer=  new ChatServer(this);
-		}
+		//if (userID.equalsIgnoreCase("admin")){
+		//	chatServer=  new ChatServer(this);
+		//}
 		/* --------------- Chat 관련 End -------------------------------------- */
 		
 		System.out.println("adminFlag="+adminFlag);
@@ -233,7 +233,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		sql.append(" from   menulist m \n");
 		sql.append(" where  m.menu_level = 1 \n");
 		sql.append(" order by m.order_seq \n");
-		//System.out.println("sql : "+sql.toString());
+		System.out.println("sql : "+sql.toString());
 		
 		// 하위 메뉴
 		StringBuffer  sqlSub=new StringBuffer();
@@ -244,12 +244,11 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		sqlSub.append(" from   menulist m \n");
 		sqlSub.append(" where m.menu_up_level_id = ? \n" );
 		sqlSub.append(" order by m.order_seq \n");
-		//System.out.println("sqlSub : "+sqlSub.toString());
+		System.out.println("sqlSub : "+sqlSub.toString());
 		
 		try {
 			pstmt = con.prepareStatement(sql.toString());
 			rs = pstmt.executeQuery();
-			//System.out.println("rs = "+rs);
 			
 			// Menu 생성
 			while (rs.next()){
@@ -403,12 +402,6 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		// Title 초기화
 		this.setTitle("");
 		
-		// 등록된 Panel 모두  Visible=false
-		for (int i=0; i<panelList.size(); i++){
-			panelList.get(i).setVisible(false);
-			//System.out.println(i+" : visible false");
-		}
-		
 		// 선택된 메뉴 node check
 		DefaultMutableTreeNode  node = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
 		
@@ -522,6 +515,12 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	// Panel menu open
 	public void panelOpen(String className, String menuName){		
 		
+		// 등록된 Panel 모두  Visible=false
+		for (int i=0; i<panelList.size(); i++){
+			panelList.get(i).setVisible(false);
+			//System.out.println(i+" : visible false");
+		}
+		
 		// p_center 재정비
 		setTitle("");
 		p_center.updateUI();
@@ -573,6 +572,10 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	    		// 동호수 등록
 	    		ComplexPanel complexPanel = new ComplexPanel();
 	    		curPanel = complexPanel;	
+	    	} else if (className.equalsIgnoreCase("ChatServer")){
+	    		// 채팅(서버)
+	    		ChatServer chatSrv = new ChatServer(this);
+	    		curPanel = chatSrv;	
 	    	} else {
 	    		//System.out.println("menu 없음.");
 	    		curPanel=null;
