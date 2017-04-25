@@ -38,6 +38,7 @@ import db.AptuserModelByID;
 import db.DBManager;
 import dto.Aptuser;
 import dto.MenuDto;
+import message.MessageInsertThread;
 import message.RecieveMessage;
 import message.SendMessage;
 import message.SendMessageList;
@@ -185,6 +186,9 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		
 		// Tree 구성 작업
 		makeTree();
+		
+		//MessageInsertThread msgThread = new MessageInsertThread(this);
+		//msgThread.start();
 	}
 	
 	// get Connection 
@@ -200,6 +204,10 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	// get ServrIP
 	public String getSeverIP() {
 		return serverIP;
+	}
+	
+	public boolean getAdminFlag(){
+		return adminFlag;
 	}
 	
 	// 프로그램 종료를 위한 메서드
