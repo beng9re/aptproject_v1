@@ -115,6 +115,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		// la_welcom text Bold, 가운데 정렬
 		la_welcom.setFont(new Font("Default", Font.BOLD, 15));
 		la_welcom.setHorizontalAlignment(JLabel.CENTER);
+		la_welcom.setForeground(Color.BLUE);
 		
 		p_west_center.setLayout(new BorderLayout());
 		p_west_center.add(scroll);
@@ -137,7 +138,6 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		bt_exit.addActionListener(this);
 		// 프로그램 종료를 위한 윈도우 리스너
 		this.addWindowListener(new WindowAdapter() {
-			@Override
 			public void windowClosing(WindowEvent e) {
 				close();
 			}
@@ -154,6 +154,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	}
 	
 	public void init(){
+		/* --------------- Chat 관련 Start -------------------------------------- */
 		// aptuser테이블에서 데이터를 갖고오는 모델을 생성한다
 		AptuserModelByID aptuser = new AptuserModelByID(con, userID);
 		userList = aptuser.getData();
@@ -165,40 +166,59 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		if (userList.get(0).getAptuser_perm()==9){
 			adminFlag = true;
 		}
-		la_welcom.setText(userName+" 님 환영합니다");
 	
 		// 관리자 IP를 가지고 온다 (채팅 클라이언트에서 서버에 접속할 때 사용)
 		aptuser.selectData("admin");
 		serverIP = ((Aptuser)aptuser.getData().get(0)).getAptuser_ip();
-
+<<<<<<< HEAD
+		
+		aptuser.selectData(userID);
+		
 		// Tree 구성 작업
 		makeTree();
+=======
+		System.out.println("serverIP = "+serverIP);
+>>>>>>> cde0a4764f076d126979fd63f9ba168a81602b3b
 
 		// 서버관리자(admin)인 경우 Chat Server 생성
-		if (userID.equalsIgnoreCase("admin")){
-			chatServer=  new ChatServer(this);
-		}
+		//if (userID.equalsIgnoreCase("admin")){
+		//	chatServer=  new ChatServer(this);
+		//}
+		/* --------------- Chat 관련 End -------------------------------------- */
 		
+		System.out.println("adminFlag="+adminFlag);
+		la_welcom.setText(userName+" 님 환영합니다");
+		
+		// Tree 구성 작업
+		makeTree();
 	}
 	
+	// get Connection 
 	public Connection getConnection(){
 		return con;
 	}
 	
+	// get UserId
 	public String getUserID(){
 		return userID;
 	}
 	
+	// get ServrIP
 	public String getSeverIP() {
 		return serverIP;
 	}
 	
 	// 프로그램 종료를 위한 메서드
 	public void close(){
+		// 채팅 Server 종료
 		if (chatServer!=null) {
 			chatServer.close(); 
 		}
+		
+		// Connection 종료
 		instance.disConnect(con);
+		
+		// Window Close
 		System.exit(0);
 	}
 
@@ -222,7 +242,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		sql.append(" from   menulist m \n");
 		sql.append(" where  m.menu_level = 1 \n");
 		sql.append(" order by m.order_seq \n");
-		//System.out.println("sql : "+sql.toString());
+		System.out.println("sql : "+sql.toString());
 		
 		// 하위 메뉴
 		StringBuffer  sqlSub=new StringBuffer();
@@ -233,12 +253,11 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		sqlSub.append(" from   menulist m \n");
 		sqlSub.append(" where m.menu_up_level_id = ? \n" );
 		sqlSub.append(" order by m.order_seq \n");
-		//System.out.println("sqlSub : "+sqlSub.toString());
+		System.out.println("sqlSub : "+sqlSub.toString());
 		
 		try {
 			pstmt = con.prepareStatement(sql.toString());
 			rs = pstmt.executeQuery();
-			//System.out.println("rs = "+rs);
 			
 			// Menu 생성
 			while (rs.next()){
@@ -260,7 +279,8 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 				menuDto.setUser_role_flag(rs.getString("user_role_flag"));
 				menuDto.setMenu_use_flag(rs.getString("menu_use_flag"));		
 				
-				// Admin 유저이고 admin 권한 화면인 경우, 또는 admin 유저가 아니고, 유저 권한이 있는 화면 인 경우. 메뉴 추가
+				// Admin 유저이고 admin 권한 화면인 경우, 
+				// 또는 admin 유저가 아니고, 유저 권한이 있는 화면 인 경우. 메뉴 추가
 				if ((adminFlag==true && rs.getString("admin_role_flag").equalsIgnoreCase("Y")) ||
 					 (adminFlag==false && rs.getString("user_role_flag").equalsIgnoreCase("Y"))	) {
 					
@@ -391,12 +411,6 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		// Title 초기화
 		this.setTitle("");
 		
-		// 등록된 Panel 모두  Visible=false
-		for (int i=0; i<panelList.size(); i++){
-			panelList.get(i).setVisible(false);
-			//System.out.println(i+" : visible false");
-		}
-		
 		// 선택된 메뉴 node check
 		DefaultMutableTreeNode  node = (DefaultMutableTreeNode)tree.getLastSelectedPathComponent();
 		
@@ -510,6 +524,12 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	// Panel menu open
 	public void panelOpen(String className, String menuName){		
 		
+		// 등록된 Panel 모두  Visible=false
+		for (int i=0; i<panelList.size(); i++){
+			panelList.get(i).setVisible(false);
+			//System.out.println(i+" : visible false");
+		}
+		
 		// p_center 재정비
 		setTitle("");
 		p_center.updateUI();
@@ -526,41 +546,45 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	    	
 	    	if (className.equalsIgnoreCase("InvEditPan")){
 	    		// 송장등록
-	    		InvEditPan invEditPan = new InvEditPan();
+	    		InvEditPan invEditPan = new InvEditPan(con);
 	    		curPanel = invEditPan;				
 	    	} else if (className.equalsIgnoreCase("Admin_InvoiceView")){
 	    		// 관리자물품목록
-	    		Admin_InvoiceView adminInvoice = new Admin_InvoiceView();
+	    		Admin_InvoiceView adminInvoice = new Admin_InvoiceView(con);
 	    		//System.out.println("adminInvoice = "+adminInvoice);
 	    		curPanel = adminInvoice;	
 	    	} else if (className.equalsIgnoreCase("RetunPan")){
 	    		// 반송등록
-	    		RetunPan returnPan = new RetunPan();
+	    		RetunPan returnPan = new RetunPan(con);
 	    		curPanel = returnPan;	
 	    	} else if (className.equalsIgnoreCase("User")){
 	    		// 사용자물품목록
-	    		User userPan = new User(userList);
+	    		User userPan = new User(userList, con);
 	    		curPanel = userPan;	
 	    	} else if (className.equalsIgnoreCase("RegistUser")){
 	    		// 회원등록
-	    		RegistUser registUser = new RegistUser();
+	    		RegistUser registUser = new RegistUser(con);
 	    		curPanel = registUser;	
 	    	} else if (className.equalsIgnoreCase("Admin_UserView")){
 	    		// 회원목록
-	    		Admin_UserView adminUserView = new Admin_UserView();
+	    		Admin_UserView adminUserView = new Admin_UserView(con);
 	    		curPanel = adminUserView;	
 	    	} else if (className.equalsIgnoreCase("ModifyAdmin")){
 	    		// 관리자정보수정
-	    		ModifyAdmin modifyAdmin = new ModifyAdmin();
+	    		ModifyAdmin modifyAdmin = new ModifyAdmin(con);
 	    		curPanel = modifyAdmin;	
 	    	} else if (className.equalsIgnoreCase("ModifyUser")){
 	    		// 회원정보수정
-	    		ModifyUser midifyUser = new ModifyUser();
+	    		ModifyUser midifyUser = new ModifyUser(con);
 	    		curPanel = midifyUser;	
 	    	} else if (className.equalsIgnoreCase("ComplexPanel")){
 	    		// 동호수 등록
-	    		ComplexPanel complexPanel = new ComplexPanel();
+	    		ComplexPanel complexPanel = new ComplexPanel(con);
 	    		curPanel = complexPanel;	
+	    	} else if (className.equalsIgnoreCase("ChatServer")){
+	    		// 채팅(서버)
+	    		ChatServer chatSrv = new ChatServer(this);
+	    		curPanel = chatSrv;	
 	    	} else {
 	    		//System.out.println("menu 없음.");
 	    		curPanel=null;

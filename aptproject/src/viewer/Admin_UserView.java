@@ -331,8 +331,4 @@ public class Admin_UserView extends JPanel implements ActionListener {
 		}
 
 	}
-
-	public static void main(String[] args) {
-		new Admin_UserView();
-	}
 }
