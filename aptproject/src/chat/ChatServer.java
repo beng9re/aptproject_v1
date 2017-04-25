@@ -12,14 +12,13 @@ import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
-import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 import main.TreeMain;
 
-public class ChatServer extends JFrame implements Runnable {
+public class ChatServer extends JPanel implements Runnable {
 	private TreeMain main;
-	
-	Thread thread;
+	private Thread thread;
 	private ServerSocket server;
 	private Socket socket;
 	private int port = 7777;
