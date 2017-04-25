@@ -38,7 +38,6 @@ import db.AptuserModelByID;
 import db.DBManager;
 import dto.Aptuser;
 import dto.MenuDto;
-import message.MessageInsertThread;
 import message.RecieveMessage;
 import message.SendMessage;
 import message.SendMessageList;
@@ -63,7 +62,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	private boolean  adminFlag=false;
 	private boolean  systemUserFlag=false;
 	private String serverIP;
-	private ChatServer chatServer;
+	private ChatServer chatSrv;
 	private ChatClient chatClient;
 	
 	JTree  tree;
@@ -213,12 +212,17 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	// 프로그램 종료를 위한 메서드
 	public void close(){
 		// 채팅 Server 종료
-		if (chatServer!=null) {
-			chatServer.close(); 
+		if (chatSrv!=null) {
+			chatSrv.close(); 
 		}
-		if (chatClient != null) {
-			chatClient.getThread().disconnect();
+		
+		// 채팅 Client 종료
+		for (Object obj : menuOpenList) {
+			if (obj == chatClient) {
+				chatClient.getThread().disconnect();
+			}
 		}
+		
 		// Connection 종료
 		instance.disConnect(con);
 		
@@ -609,7 +613,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	    		curPanel = complexPanel;	
 	    	} else if (className.equalsIgnoreCase("ChatServer")){
 	    		// 채팅(서버)
-	    		ChatServer chatSrv = new ChatServer(this);
+	    		chatSrv = new ChatServer(this);
 	    		curPanel = chatSrv;	
 	    	} else {
 	    		//System.out.println("menu 없음.");
