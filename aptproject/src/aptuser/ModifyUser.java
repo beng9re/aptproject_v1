@@ -1,5 +1,7 @@
 package aptuser;
 
+import java.sql.Connection;
+
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JPasswordField;
@@ -10,8 +12,14 @@ public class ModifyUser extends UserInfo {
 			{ "연락처", "Y" }, { "등록일", "N" }, { "주소", "N" } };
 	String titleStr = "회원정보 수정";
 	String btnTxt = "수 정";
-
+	
+	// 상속을 위한 기본 생성자
 	public ModifyUser() {
+	}
+	
+	public ModifyUser(Connection conn, String id) {
+		this.conn = conn;
+		this.id = id;
 		init(isEdit, titleStr, btnTxt, true);
 		loadInfo();
 	}

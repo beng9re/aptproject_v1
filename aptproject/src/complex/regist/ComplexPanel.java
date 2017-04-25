@@ -47,7 +47,7 @@ public class ComplexPanel extends JPanel implements ActionListener {
 	ButtonGroup group;
 	MiddlePanel mp;// 동,호수를 입력이 들어있는 패널
 	Connection con;
-	DBManager manager = DBManager.getInstance();
+	
 
 	Vector<String> vec = new Vector<String>();// 호수를 담기 위한 벡터
 	Vector complex_list = new Vector();//
@@ -59,8 +59,9 @@ public class ComplexPanel extends JPanel implements ActionListener {
 
 	TableController controller;
 
-	public ComplexPanel() {
-		con = manager.getConnection();
+	public ComplexPanel(Connection con) {
+		
+		this.con=con;
 		p_north = new JPanel();
 		p_center = new JPanel();
 		p_south = new JPanel();
