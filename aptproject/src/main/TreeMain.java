@@ -62,6 +62,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	private boolean  adminFlag=false;
 	private String serverIP;
 	private ChatServer chatServer;
+	private ChatClient chatClient;
 	
 	JTree  tree;
 	JScrollPane  scroll;	
@@ -156,39 +157,24 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	public void init(){
 		/* --------------- Chat 관련 Start -------------------------------------- */
 		// aptuser테이블에서 데이터를 갖고오는 모델을 생성한다
-		AptuserModelByID aptuser = new AptuserModelByID(con, userID);
+		AptuserModelByID aptuser = new AptuserModelByID(con, "admin");
 		userList = aptuser.getData();
 		
+		// 관리자 IP를 가지고 온다 (채팅 클라이언트에서 서버에 접속할 때 사용)
+		System.out.println("serverIP = "+serverIP);
+		serverIP = ((Aptuser)aptuser.getData().get(0)).getAptuser_ip();
+		
 		// UserName 조회
+		aptuser.selectData(userID);
 		userName = userList.get(0).getAptuser_name();
 		
 		// 접속한 회원의 권한을 조회하고 Main의 권한변수에 대입한다
 		if (userList.get(0).getAptuser_perm()==9){
 			adminFlag = true;
 		}
-	
-		// 관리자 IP를 가지고 온다 (채팅 클라이언트에서 서버에 접속할 때 사용)
-		aptuser.selectData("admin");
-		serverIP = ((Aptuser)aptuser.getData().get(0)).getAptuser_ip();
-<<<<<<< HEAD
-//<<<<<<< HEAD
-=======
-
->>>>>>> 2a49dad8e12aa61a81eb65b34f18a50861ef5a7e
-		
-		aptuser.selectData(userID);
 		
 		// Tree 구성 작업
 		makeTree();
-<<<<<<< HEAD
-//=======
-		System.out.println("serverIP = "+serverIP);
-//>>>>>>> cde0a4764f076d126979fd63f9ba168a81602b3b
-=======
-
-		System.out.println("serverIP = "+serverIP);
-
->>>>>>> 2a49dad8e12aa61a81eb65b34f18a50861ef5a7e
 
 		// 서버관리자(admin)인 경우 Chat Server 생성
 		//if (userID.equalsIgnoreCase("admin")){
@@ -224,7 +210,9 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		if (chatServer!=null) {
 			chatServer.close(); 
 		}
-		
+		if (chatClient != null) {
+			chatClient.getThread().disconnect();
+		}
 		// Connection 종료
 		instance.disConnect(con);
 		
@@ -499,7 +487,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 			if (className.equalsIgnoreCase("ChatClient")){
 				// 채팅
 				//System.out.println("ChatClient -------------------");
-				ChatClient  chatClient = new ChatClient(this);
+				chatClient = new ChatClient(this);
 				menuOpenList.add(chatClient);
 				currObject=chatClient;
 				
@@ -573,7 +561,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	    		curPanel = userPan;	
 	    	} else if (className.equalsIgnoreCase("RegistUser")){
 	    		// 회원등록
-	    		RegistUser registUser = new RegistUser(con);
+	    		RegistUser registUser = new RegistUser(con, userID);
 	    		curPanel = registUser;	
 	    	} else if (className.equalsIgnoreCase("Admin_UserView")){
 	    		// 회원목록
@@ -581,11 +569,11 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	    		curPanel = adminUserView;	
 	    	} else if (className.equalsIgnoreCase("ModifyAdmin")){
 	    		// 관리자정보수정
-	    		ModifyAdmin modifyAdmin = new ModifyAdmin(con);
+	    		ModifyAdmin modifyAdmin = new ModifyAdmin(con, userID);
 	    		curPanel = modifyAdmin;	
 	    	} else if (className.equalsIgnoreCase("ModifyUser")){
 	    		// 회원정보수정
-	    		ModifyUser midifyUser = new ModifyUser(con);
+	    		ModifyUser midifyUser = new ModifyUser(con, userID);
 	    		curPanel = midifyUser;	
 	    	} else if (className.equalsIgnoreCase("ComplexPanel")){
 	    		// 동호수 등록

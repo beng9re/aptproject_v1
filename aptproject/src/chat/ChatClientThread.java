@@ -72,7 +72,7 @@ public class ChatClientThread extends Thread {
 		}
 	}
 
-	private void disconnect() {
+	public void disconnect() {
 		send("disconnect", "서버 쓰레드 종료");
 		// 접속종료
 		if (socket != null) {
