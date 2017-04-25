@@ -4,6 +4,7 @@ public class ComplexDto {
 
 	int complex_id;
 	String complex_name;
+	
 	public int getComplex_id() {
 		return complex_id;
 	}
