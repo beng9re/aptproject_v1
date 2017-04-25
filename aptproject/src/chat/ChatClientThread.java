@@ -14,7 +14,6 @@ import java.net.Socket;
 import javax.swing.Box;
 
 import org.json.simple.JSONObject;
-import org.json.simple.parser.JSONParser;
 
 public class ChatClientThread extends Thread {
 	Socket socket;
@@ -41,21 +40,22 @@ public class ChatClientThread extends Thread {
 			client.scrollFlag = true;
 			String msg = buffR.readLine();
 			
-			// 들어온 메시지를 파싱하여 자신의 메시지와 타인의 메시지를 구분하여 출력
-			JSONObject jsonObj = ChatProtocol.parsing(msg);
-			msg = jsonObj.get("message").toString();
-			String user_id = jsonObj.get("user_id").toString();
-			ChatMessage chatbox = null;
-			
-			if (user_id.equals(client.id)) {
-				chatbox = new ChatMessage(client, user_id, msg, true);
-			} else {
-				chatbox = new ChatMessage(client, user_id, msg, false);
+			if (msg != null) {
+				// 들어온 메시지를 파싱하여 자신의 메시지와 타인의 메시지를 구분하여 출력
+				JSONObject jsonObj = ChatProtocol.parsing(msg);
+				msg = jsonObj.get("message").toString();
+				String user_id = jsonObj.get("user_id").toString();
+				ChatMessage chatbox = null;
+				
+				if (user_id.equals(client.id)) {
+					chatbox = new ChatMessage(client, user_id, msg, true);
+				} else {
+					chatbox = new ChatMessage(client, user_id, msg, false);
+				}
+				client.pnl_chat.add(chatbox);
+				client.pnl_chat.add(Box.createHorizontalGlue());
+				client.pnl_chat.revalidate();
 			}
-			
-			client.pnl_chat.add(chatbox);
-			client.pnl_chat.add(Box.createHorizontalGlue());
-			client.pnl_chat.revalidate();
 
 		} catch (IOException e) {
 			e.printStackTrace();
@@ -64,7 +64,7 @@ public class ChatClientThread extends Thread {
 
 	public void send(String type, String msg) {
 		try {
-			msg = ChatProtocol.toJSON("chat", client.id, msg);
+			msg = ChatProtocol.toJSON(type, client.id, msg);
 			buffW.write(msg + "\n");
 			buffW.flush();
 		} catch (IOException e) {
@@ -72,16 +72,13 @@ public class ChatClientThread extends Thread {
 		}
 	}
 
-	private void disconnect() {
-		send("disconnect", "서버 쓰레드 종료");
+	public void disconnect() {
+		flag = false;
+		
 		// 접속종료
-		if (socket != null) {
-			try {
-				socket.close();
-			} catch (IOException e1) {
-				e1.printStackTrace();
-			}
-		}
+		send("disconnect", "exit");
+		System.out.println("유저채팅종료");
+		
 		if (buffR != null) {
 			try {
 				buffR.close();
@@ -96,6 +93,13 @@ public class ChatClientThread extends Thread {
 				e.printStackTrace();
 			}
 		}
+		if (socket != null) {
+			try {
+				socket.close();
+			} catch (IOException e1) {
+				e1.printStackTrace();
+			}
+		}
 	}
 
 	@Override
@@ -103,6 +107,5 @@ public class ChatClientThread extends Thread {
 		while (flag) {
 			listen();
 		}
-		disconnect();
 	}
 }

@@ -4,6 +4,7 @@ import java.awt.Choice;
 import java.awt.Component;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.TreeMap;
 import java.util.TreeSet;
@@ -37,7 +38,9 @@ public class RegistUser extends UserInfo implements ItemListener {
 	
 	Choice ch_complex, ch_floor, ch_unit;
 
-	public RegistUser() {
+	public RegistUser(Connection conn, String id) {
+		this.conn = conn;
+		this.id = id;
 		ch_complex = ((Choice) fieldData.get("µ¿"));
 		ch_floor = ((Choice) fieldData.get("Ãþ"));
 		ch_unit = ((Choice) fieldData.get("È£"));

@@ -10,7 +10,6 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.io.File;
 import java.sql.Connection;
-import java.sql.Date;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Random;
@@ -30,7 +29,6 @@ import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.JTextComponent;
 
 import db.AptuserModelByID;
-import db.DBManager;
 import dto.Aptuser;
 
 public abstract class UserInfo extends JPanel implements ActionListener {
@@ -56,9 +54,8 @@ public abstract class UserInfo extends JPanel implements ActionListener {
 	ArrayList<Aptuser> aptuser;
 
 	// 프로그램 전체에서 id와 conn은 항상보유중이어야함 (main으로 부터 가져온다)
-	String id = "admin";
-	DBManager dbMgr = DBManager.getInstance();
-	Connection conn = dbMgr.getConnection();
+	String id;
+	Connection conn;
 
 	public UserInfo() {
 		// 필드생성

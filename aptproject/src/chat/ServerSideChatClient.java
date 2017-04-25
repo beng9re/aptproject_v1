@@ -8,11 +8,8 @@ package chat;
 
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
-import java.io.IOException;
 
 import javax.swing.Box;
-
-import org.json.simple.JSONObject;
 
 public class ServerSideChatClient extends ChatClient {
 	String id;
@@ -33,8 +30,8 @@ public class ServerSideChatClient extends ChatClient {
 	public void connect() {
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
-				// 채팅창 종료
-				ServerSideChatClient.this.dispose();
+				// 채팅화면을 보이지 않게만 두고 리스트를 통해 직접 메모리에서 내린다
+				ServerSideChatClient.this.setVisible(false);
 			}
 		});
 	}
