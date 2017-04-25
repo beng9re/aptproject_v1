@@ -170,6 +170,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		// 관리자 IP를 가지고 온다 (채팅 클라이언트에서 서버에 접속할 때 사용)
 		aptuser.selectData("admin");
 		serverIP = ((Aptuser)aptuser.getData().get(0)).getAptuser_ip();
+		System.out.println("serverIP = "+serverIP);
 
 		// 서버관리자(admin)인 경우 Chat Server 생성
 		//if (userID.equalsIgnoreCase("admin")){
@@ -537,40 +538,40 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	    	
 	    	if (className.equalsIgnoreCase("InvEditPan")){
 	    		// 송장등록
-	    		InvEditPan invEditPan = new InvEditPan();
+	    		InvEditPan invEditPan = new InvEditPan(con);
 	    		curPanel = invEditPan;				
 	    	} else if (className.equalsIgnoreCase("Admin_InvoiceView")){
 	    		// 관리자물품목록
-	    		Admin_InvoiceView adminInvoice = new Admin_InvoiceView();
+	    		Admin_InvoiceView adminInvoice = new Admin_InvoiceView(con);
 	    		//System.out.println("adminInvoice = "+adminInvoice);
 	    		curPanel = adminInvoice;	
 	    	} else if (className.equalsIgnoreCase("RetunPan")){
 	    		// 반송등록
-	    		RetunPan returnPan = new RetunPan();
+	    		RetunPan returnPan = new RetunPan(con);
 	    		curPanel = returnPan;	
 	    	} else if (className.equalsIgnoreCase("User")){
 	    		// 사용자물품목록
-	    		User userPan = new User(userList);
+	    		User userPan = new User(userList, con);
 	    		curPanel = userPan;	
 	    	} else if (className.equalsIgnoreCase("RegistUser")){
 	    		// 회원등록
-	    		RegistUser registUser = new RegistUser();
+	    		RegistUser registUser = new RegistUser(con);
 	    		curPanel = registUser;	
 	    	} else if (className.equalsIgnoreCase("Admin_UserView")){
 	    		// 회원목록
-	    		Admin_UserView adminUserView = new Admin_UserView();
+	    		Admin_UserView adminUserView = new Admin_UserView(con);
 	    		curPanel = adminUserView;	
 	    	} else if (className.equalsIgnoreCase("ModifyAdmin")){
 	    		// 관리자정보수정
-	    		ModifyAdmin modifyAdmin = new ModifyAdmin();
+	    		ModifyAdmin modifyAdmin = new ModifyAdmin(con);
 	    		curPanel = modifyAdmin;	
 	    	} else if (className.equalsIgnoreCase("ModifyUser")){
 	    		// 회원정보수정
-	    		ModifyUser midifyUser = new ModifyUser();
+	    		ModifyUser midifyUser = new ModifyUser(con);
 	    		curPanel = midifyUser;	
 	    	} else if (className.equalsIgnoreCase("ComplexPanel")){
 	    		// 동호수 등록
-	    		ComplexPanel complexPanel = new ComplexPanel();
+	    		ComplexPanel complexPanel = new ComplexPanel(con);
 	    		curPanel = complexPanel;	
 	    	} else if (className.equalsIgnoreCase("ChatServer")){
 	    		// 채팅(서버)
