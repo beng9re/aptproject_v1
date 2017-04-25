@@ -54,7 +54,6 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 	JButton bt_find, bt_copy, bt_xls;
 	JTextField t_input;
 
-	DBManager manager;
 	Connection con;
 	AdminModel adminModel;
 	InvoiceModel invoiceModel;
@@ -75,7 +74,8 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 
 	Boolean boxflag;
 
-	public Admin_InvoiceView() {
+	public Admin_InvoiceView(Connection con) {
+		this.con=con;
 		chooser = new JFileChooser();
 		p_north = new JPanel();
 		p_north_radio = new JPanel();
@@ -181,13 +181,6 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 		setVisible(true);
 		setSize(700, 700);
 
-		init();
-
-	}
-
-	public void init() {
-		manager = DBManager.getInstance();
-		this.con = manager.getConnection();
 	}
 
 	public void getReturninv(String sql) {
