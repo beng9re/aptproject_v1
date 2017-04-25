@@ -173,9 +173,6 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 			adminFlag = true;
 		}
 		
-		// Tree 备己 累诀
-		makeTree();
-
 		// 辑滚包府磊(admin)牢 版快 Chat Server 积己
 		//if (userID.equalsIgnoreCase("admin")){
 		//	chatServer=  new ChatServer(this);
@@ -236,9 +233,11 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		sql.append("         , nvl(m.admin_role_flag,'N') admin_role_flag, nvl(m.user_role_flag,'N') user_role_flag \n");
 		sql.append("         , nvl(m.menu_use_flag,'Y') menu_use_flag \n");
 		sql.append("         , (select count(*) from menulist s \n");
-		sql.append("	           where  s.MENU_UP_LEVEL_ID = m.menu_id) subcnt \n");
+		sql.append("	           where  s.MENU_UP_LEVEL_ID = m.menu_id \n");
+		sql.append("             and     nvl(s.menu_use_flag,'Y')='Y') subcnt \n");
 		sql.append(" from   menulist m \n");
 		sql.append(" where  m.menu_level = 1 \n");
+		sql.append(" and      nvl(m.menu_use_flag,'Y') = 'Y' ");
 		sql.append(" order by m.order_seq \n");
 		System.out.println("sql : "+sql.toString());
 		

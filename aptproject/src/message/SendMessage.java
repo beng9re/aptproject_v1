@@ -49,6 +49,7 @@ public class SendMessage extends JFrame implements ActionListener{
 	CompUnitModel  model;
 	JTextField  t_input, t_title;
 	JLabel  la_title, la_explain;
+	String userId;
 	
 	int frameWidth=600;
 	int frameHeight=500;
@@ -57,6 +58,7 @@ public class SendMessage extends JFrame implements ActionListener{
 		
 		this.treeMain = treeMain;
 		this.con = treeMain.getConnection();
+		this.userId = treeMain.getUserID();
 		
 		p_north = new JPanel();
 		p_center = new JPanel();
@@ -192,13 +194,12 @@ public class SendMessage extends JFrame implements ActionListener{
 			con.setAutoCommit(false);
 			
 			//보내는 쪽지
-			String send_user_id = "test1"; // 임시로 사용. 나중에 로그인 아이디 받아 와야 함.
 			String send_title = t_title.getText();
 			String msg_content = area.getText();
 			sql.append(" insert into send_message (msg_send_id, msg_send_user_id, msg_send_title, msg_send_content, msg_sendtime) ");
 			sql.append(" values (seq_send_message.nextval, ?, ?, ?, sysdate)");
 			pstmt = con.prepareStatement(sql.toString());
-			pstmt.setString(1, send_user_id);
+			pstmt.setString(1, userId);
 			pstmt.setString(2, send_title);
 			pstmt.setString(3, msg_content);
 			int result = pstmt.executeUpdate();
@@ -234,6 +235,7 @@ public class SendMessage extends JFrame implements ActionListener{
 					JOptionPane.showMessageDialog(this, count+" 명에게 메세지가 송신되었습니다.");
 					t_title.setText("");
 					area.setText("");
+					table.clearSelection();
 				}
 			}
 			
