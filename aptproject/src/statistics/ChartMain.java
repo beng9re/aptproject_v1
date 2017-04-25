@@ -1,4 +1,4 @@
-package chart;
+package statistics;
 
 import java.awt.Color;
 

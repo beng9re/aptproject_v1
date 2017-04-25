@@ -8,26 +8,37 @@ package chat;
 
 import java.awt.Color;
 import java.awt.Dimension;
+import java.awt.FlowLayout;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
+import java.util.Vector;
+import java.util.concurrent.ConcurrentHashMap;
 
+import javax.swing.BorderFactory;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 
 import main.TreeMain;
 
 public class ChatServer extends JPanel {
-	private TreeMain main;
-	private Thread mainThread;
-	private ServerSocket server;
-	private Socket socket;
-	private int port = 7777;
-	private boolean flag = true;
+	TreeMain main;
+	Thread mainThread;
+	ServerSocket server;
+	Socket socket;
+	int port = 7777;
+	boolean flag = true;
+	ConcurrentHashMap<String, ServerSideChatClient> userList;
+	ConcurrentHashMap<String, JPanel> pnlList;
 
 	public ChatServer(TreeMain main) {
 		this.main = main;
+		userList = new ConcurrentHashMap<String, ServerSideChatClient>();
 		
-		setBackground(Color.GRAY);
+		setLayout(new FlowLayout(FlowLayout.CENTER));
+		setBorder(BorderFactory.createEmptyBorder(50, 50, 50, 50));
 		setPreferredSize(new Dimension(700, 700));
 		
 		// 서버기능을 시작한다
@@ -48,8 +59,10 @@ public class ChatServer extends JPanel {
 							System.out.println("접속대기");
 							socket = server.accept();
 							System.out.println("접속자 확인");
+							// 관리자가 보는 채팅 클라이언트를 생성한다
 							ServerSideChatClient serverChat = new ServerSideChatClient();
-							ChatServerThread thread = new ChatServerThread(socket, serverChat);
+							// 접속자를 위한 thread를 생성한다
+							ChatServerThread thread = new ChatServerThread(ChatServer.this, socket, serverChat);
 							
 						} catch (IOException e) {
 							e.printStackTrace();
@@ -64,12 +77,30 @@ public class ChatServer extends JPanel {
 		}
 	}
 	
+	public void addUser(String user_id, ServerSideChatClient serverChat) {
+		userList.put(user_id, serverChat);
+		// 대화중인 주민목록을 보여주는 패널을 접속자가 생길때 마다 붙여넣는다
+		JPanel pnl = new JPanel();
+		pnl.add(new JLabel(user_id+"님과의 대화"));
+		pnl.add(new JLabel("이곳을 누르시면 대화를 다시 시작합니다"));
+		pnl.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				// 채팅창을 다시 보여준다
+				userList.get(user_id).setVisible(true);
+			}
+		});
+		pnl.setBackground(Color.GRAY);
+		pnl.setPreferredSize(new Dimension(600,100));
+		add(pnl);
+		
+		//대화리스트 목록를 관리한다
+		pnlList.put(user_id, pnl);
+	}
+	
 	public void close()	{
 		// 접속자를 받는 thread를 닫는다
 		flag = false;
-		
-		//소켓을 전부 반환받는다
-		
 	}
 
 }

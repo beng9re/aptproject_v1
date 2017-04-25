@@ -116,13 +116,10 @@ public class PostBoxMain  extends JFrame{
 				ss.add(dto.getInvoice_arrtime());
 				ss.add(dto.getInvoice_taker());
 				ss.add(dto.getInvoice_takeflag());
-				ss.add(dto.getAptuser_id()));
-				ss.add(dto.getCompany_id());
-				ss.add(dto.getBox_num()));
-				
-				ss.add(Integer.toString((dto.getBox_num())));
-				ss.add(dto.getBox_use());
-				ss.add(Integer.toString((dto.getInvoice_id())));
+				ss.add(dto.getAptuser_id());
+				ss.add(Integer.toString(dto.getCompany_id()));
+				ss.add(Integer.toString(dto.getBox_num()));
+		
 				box.add(ss);
 			
 			}
@@ -152,13 +149,13 @@ public class PostBoxMain  extends JFrame{
 		int flag=0;
 		for(int i=0;i<box.size();i++){
 	
-			
+			System.out.println(i);
 			if(box.get(i).get(1).toString().equals("N")){
 				flag=1;
 			}else{
 				flag=0;
 			}
-			ps=new Postbox(box.get(i).get(0).toString(),p_south,path[flag],con);
+			ps=new Postbox(box.get(i),p_south,path[flag],con);
 			
 		};
 	}
