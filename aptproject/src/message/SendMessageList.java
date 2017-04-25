@@ -64,6 +64,8 @@ public class SendMessageList extends JFrame implements ActionListener , Runnable
 		this.con = treeMain.getConnection();
 		this.userId = this.treeMain.getUserID();
 		
+		System.out.println("SendMessageList : userId="+userId);
+		
 		p_north = new JPanel();
 		p_center = new JPanel();
 		p_center_center = new JPanel();
@@ -119,7 +121,9 @@ public class SendMessageList extends JFrame implements ActionListener , Runnable
 			public void keyReleased(KeyEvent e) {
 				int key = e.getKeyCode();
 				if (key==KeyEvent.VK_ENTER){
-					search();					
+					search("I");		
+					showMessage();
+					showRecvList();
 				}
 			}
 		});
@@ -136,6 +140,7 @@ public class SendMessageList extends JFrame implements ActionListener , Runnable
 				int key = e.getKeyCode();
 				if (key==KeyEvent.VK_UP || key==KeyEvent.VK_DOWN){
 					showMessage();
+					showRecvList();
 				}
 			}
 		});
@@ -200,8 +205,8 @@ public class SendMessageList extends JFrame implements ActionListener , Runnable
 		// 송신 List 가 있는 경우, 첫 row 선택
 		int row=-1;
 		if (table.getRowCount() !=0){
-			table.setRowSelectionInterval(0, 0);
-			row = table.getSelectedRow();
+			//table.setRowSelectionInterval(0, 0);
+			//row = table.getSelectedRow();
 		}
 		
 		//((DefaultTableCellRenderer)table.getCellRenderer(1, 0)).setBackground(Color.black);
@@ -223,8 +228,8 @@ public class SendMessageList extends JFrame implements ActionListener , Runnable
 		System.out.println("msg_send_id ="+msg_send_id);
 		
 		// 제목, 내용 보여주기.
-		showMessage();		
-		
+		//showMessage();		
+		msg_send_id=-1;
 		// 수신 List 조회
 		recvListModel = new RecieveUserListModel(con, msg_send_id);
 		tableList.setModel(recvListModel);
@@ -256,27 +261,23 @@ public class SendMessageList extends JFrame implements ActionListener , Runnable
 		dispose();
 	}
 	
-	public void search(){
-		
+	public void search(String searchType){
+		/*
+		 * searchType : I - 입력 조회   (검색버튼이나 입력 하여 조회하는 경우)
+		 *                     C - 체크 조회  (checkNewSendMsg() 에서 조회되는 경우)
+		 */
+		if (searchType.equals("I")){
+			table.clearSelection();
+		}
 		System.out.println("search");
 		String srch = t_input.getText();
 		model.getList(userId, srch);
 		table.updateUI();
 		
-		int row=-1;
-		if (table.getRowCount() != 0){
+		if (searchType.equals("I") && table.getRowCount()!=0){
 			table.setRowSelectionInterval(0, 0);
-			row = table.getSelectedRow();
-			msg_send_id = (Integer)table.getValueAt(row, colIndexOfSendId);
-		} else {
-			msg_send_id = -1;
 		}
 		
-		// 제목, 내용 보여주기
-		showMessage();
-		
-		// 수신자 List
-		showRecvList();
 		
 	}
 	
@@ -284,12 +285,14 @@ public class SendMessageList extends JFrame implements ActionListener , Runnable
 	public void showMessage(){
 		
 		int col;
-		int row;
+		int row=-1;
 		t_title.setText("");
 		area.setText("");
 		
-		row = table.getSelectedRow();
-		
+		if (table.getRowCount()!=0){
+			row = table.getSelectedRow();
+		}
+		System.out.println("showMessage : sel row = "+row);
 		if (row != -1){		
 			// title
 			col =  table.getColumn("제목").getModelIndex();
@@ -308,7 +311,10 @@ public class SendMessageList extends JFrame implements ActionListener , Runnable
 	
 	// 선택된 송신 메세지의 수신자 리스트 조회
 	public void showRecvList(){
-		int row=table.getSelectedRow();
+		int row=-1;
+		if (table.getRowCount()!=0){
+			row=table.getSelectedRow();
+		}
 		if (row!=-1){
 			msg_send_id = (Integer)table.getValueAt(row, colIndexOfSendId);
 		} else {
@@ -323,9 +329,9 @@ public class SendMessageList extends JFrame implements ActionListener , Runnable
 		PreparedStatement pstmt=null;
 		ResultSet  rs=null;
 		StringBuffer sql=new StringBuffer();
-		int max_msg_send_id=-1;
-		int currSelRow=table.getSelectedRow();
-		int currSelMsgSendId=-1;
+		int max_msg_send_id=-1; // 최종 송신 메세지의 msg_send_id
+		int currSelRow=table.getSelectedRow(); // 현재 선택된 row
+		int currSelMsgSendId=-1; // 현재 선택된 msg_send_id
 		
 		// 최종 송신 메세지 id check
 		sql.append(" select nvl(max(s.msg_send_id),-1) max_msg_send_id \n");
@@ -368,25 +374,72 @@ public class SendMessageList extends JFrame implements ActionListener , Runnable
 			}
 		}
 		
-		// 현재 table 에 조회되어 있는 경우는 중단
-		if (existFlag) return;
+		// 현재 table 에 조회되어 있는 경우는 수신자 List 만 재조회. 확인여부 check 위해.
+		if (existFlag) {
+			// 수신자 List
+			showRecvList();
+			return;
+		}
 		
-		//currMsgSendId = table.getValueAt(row, column)
+		// 현재 선택된 row 가 있는 경우, 해당 row 의 msg_send_id 값 체크
+		if (currSelRow!=-1){
+			currSelMsgSendId = (Integer)table.getValueAt(currSelRow, colIndexOfSendId);
+		}
+		
+		// 재조회
+		search("C");
+		
+		// 선택되었던 msg_send_id 찾아서 선택해 준다.
+		int chk_msg_send_id;
+		int newSelRow=-1;
+		for (int i=0; i<table.getRowCount(); i++){
+			chk_msg_send_id=(Integer)table.getValueAt(i, colIndexOfSendId);
+			if (chk_msg_send_id==currSelMsgSendId){
+				newSelRow=i;
+				break;
+			}
+		}
+		
+		// 선택되었던 row 가 있었던 경우, 해당 row 선택
+		if (newSelRow!=-1){
+			table.setRowSelectionInterval(newSelRow, newSelRow);
+		}
+		
+		// 제목, 내용 보여주기
+		showMessage();
+					
+		// 수신자 List
+		showRecvList();
 
+	}
+	
+	public void run() {
+		while (threadFlag){
+			try {
+				System.out.println("t_input.isEditable = "+t_input.isEditable());
+				thread.sleep(1000);
+				checkNewSendMsg();
+			} catch (InterruptedException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			
+		}
 	}
 	
 	public void actionPerformed(ActionEvent e) {
 		Object obj = e.getSource();
 		if (obj==bt_search){
-			search();
+			
+			// 송신 메세지 리스트 조회
+			search("I");
+			
+			// 제목, 내용 보여주기
+			showMessage();
+			
+			// 수신자 List
+			showRecvList();
 		}		
 	}
-
-	public void run() {
-		while (threadFlag){
-			
-		}
-	}
-	
 
 }

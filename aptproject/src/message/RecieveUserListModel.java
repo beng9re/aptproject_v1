@@ -48,7 +48,7 @@ public class RecieveUserListModel extends AbstractTableModel{
 		sql.append(" and     rcv.msg_send_id = ? \n");
 		sql.append(" order by 1,2 \n");
 		
-		System.out.println(sql.toString());
+		System.out.println("RecieveUserListModel - sql \n" +sql.toString());
 		
 		try {
 			pstmt = con.prepareStatement(sql.toString());

@@ -58,12 +58,12 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 	
 	int frameWidth=600;
 	int frameHeight=500;
-	String userId;
+	String userID;
 	
 	public RecieveMessage(TreeMain treeMain) {
 		this.treeMain = treeMain;
 		this.con = treeMain.getConnection();
-		this.userId = treeMain.getUserID();
+		this.userID = treeMain.getUserID();
 		
 		p_north = new JPanel();
 		p_center = new JPanel();
@@ -161,7 +161,7 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 	
 	public void init(){
 		
-		model = new RecieveMsgModel(con, userId);
+		model = new RecieveMsgModel(con, userID);
 		table.setModel(model);
 		table.setRowSorter(new TableRowSorter(model));
 		
@@ -202,10 +202,13 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 	
 	public void search(){
 		
+		table.clearSelection();
 		System.out.println("search");
 		String srch = t_input.getText();
 		model.getList(srch);
 		table.updateUI();
+		
+		showMessage();
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -225,53 +228,55 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 		t_title.setText("");
 		area.setText("");
 		
-		// title
-		col =  table.getColumn("제목").getModelIndex();
-		System.out.println("제목="+col);
-		String title = (String)table.getValueAt(row, col);
-		t_title.setText(title);
-		
-		// content
-		col =  table.getColumn("msg_send_content").getModelIndex();
-		//System.out.println("제목="+col);
-		String content = (String)table.getValueAt(row, col);
-		area.setText(content);
-		
-		// 확인여부
-		col = table.getColumn("확인여부").getModelIndex();
-		String confirmFlag = (String)table.getValueAt(table.getSelectedRow(), col);
-		
-		// 미확인 인 경우만 Update
-		if (confirmFlag.equalsIgnoreCase("N")){		
+		if (row!=-1){
+			// title
+			col =  table.getColumn("제목").getModelIndex();
+			System.out.println("제목="+col);
+			String title = (String)table.getValueAt(row, col);
+			t_title.setText(title);
 			
-			// msg_recieve_id
-			col =  table.getColumn("msg_recieve_id").getModelIndex();
-			System.out.println("msg_recieve_id="+col + "value="+table.getValueAt(row, col));
-			int msg_recieve_id=(Integer)table.getValueAt(row, col);
+			// content
+			col =  table.getColumn("msg_send_content").getModelIndex();
+			//System.out.println("제목="+col);
+			String content = (String)table.getValueAt(row, col);
+			area.setText(content);
 			
-			StringBuffer sql = new StringBuffer();
-			sql.append("update recieve_message ");
-			sql.append("set       msg_confirm_flag = 'Y' ");
-			sql.append("          ,msg_confirm_time=sysdate ");
-			sql.append("where  msg_recieve_id = ? ");
-			//String sql="update recieve_message ";
-			try {
-				pstmt = con.prepareStatement(sql.toString());
-				pstmt.setInt(1, msg_recieve_id);
-				int result = pstmt.executeUpdate();
-			} catch (SQLException e) {
-				e.printStackTrace();
-			} finally {
-				if (pstmt!=null)
-					try {
-						pstmt.close();
-					} catch (SQLException e) {
-						e.printStackTrace();
-					}
+			// 확인여부
+			col = table.getColumn("확인여부").getModelIndex();
+			String confirmFlag = (String)table.getValueAt(table.getSelectedRow(), col);
+			
+			// 미확인 인 경우만 Update
+			if (confirmFlag.equalsIgnoreCase("N")){		
+				
+				// msg_recieve_id
+				col =  table.getColumn("msg_recieve_id").getModelIndex();
+				System.out.println("msg_recieve_id="+col + "value="+table.getValueAt(row, col));
+				int msg_recieve_id=(Integer)table.getValueAt(row, col);
+				
+				StringBuffer sql = new StringBuffer();
+				sql.append("update recieve_message ");
+				sql.append("set       msg_confirm_flag = 'Y' ");
+				sql.append("          ,msg_confirm_time=sysdate ");
+				sql.append("where  msg_recieve_id = ? ");
+				//String sql="update recieve_message ";
+				try {
+					pstmt = con.prepareStatement(sql.toString());
+					pstmt.setInt(1, msg_recieve_id);
+					int result = pstmt.executeUpdate();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				} finally {
+					if (pstmt!=null)
+						try {
+							pstmt.close();
+						} catch (SQLException e) {
+							e.printStackTrace();
+						}
+				}
+				// table 데이터 다시 조회
+				model.getList(t_input.getText());
+				table.updateUI();
 			}
-			// table 데이터 다시 조회
-			model.getList(t_input.getText());
-			table.updateUI();
 		}
 
 	}
@@ -280,7 +285,7 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 		System.out.println("checkNewMsg");
 		PreparedStatement  pstmt=null;
 		ResultSet  rs=null;
-		String sql;
+		StringBuffer sql = new StringBuffer();
 		
 		int msg_recieve_id;
 		int chk_msg_recieve_id;
@@ -293,15 +298,21 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 		int currSelectedRow=table.getSelectedRow();
 		// 현재 선택된 row 의 msg_recieve_id 값 얻어 놓기
 		int sel_msg_recieve_id=-1;
-		if (currSelectedRow!=-1){
+		if (currSelectedRow!=-1 && table.getRowCount()!=0){
+			System.out.println("currSelectedRow = "+currSelectedRow + ", msg_recieve_id_col = "+msg_recieve_id_col);
 			sel_msg_recieve_id=(Integer)table.getValueAt(currSelectedRow, msg_recieve_id_col);
-			System.out.println("currSelectedRow = "+currSelectedRow + ", sel_msg_recieve_id = "+sel_msg_recieve_id);
+			System.out.println( ", sel_msg_recieve_id = "+sel_msg_recieve_id);
 		}
 		
 		// 미확인 메세지 건수, 마지막 id
-		sql = "select count(*) cnt, max(r.msg_recieve_id) max_msg_recieve_id from recieve_message r where NVL(r.msg_confirm_flag,'N')='N' ";
+		sql.append(" select count(*) cnt, max(r.msg_recieve_id) max_msg_recieve_id \n");
+		sql.append(" from recieve_message r \n");
+		sql.append(" where r.msg_recv_user_id = ?  \n");
+		sql.append(" and NVL(r.msg_confirm_flag,'N')='N'  \n");
+		System.out.println("checkNewMsg - sql : "+sql.toString());
 		try {
-			pstmt = con.prepareStatement(sql);
+			pstmt = con.prepareStatement(sql.toString());
+			pstmt.setString(1, userID);
 			rs = pstmt.executeQuery();
 			if (rs.next()){
 				
@@ -374,7 +385,7 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 	public void run() {
 		while (threadFlag){			
 			try {
-				thread.sleep(500);
+				thread.sleep(1000);
 				checkNewMsg();
 			} catch (InterruptedException e) {
 				// TODO Auto-generated catch block

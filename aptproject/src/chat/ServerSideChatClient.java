@@ -33,8 +33,8 @@ public class ServerSideChatClient extends ChatClient {
 	public void connect() {
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
-				// 채팅창 종료
-				ServerSideChatClient.this.dispose();
+				// 채팅화면을 보이지 않게만 두고 상대가 접속을 끊을 때 메모리에서 내린다
+				ServerSideChatClient.this.setVisible(false);
 			}
 		});
 	}
