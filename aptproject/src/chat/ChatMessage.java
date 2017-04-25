@@ -15,9 +15,9 @@ public class ChatMessage extends JPanel {
 	JTextArea content;
 	float alignf;
 
-	public ChatMessage(ChatClient client, String msg, boolean isEcho) {
+	public ChatMessage(ChatClient client, String id, String msg, boolean isEcho) {
 		this.client = client;
-		user_id = new JLabel(client.id);
+		user_id = new JLabel(id);
 		content = new JTextArea(msg);
 		
 		if (!isEcho) {
