@@ -6,15 +6,19 @@
 
 package chat;
 
+import java.awt.Color;
+import java.awt.Dimension;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 
+import javax.swing.JPanel;
+
 import main.TreeMain;
 
-public class ChatServer extends Thread {
+public class ChatServer extends JPanel implements Runnable {
 	private TreeMain main;
-	
+	private Thread thread;
 	private ServerSocket server;
 	private Socket socket;
 	private int port = 7777;
@@ -22,16 +26,24 @@ public class ChatServer extends Thread {
 
 	public ChatServer(TreeMain main) {
 		this.main = main;
+		thread = new Thread();
 		
+		setBackground(Color.GRAY);
+		setPreferredSize(new Dimension(700, 700));
+		
+		// 서버기능을 시작한다
+		mkServer();
+	}
+
+	public void mkServer() {
 		try {
 			server = new ServerSocket(port);
 			System.out.println("서버생성");
-			start();
+			thread.start();
 
 		} catch (IOException e) {
 			e.printStackTrace();
 		}
-
 	}
 	
 	public void close()	{
@@ -44,12 +56,13 @@ public class ChatServer extends Thread {
 			try {
 				socket = server.accept();
 				System.out.println("접속자 확인");
-				ChatServerThread thread = new ChatServerThread(socket);
+				ServerSideChatClient serverChat = new ServerSideChatClient();
+				ChatServerThread thread = new ChatServerThread(socket, serverChat);
 				
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 	}
-
+	
 }

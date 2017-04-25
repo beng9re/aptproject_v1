@@ -75,6 +75,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	Vector<Object>  menuOpenList = new Vector<Object>();
 	Vector<MenuDto> menuDtoList = new Vector<MenuDto>();
 	Vector<JPanel> panelList = new Vector<JPanel>();
+	ArrayList<Aptuser> userList;
 	
 	public TreeMain(DBManager  instance, String userID) {
 
@@ -156,7 +157,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		/* --------------- Chat 관련 Start -------------------------------------- */
 		// aptuser테이블에서 데이터를 갖고오는 모델을 생성한다
 		AptuserModelByID aptuser = new AptuserModelByID(con, userID);
-		ArrayList<Aptuser> userList = aptuser.getData();
+		userList = aptuser.getData();
 		
 		// UserName 조회
 		userName = userList.get(0).getAptuser_name();
@@ -550,7 +551,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	    		curPanel = returnPan;	
 	    	} else if (className.equalsIgnoreCase("User")){
 	    		// 사용자물품목록
-	    		User userPan = new User();
+	    		User userPan = new User(userList);
 	    		curPanel = userPan;	
 	    	} else if (className.equalsIgnoreCase("RegistUser")){
 	    		// 회원등록
