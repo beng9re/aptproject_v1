@@ -23,7 +23,7 @@ public class ServerSideChatClient extends ChatClient {
 	}
 	
 	public void initFrame() {
-		setBounds(100, 100, 500, 500);
+		setBounds(100, 100, 300, 500);
 		setResizable(false);
 		setVisible(false);
 	}
