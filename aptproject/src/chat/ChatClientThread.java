@@ -44,12 +44,15 @@ public class ChatClientThread extends Thread {
 			// 들어온 메시지를 파싱하여 자신의 메시지와 타인의 메시지를 구분하여 출력
 			JSONObject jsonObj = ChatProtocol.parsing(msg);
 			msg = jsonObj.get("message").toString();
+			String user_id = jsonObj.get("user_id").toString();
 			ChatMessage chatbox = null;
-			if (jsonObj.get("user_id").equals(client.id)) {
-				chatbox = new ChatMessage(client, msg, true);
+			
+			if (user_id.equals(client.id)) {
+				chatbox = new ChatMessage(client, user_id, msg, true);
 			} else {
-				chatbox = new ChatMessage(client, msg, false);
+				chatbox = new ChatMessage(client, user_id, msg, false);
 			}
+			
 			client.pnl_chat.add(chatbox);
 			client.pnl_chat.add(Box.createHorizontalGlue());
 			client.pnl_chat.revalidate();

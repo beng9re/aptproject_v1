@@ -44,12 +44,13 @@ public class ChatServer extends Thread {
 			try {
 				socket = server.accept();
 				System.out.println("접속자 확인");
-				ChatServerThread thread = new ChatServerThread(socket);
+				ServerSideChatClient serverChat = new ServerSideChatClient();
+				ChatServerThread thread = new ChatServerThread(socket, serverChat);
 				
 			} catch (IOException e) {
 				e.printStackTrace();
 			}
 		}
 	}
-
+	
 }
