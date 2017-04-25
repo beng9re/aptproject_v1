@@ -39,13 +39,15 @@ import dto.ViewCPUT;
 
 public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 	
-	JLabel lb_block,lb_class,lb_code,lb_com,lb_taker,lb_takerTime,lb_Time;
+	JLabel lb_block,lb_class,lb_code,lb_com,lb_id,lb_takerTime,lb_Time;
 				//동			//호수
 	JLabel title;
 	
 	JTextField tf_code,tf_taker;
-	Choice ch_block,ch_class,ch_com;
+	Choice ch_block,ch_class,ch_com,ch_id;
 	
+	
+	Vector <String> u_id=new Vector<String>();
 	String userid; //회원아이디 값이 들어갈것
 	
 	JPanel p_info;
@@ -92,10 +94,10 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 		p_up.add(title);
 		lb_block=new JLabel("동"); //동 id
 		lb_class=new JLabel("호수");
+		lb_id=new JLabel("회원ID");//수령인
 		lb_code=new JLabel("바코드"); //바코드
 		
 		lb_com=new JLabel("운송사"); //운송사
-		lb_taker=new JLabel("수령인");//수령인
 	
 		
 		ch_block=new Choice();
@@ -103,13 +105,15 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 		ch_com=new Choice();
 		
 		tf_code=new JTextField(20);
+		ch_id=new Choice();
 		tf_taker=new JTextField(20);
 		
+		ch_id.setPreferredSize(new Dimension(220,30));
 		ch_block.setPreferredSize(new Dimension(220,30));
 		ch_class.setPreferredSize(new Dimension(220,30));
 		tf_code.setPreferredSize(new Dimension(20,30));
 		ch_com.setPreferredSize(new Dimension(220,30));
-		tf_taker.setPreferredSize(new Dimension(20,30));
+		
 		
 		bt_regist=new JButton("입력");
 		bt_reset=new JButton("초기화");
@@ -125,12 +129,11 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 	
 		ch_block.setBackground(Color.PINK);
 		ch_class.setBackground(Color.pink);
+		ch_id.setBackground(Color.pink);
 		ch_com.setBackground(Color.pink);
-		//ch_block.setBorder(BorderFactory.createLineBorder(Color.PINK, 2));
-		//ch_class.setBorder(BorderFactory.createLineBorder(Color.PINK, 2));
+	
 		tf_code.setBorder(BorderFactory.createLineBorder(Color.PINK, 2));
 		
-		tf_taker.setBorder(BorderFactory.createLineBorder(Color.PINK, 2));
 		
 		
 		add(p_down,BorderLayout.SOUTH);
@@ -162,7 +165,7 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 		});
 		
 		ch_block.addItemListener(this);
-	
+		ch_class.addItemListener(this);
 		
 		bt_regist.addActionListener(this);
 		bt_reset.addActionListener(this);
@@ -182,14 +185,12 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 		GridCom g_l1=new GridCom(p_info, gbl, gdc, ch_block, 				1, 0, 1,1,0, 0);
 		GridCom g_t2=new GridCom(p_info, gbl, gdc,lb_class, 				0, 1, 1,1,0, 0);
 		GridCom g_l2=new GridCom(p_info, gbl, gdc, ch_class, 				1, 1, 1,1,0, 0);
-		GridCom g_t3=new GridCom(p_info, gbl, gdc, lb_code,			    0, 2, 1,1,0, 0);
-		GridCom g_l3=new GridCom(p_info, gbl, gdc, tf_code, 			    1, 2, 1,1,0, 0);
-		GridCom g_t4=new GridCom(p_info, gbl, gdc, lb_com,				0, 3, 1,1,0, 0);
-		GridCom g_l4=new GridCom(p_info, gbl, gdc, ch_com, 			    1, 3, 1,1,0, 0);
-		GridCom g_t5=new GridCom(p_info, gbl, gdc, lb_taker, 			    0, 4, 1,1,0, 0);
-		GridCom g_l5=new GridCom(p_info, gbl, gdc, tf_taker, 		     	1, 4, 1,1,0, 0);
-		//GridCom g_timeT=new GridCom(p_info, gbl, gdc, lb_takerTime,    3, 7, 1, 1, 0, 0);
-		//GridCom g_time=new GridCom(p_info, gbl, gdc, lb_Time,   		3, 8, 1, 1, 0, 0);
+		GridCom g_t3=new GridCom(p_info, gbl, gdc, lb_id, 			  	    0, 2, 1,1,0, 0);
+		GridCom g_l3=new GridCom(p_info, gbl, gdc, ch_id, 		     		1, 2, 1,1,0, 0);
+		GridCom g_t4=new GridCom(p_info, gbl, gdc, lb_code,			    0, 3, 1,1,0, 0);
+		GridCom g_l4=new GridCom(p_info, gbl, gdc, tf_code, 			    1, 3, 1,1,0, 0);
+		GridCom g_t5=new GridCom(p_info, gbl, gdc, lb_com,					0, 4, 1,1,0, 0);
+		GridCom g_l5=new GridCom(p_info, gbl, gdc, ch_com, 			    1, 4, 1,1,0, 0);
 		
 		
 	}
@@ -325,11 +326,15 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 			}
 		}
 	}
+	public void addIdlist(){
+		ch_class.removeAll();
+		
+	}
 	
 	
 	//등록
 	public void regist(){
-		userSelect();
+		//userSelect();
 		
 		
 		String a=ch_com.getSelectedItem();
@@ -359,7 +364,7 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 		
 			pstmt.setString(1,tf_code.getText());
 			pstmt.setString(2,tf_taker.getText());
-			pstmt.setString(3,userid); //나중에 아이디 값뽑아야됨
+			pstmt.setString(3,ch_id.getSelectedItem()); //나중에 아이디 값뽑아야됨
 			pstmt.setInt(4,Integer.parseInt(companyid));
 
 			
@@ -387,6 +392,8 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 	
 	public void userSelect(){
 		
+		ch_id.removeAll();
+		u_id.removeAll(u_id);
 		
 		int unit=1;
 		for(int i=0;i<cput.size();i++){
@@ -411,9 +418,11 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 			pstmt.setInt(1,unit);
 			rs=pstmt.executeQuery();
 			
-			
-			rs.next();
-			userid=rs.getString("aptuser_id");
+			while(rs.next()){
+				userid=rs.getString("aptuser_id");
+				u_id.add(userid);
+				
+			}
 		} catch (SQLException e) {
 			try {
 				pstmt=con.prepareStatement(sql);
@@ -427,7 +436,11 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 			}
 			
 		}
+		for(int i=0;i<u_id.size();i++){
+			ch_id.add(u_id.get(i));
+		}
 	}
+	
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
@@ -451,6 +464,9 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 		Object obj=e.getSource();
 		if(obj==ch_block){
 			addClasslist();
+		}
+		if(obj==ch_class){
+			userSelect();
 		}
 		
 	}
