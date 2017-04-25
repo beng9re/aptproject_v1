@@ -170,15 +170,15 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		// 관리자 IP를 가지고 온다 (채팅 클라이언트에서 서버에 접속할 때 사용)
 		aptuser.selectData("admin");
 		serverIP = ((Aptuser)aptuser.getData().get(0)).getAptuser_ip();
-<<<<<<< HEAD
+//<<<<<<< HEAD
 		
 		aptuser.selectData(userID);
 		
 		// Tree 구성 작업
 		makeTree();
-=======
+//=======
 		System.out.println("serverIP = "+serverIP);
->>>>>>> cde0a4764f076d126979fd63f9ba168a81602b3b
+//>>>>>>> cde0a4764f076d126979fd63f9ba168a81602b3b
 
 		// 서버관리자(admin)인 경우 Chat Server 생성
 		//if (userID.equalsIgnoreCase("admin")){
