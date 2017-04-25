@@ -56,6 +56,7 @@ public class ChatServerThread extends Thread {
 
 	public void send(String user_id, String msg) {
 		try {
+			//채팅도중 관리자가 창을 닫아버리면 끝남 >> 수정필요
 			//메세지를 날리기전 서버측 클라이언트의 초기화를 실행한다
 			if (serverChatStart) {
 				serverChatStart = false;
