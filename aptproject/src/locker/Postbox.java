@@ -32,15 +32,35 @@ public class Postbox extends JPanel implements MouseListener{
 	String abpath;
 	String name;
 	Connection con;
+	Vector vec=new Vector();
+	//벡터의 값
+	 
+	/*
+	 * 
+	 0 Invoice_id				//아이디
+	 1 Box_use				//사용중인지
+	 2	Invoice_barcode  //바코드
+	 3	Invoice_arrtime   
+	 4	Invoice_taker
+	 5	Invoice_takeflag
+	 6	Aptuser_id
+	 7	Company_id
+	 8	Box_num				//사물함번호
+				
+	 * 
+	 * */
+	
+	
 	
 	//없는것 				있는것
-	public Postbox(String name,Container c,String path,Connection con) {
+	public Postbox(Vector vec,Container c,String path,Connection con) {
+		this.vec=vec;
 		this.con=con;
-		this.name=name;
+	
 		setLayout(null);
 		abpath=path;
 		
-		lb_name=new JLabel(name);
+		lb_name=new JLabel(vec.get(8).toString()+"");
 		
 		
 		url=this.getClass().getResource(path);
@@ -86,7 +106,7 @@ public class Postbox extends JPanel implements MouseListener{
 	}
 	@Override
 	public void mouseClicked(MouseEvent e) {
-		System.out.println(name);
+		System.out.println(vec.get(0));
 		
 	}
 	@Override
