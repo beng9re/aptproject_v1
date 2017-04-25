@@ -114,6 +114,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		// la_welcom text Bold, 가운데 정렬
 		la_welcom.setFont(new Font("Default", Font.BOLD, 15));
 		la_welcom.setHorizontalAlignment(JLabel.CENTER);
+		la_welcom.setForeground(Color.BLUE);
 		
 		p_west_center.setLayout(new BorderLayout());
 		p_west_center.add(scroll);
@@ -136,7 +137,6 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		bt_exit.addActionListener(this);
 		// 프로그램 종료를 위한 윈도우 리스너
 		this.addWindowListener(new WindowAdapter() {
-			@Override
 			public void windowClosing(WindowEvent e) {
 				close();
 			}
@@ -153,6 +153,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	}
 	
 	public void init(){
+		/* --------------- Chat 관련 Start -------------------------------------- */
 		// aptuser테이블에서 데이터를 갖고오는 모델을 생성한다
 		AptuserModelByID aptuser = new AptuserModelByID(con, userID);
 		ArrayList<Aptuser> userList = aptuser.getData();
@@ -164,40 +165,50 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		if (userList.get(0).getAptuser_perm()==9){
 			adminFlag = true;
 		}
-		la_welcom.setText(userName+" 님 환영합니다");
 	
 		// 관리자 IP를 가지고 온다 (채팅 클라이언트에서 서버에 접속할 때 사용)
 		aptuser.selectData("admin");
 		serverIP = ((Aptuser)aptuser.getData().get(0)).getAptuser_ip();
 
-		// Tree 구성 작업
-		makeTree();
-
 		// 서버관리자(admin)인 경우 Chat Server 생성
 		if (userID.equalsIgnoreCase("admin")){
 			chatServer=  new ChatServer(this);
 		}
+		/* --------------- Chat 관련 End -------------------------------------- */
 		
+		System.out.println("adminFlag="+adminFlag);
+		la_welcom.setText(userName+" 님 환영합니다");
+		
+		// Tree 구성 작업
+		makeTree();
 	}
 	
+	// get Connection 
 	public Connection getConnection(){
 		return con;
 	}
 	
+	// get UserId
 	public String getUserID(){
 		return userID;
 	}
 	
+	// get ServrIP
 	public String getSeverIP() {
 		return serverIP;
 	}
 	
 	// 프로그램 종료를 위한 메서드
 	public void close(){
+		// 채팅 Server 종료
 		if (chatServer!=null) {
 			chatServer.close(); 
 		}
+		
+		// Connection 종료
 		instance.disConnect(con);
+		
+		// Window Close
 		System.exit(0);
 	}
 
@@ -259,7 +270,8 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 				menuDto.setUser_role_flag(rs.getString("user_role_flag"));
 				menuDto.setMenu_use_flag(rs.getString("menu_use_flag"));		
 				
-				// Admin 유저이고 admin 권한 화면인 경우, 또는 admin 유저가 아니고, 유저 권한이 있는 화면 인 경우. 메뉴 추가
+				// Admin 유저이고 admin 권한 화면인 경우, 
+				// 또는 admin 유저가 아니고, 유저 권한이 있는 화면 인 경우. 메뉴 추가
 				if ((adminFlag==true && rs.getString("admin_role_flag").equalsIgnoreCase("Y")) ||
 					 (adminFlag==false && rs.getString("user_role_flag").equalsIgnoreCase("Y"))	) {
 					
