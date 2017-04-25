@@ -51,8 +51,6 @@ public class Admin_UserView extends JPanel implements ActionListener {
 	Choice choice;
 	JButton bt_find, bt_copy, bt_xls;
 	JTextField t_input;
-
-	DBManager manager;
 	Connection con;
 	AdminModel adminModel;
 	InvoiceModel invoiceModel;
@@ -67,7 +65,8 @@ public class Admin_UserView extends JPanel implements ActionListener {
 	Vector<Aptuser> user = new Vector<Aptuser>();
 	Vector<Invoice> invoice = new Vector<Invoice>();
 
-	public Admin_UserView() {
+	public Admin_UserView(Connection con) {
+		this.con=con;
 		chooser = new JFileChooser();
 		p_north = new JPanel();
 		p_south = new JPanel();
@@ -156,15 +155,8 @@ public class Admin_UserView extends JPanel implements ActionListener {
 
 		setVisible(true);
 		setSize(700, 700);
-		init();
-
 	}
-
-	public void init() {
-		manager = DBManager.getInstance();
-		this.con = manager.getConnection();
-	}
-
+	
 	public void getUser() {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
