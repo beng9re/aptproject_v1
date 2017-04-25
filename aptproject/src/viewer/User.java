@@ -42,13 +42,13 @@ public class User extends JPanel implements ActionListener, ItemListener {
 	Choice choice;
 	JButton bt_find, bt_xls;
 	JRadioButton rb_a, rb_b;
-	DBManager manager;
 	Connection con;
 	JFileChooser chooser;
 	FileOutputStream fos;
 	Aptuser aptUser;
 	ArrayList<Aptuser> userList;
-	public User(ArrayList userList) {
+	public User(ArrayList userList,Connection con) {
+		this.con=con;
 		this.userList=userList;
 		chooser = new JFileChooser();
 		p_radio = new JPanel();
@@ -114,12 +114,7 @@ public class User extends JPanel implements ActionListener, ItemListener {
 
 		setVisible(true);
 		setSize(700, 700);
-		init();
-	}
-
-	public void init() {
-		manager = DBManager.getInstance();
-		this.con = manager.getConnection();
+		
 	}
 
 	public void getList(StringBuffer sb) {
