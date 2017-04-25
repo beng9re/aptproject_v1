@@ -60,6 +60,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	private String userID;
 	private String userName;
 	private boolean  adminFlag=false;
+	private boolean  systemUserFlag=false;
 	private String serverIP;
 	private ChatServer chatServer;
 	private ChatClient chatClient;
@@ -83,6 +84,10 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		this.instance = instance;
 		this.con = instance.getConnection();
 		this.userID = userID;
+		
+		if (userID.equalsIgnoreCase("system")){
+			systemUserFlag=true;
+		}
 		
 		p_west = new JPanel();
 		p_west_center = new JPanel();
@@ -161,8 +166,8 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		userList = aptuser.getData();
 		
 		// 관리자 IP를 가지고 온다 (채팅 클라이언트에서 서버에 접속할 때 사용)
-		System.out.println("serverIP = "+serverIP);
 		serverIP = ((Aptuser)aptuser.getData().get(0)).getAptuser_ip();
+		//System.out.println("serverIP = "+serverIP);
 		
 		// UserName 조회
 		aptuser.selectData(userID);
@@ -173,13 +178,9 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 			adminFlag = true;
 		}
 		
-		// 서버관리자(admin)인 경우 Chat Server 생성
-		//if (userID.equalsIgnoreCase("admin")){
-		//	chatServer=  new ChatServer(this);
-		//}
 		/* --------------- Chat 관련 End -------------------------------------- */
 		
-		System.out.println("adminFlag="+adminFlag);
+		//System.out.println("adminFlag="+adminFlag);
 		la_welcom.setText(userName+" 님 환영합니다");
 		
 		// Tree 구성 작업
@@ -239,7 +240,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		sql.append(" where  m.menu_level = 1 \n");
 		sql.append(" and      nvl(m.menu_use_flag,'Y') = 'Y' ");
 		sql.append(" order by m.order_seq \n");
-		System.out.println("sql : "+sql.toString());
+		//System.out.println("sql : "+sql.toString());
 		
 		// 하위 메뉴
 		StringBuffer  sqlSub=new StringBuffer();
@@ -250,7 +251,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		sqlSub.append(" from   menulist m \n");
 		sqlSub.append(" where m.menu_up_level_id = ? \n" );
 		sqlSub.append(" order by m.order_seq \n");
-		System.out.println("sqlSub : "+sqlSub.toString());
+		//System.out.println("sqlSub : "+sqlSub.toString());
 		
 		try {
 			pstmt = con.prepareStatement(sql.toString());
@@ -276,9 +277,11 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 				menuDto.setUser_role_flag(rs.getString("user_role_flag"));
 				menuDto.setMenu_use_flag(rs.getString("menu_use_flag"));		
 				
+				// system user 인 경우,
 				// Admin 유저이고 admin 권한 화면인 경우, 
 				// 또는 admin 유저가 아니고, 유저 권한이 있는 화면 인 경우. 메뉴 추가
-				if ((adminFlag==true && rs.getString("admin_role_flag").equalsIgnoreCase("Y")) ||
+				if ( systemUserFlag = true ||
+					 (adminFlag==true && rs.getString("admin_role_flag").equalsIgnoreCase("Y")) ||
 					 (adminFlag==false && rs.getString("user_role_flag").equalsIgnoreCase("Y"))	) {
 					
 					root.add(node);
@@ -312,7 +315,8 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 						menuSubDto.setMenu_use_flag(rsSub.getString("menu_use_flag"));		
 
 						// Admin 유저이고 admin 권한 화면인 경우, 또는 admin 유저가 아니고, 유저 권한이 있는 화면 인 경우. 메뉴 추가
-						if ((adminFlag==true && rsSub.getString("admin_role_flag").equalsIgnoreCase("Y")) ||
+						if ( systemUserFlag = true ||
+							 (adminFlag==true && rsSub.getString("admin_role_flag").equalsIgnoreCase("Y")) ||
 							 (adminFlag==false && rsSub.getString("user_role_flag").equalsIgnoreCase("Y"))	) {
 							
 							node.add(nodeSub);
@@ -360,6 +364,9 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 			r++;
 		}
 		
+		// ChatServer 는 무조건 생성한다.
+		
+		
 		// 초기 선택 화면 지정
 		String firstMenuClasssName="";
 		if (adminFlag){ // 관리자
@@ -370,20 +377,34 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		
 		// 초기화면 TreeIndex 찾기
 		int defaulTreeIndex=-1;
+		int chatServerIndex=-1;
 		String chkClassName="";
 		for (int i=0; i<menuDtoList.size(); i++){
 			chkClassName = menuDtoList.get(i).getMenu_class_name();
 			if (chkClassName!=null){
+				// 최초 open 화면의 index Check
 				//System.out.println("chkClassName = "+chkClassName);
 				if (chkClassName.equalsIgnoreCase(firstMenuClasssName)){
 					defaulTreeIndex = i;
 					//System.out.println("defaultSelectRow = "+defaulTreeIndex);
 				}
+				
+				// admin 일때, ChatServer 의 index Check				
+				if (adminFlag==true && chkClassName.equalsIgnoreCase("ChatServer")){
+					chatServerIndex = i;
+					//System.out.println("chatServerIndex = "+chatServerIndex);
+				}
 			}
+		}
+		
+		// 서버관리자(admin)인 경우 Chat Server 생성
+		if (chatServerIndex != -1){
+			tree.setSelectionInterval(chatServerIndex, chatServerIndex);
 		}
 		
 		// 초기 선택 화면이 있는 경우, 그 화면 선택
 		if (defaulTreeIndex!=-1){
+			//tree.clearSelection();
 			tree.setSelectionInterval(defaulTreeIndex, defaulTreeIndex);
 		}
 		
