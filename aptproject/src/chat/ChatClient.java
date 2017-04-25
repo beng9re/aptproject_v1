@@ -146,4 +146,8 @@ public class ChatClient extends JFrame {
 		txf_input.setText("");
 	}
 	
+	public ChatClientThread getThread() {
+		return thread;
+	}
+	
 }

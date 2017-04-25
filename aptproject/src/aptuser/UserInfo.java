@@ -56,9 +56,8 @@ public abstract class UserInfo extends JPanel implements ActionListener {
 	ArrayList<Aptuser> aptuser;
 
 	// 프로그램 전체에서 id와 conn은 항상보유중이어야함 (main으로 부터 가져온다)
-	String id = "admin";
-	DBManager dbMgr = DBManager.getInstance();
-	Connection conn = dbMgr.getConnection();
+	String id;
+	Connection conn;
 
 	public UserInfo() {
 		// 필드생성
