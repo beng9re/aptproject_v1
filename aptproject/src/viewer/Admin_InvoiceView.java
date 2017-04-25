@@ -317,7 +317,8 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 			} else if (data.equals("반송바코드")) {
 				option = "returninv_barcode";
 			}
-			String sql = "select returninv_id as 반송ID,returninv_time 등록시간, returninv_date 반송날짜,returninv_comment 메모, returninv_arr 입고시간, returninv_dep 출고시간, returninv_barcode 반송바코드    from "
+			
+			String sql = "select returninv_id as 반송ID,returninv_time 등록시간, returninv_date 반송날짜, returninv_arr 입고시간, returninv_dep 출고시간, returninv_barcode 반송바코드,returninv_comment 메모    from "
 					+ tableName + " where " + option + "= '" + msg + "' order by returninv_arr desc";
 			if (rb_allInvoice.isSelected()) {
 				invoiceModel.getList(sql);
@@ -437,7 +438,5 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 
 	}
 
-	public static void main(String[] args) {
-		new Admin_InvoiceView();
-	}
+
 }
