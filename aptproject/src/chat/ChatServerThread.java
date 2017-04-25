@@ -56,8 +56,9 @@ public class ChatServerThread extends Thread {
 
 	public void send(String user_id, String msg) {
 		try {
-			//채팅도중 관리자가 창을 닫아버리면 끝남 >> 수정필요
+			//채팅도중 관리자가 창을 닫아버리면 끝남 >> 수정필요 >> chatserver를 리스트로 변경
 			//채팅도중 채팅클라이언트가 아닌 전체 프로그램을 종료하면 소켓 반환이 안됨
+			
 			//메세지를 날리기전 서버측 클라이언트의 초기화를 실행한다
 			if (serverChatStart) {
 				serverChatStart = false;

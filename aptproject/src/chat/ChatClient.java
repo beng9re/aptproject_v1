@@ -135,7 +135,7 @@ public class ChatClient extends JFrame {
 	}
 	
 	public void initFrame() {
-		setBounds(100, 100, 500, 500);
+		setBounds(100, 100, 300, 500);
 		setResizable(false);
 		setTitle("관리자와 대화");
 		setVisible(true);
