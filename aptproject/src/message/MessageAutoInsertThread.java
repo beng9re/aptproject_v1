@@ -29,7 +29,6 @@ public class MessageAutoInsertThread extends  Thread{
 		
 		threadFlag=true;
 		thread = new Thread(this);
-		thread.start();
 		System.out.println("MessageInsertThread »ý¼º");
 	}
 	

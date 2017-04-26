@@ -38,6 +38,7 @@ import db.AptuserModelByID;
 import db.DBManager;
 import dto.Aptuser;
 import dto.MenuDto;
+import message.MessageAutoInsertThread;
 import message.RecieveMessage;
 import message.SendMessage;
 import message.SendMessageList;
@@ -65,6 +66,9 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	private String serverIP;
 	private ChatServer chatSrv;
 	private ChatClient chatClient;
+	private RecieveMessage recieveMessage;
+	private SendMessageList  sendMessageList;
+	private MessageAutoInsertThread  msgAutoInsertThread;
 	
 	JTree  tree;
 	JScrollPane  scroll;	
@@ -196,8 +200,8 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		// Tree 구성 작업
 		makeTree();
 		
-		//MessageInsertThread msgThread = new MessageInsertThread(this);
-		//msgThread.start();
+		msgAutoInsertThread = new MessageAutoInsertThread(this);
+		//msgAutoInsertThread.start();
 	}
 	
 	// get Connection 
@@ -234,6 +238,16 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		for (Object obj : menuOpenList) {
 			if (obj == chatClient) {
 				chatClient.getThread().disconnect();
+			} else if (obj==recieveMessage){
+				recieveMessage.setThreadFlag(false);
+				// 수신 메세지 Thread 종료
+			} else if (obj==sendMessageList){
+				// 송신 메세지 List Thread 종료
+				sendMessageList.setThreadFlag(false);
+			} else if (obj==msgAutoInsertThread){
+				// Message 
+				msgAutoInsertThread.setThreadFlag(false);
+			} else {
 			}
 		}
 		
@@ -549,9 +563,9 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 				
 			} else if (className.equalsIgnoreCase("RecieveMessage")){  
 				// 쪽지 수신함
-				RecieveMessage  recm = new RecieveMessage(this);
-				menuOpenList.add(recm);		
-				currObject=recm;
+				recieveMessage = new RecieveMessage(this);
+				menuOpenList.add(recieveMessage);		
+				currObject=recieveMessage;
 			}
 			
 			// 추가된 Frame 의 위치를 현재 treeFrame 의 위치에 맞게 조정한다.
