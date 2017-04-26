@@ -202,8 +202,8 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		makeTree();
 		
 		// (송장, 반송 체크하여 Message Insert 하는 Thread 시동)
-		msgAutoInsertThread = new MessageAutoInsertThread(this);
-		//msgAutoInsertThread.start();
+		//msgAutoInsertThread = new MessageAutoInsertThread(this);
+		//msgAutoInsertThread.setThreadFlag(true);
 	}
 	
 	// get Connection 
@@ -241,8 +241,8 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 			if (obj == chatClient) {
 				chatClient.getThread().disconnect();
 			} else if (obj==recieveMessage){
-				recieveMessage.setThreadFlag(false);
 				// 수신 메세지 Thread 종료
+				recieveMessage.setThreadFlag(false);
 			} else if (obj==sendMessageList){
 				// 송신 메세지 List Thread 종료
 				sendMessageList.setThreadFlag(false);

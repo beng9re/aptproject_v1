@@ -15,6 +15,7 @@ public class MessageAutoInsertThread extends  Thread{
 	String adminUserID;
 	boolean threadFlag=false;
 	Thread  thread;
+	int runCount=0;
 	
 	
 	public MessageAutoInsertThread(TreeMain treeMain) {
@@ -29,6 +30,7 @@ public class MessageAutoInsertThread extends  Thread{
 		
 		threadFlag=true;
 		thread = new Thread(this);
+		thread.start();
 		System.out.println("MessageInsertThread »ý¼º");
 	}
 	
@@ -206,6 +208,10 @@ public class MessageAutoInsertThread extends  Thread{
 	public void run() {
 		while (threadFlag){
 			try {
+				runCount++;
+				if (runCount==1){
+					System.out.println("MessageAutoInsertThread  start");
+				}
 				thread.sleep(1000);
 				//System.out.println("MessageThread start");
 				InvoiceCheck();
