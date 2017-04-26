@@ -15,7 +15,7 @@ public class SendMsgListModel extends AbstractTableModel{
 	Vector<Vector> data = new Vector<Vector>();
 	
 	public SendMsgListModel(Connection con, String send_user_id, String search ) {
-		System.out.println("SendMsgListModel");
+		//System.out.println("SendMsgListModel");
 		this.con = con;
 		
 		columnName = new Vector<String>();
@@ -30,7 +30,7 @@ public class SendMsgListModel extends AbstractTableModel{
 	}
 	
 	public void getList(String send_user_id, String search){
-		System.out.println("CompUnitModel - getList : "+send_user_id);
+		//System.out.println("CompUnitModel - getList : "+send_user_id);
 		PreparedStatement pstmt=null;
 		ResultSet  rs=null;
 		
@@ -44,7 +44,7 @@ public class SendMsgListModel extends AbstractTableModel{
 		sql.append(" and     (s.msg_send_title like ? or \n");
 		sql.append("             s.msg_send_content like ?) \n");
 		sql.append(" order by s.msg_send_id desc \n");		
-		System.out.println("SendMsgListModel : \n"+sql.toString());
+		//System.out.println("SendMsgListModel : \n"+sql.toString());
 		
 		try {
 			pstmt = con.prepareStatement(sql.toString());
@@ -65,7 +65,7 @@ public class SendMsgListModel extends AbstractTableModel{
 				
 				data.add(vec);
 			}
-			System.out.println("SendMsgListModel -> getList -> OK : size = "+data.size());
+			//System.out.println("SendMsgListModel -> getList -> OK : size = "+data.size());
 		} catch (SQLException e) {
 			System.out.println("SendMsgListModel -> getList -> SQLException : "+e.getMessage());
 			e.printStackTrace();

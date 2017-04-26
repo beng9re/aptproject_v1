@@ -324,7 +324,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 				// 또는 admin 유저가 아니고, 유저 권한이 있는 화면 인 경우. 메뉴 추가
 				if ( (adminMenuFlag==true && rs.getString("admin_role_flag").equalsIgnoreCase("Y")) ||
 					 (adminMenuFlag==false && rs.getString("user_role_flag").equalsIgnoreCase("Y"))	) {
-					
+					System.out.println("menu="+rs.getString("menu_name"));
 					root.add(node);
 					menuDtoList.add(menuDto);				
 				}
@@ -358,7 +358,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 						// Admin 유저이고 admin 권한 화면인 경우, 또는 admin 유저가 아니고, 유저 권한이 있는 화면 인 경우. 메뉴 추가
 						if ( (adminMenuFlag==true && rsSub.getString("admin_role_flag").equalsIgnoreCase("Y")) ||
 							 (adminMenuFlag==false && rsSub.getString("user_role_flag").equalsIgnoreCase("Y"))	) {
-							
+							System.out.println("submenu="+rsSub.getString("menu_name"));
 							node.add(nodeSub);
 							menuDtoList.add(menuSubDto);
 						}
@@ -398,6 +398,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		}		
 		
 		// tree 모두 펼치기
+		System.out.println("tree.getRowCount()="+tree.getRowCount());
 		int r=0;
 		while (r < tree.getRowCount()){
 			tree.expandRow(r);
@@ -668,6 +669,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	    		if (panelList.get(i)==menuOpenList.get(index)){
 	    			// panel 사이즈 p_center 의 사이즈로 만들기
 					//panelList.get(i).setPreferredSize(new Dimension(centerWidth, centerHeight));
+	    			panelList.get(i).setSize(centerWidth, centerHeight);
 					// panel 보이기
 					panelList.get(i).setVisible(true);
 					// Title 변경

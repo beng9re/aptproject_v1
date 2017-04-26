@@ -324,7 +324,9 @@ public class SendMessageList extends JFrame implements ActionListener , Runnable
 		} else {
 			msg_send_id = -1;
 		}
-		System.out.println("showRecvList : msg_send_id="+msg_send_id);
+		String name = getClass().getName().getClass().getName();
+		System.out.println("showRecvList - name : "+name);
+		//System.out.println("showRecvList : msg_send_id="+msg_send_id);
 		recvListModel.getList(msg_send_id);
 		tableList.updateUI();
 	}

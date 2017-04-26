@@ -33,10 +33,10 @@ public class PopUpTable extends JFrame{
 		
 		String name=rp.userList.get(0).getAptuser_name();
 		
-		if((rp.userList.get(0).getAptuser_perm())!=9){
-			
+		System.out.println(rp.userList.get(0).getAptuser_perm());
+		
 			where=" where aptuser_id="+"'"+name+"'";
-		}
+	
 		
 		String sql="select invoice_id as 송장ID, invoice_barcode as 송장바코드, invoice_arrtime as 등록시간, invoice_taker as 수령인, invoice_taketime as 수령시간, invoice_takeflag as 수령여부, aptuser_id as 회원ID "
 				+" from view_acis "+where;

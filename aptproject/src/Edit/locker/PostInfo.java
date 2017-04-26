@@ -1,4 +1,4 @@
-package locker;
+package Edit.locker;
 
 import java.util.Vector;
 
