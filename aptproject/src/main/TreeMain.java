@@ -59,8 +59,9 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	
 	private String userID;
 	private String userName;
+	private String adminUserID;
 	private boolean  adminFlag=false;
-	private boolean  systemUserFlag=false;
+	private boolean  adminMenuFlag=false;
 	private String serverIP;
 	private ChatServer chatSrv;
 	private ChatClient chatClient;
@@ -84,10 +85,6 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		this.instance = instance;
 		this.con = instance.getConnection();
 		this.userID = userID;
-		
-		if (userID.equalsIgnoreCase("system")){
-			systemUserFlag=true;
-		}
 		
 		p_west = new JPanel();
 		p_west_center = new JPanel();
@@ -161,6 +158,8 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	
 	public void init(){
 		/* --------------- Chat 관련 Start -------------------------------------- */
+		
+		// admin User ///////////////////////////
 		// aptuser테이블에서 데이터를 갖고오는 모델을 생성한다
 		AptuserModelByID aptuser = new AptuserModelByID(con, "admin");
 		userList = aptuser.getData();
@@ -169,13 +168,23 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		serverIP = ((Aptuser)aptuser.getData().get(0)).getAptuser_ip();
 		//System.out.println("serverIP = "+serverIP);
 		
+		// adminUserID 받아 놓는다.
+		adminUserID = ((Aptuser)aptuser.getData().get(0)).getAptuser_id();		
+		
+		// 현재 User ////////////////////////////////////////////////////////////
 		// UserName 조회
 		aptuser.selectData(userID);
 		userName = userList.get(0).getAptuser_name();
 		
+		// userID 가 admin 인 경우 adminFlag 부여
+		if (userID.equalsIgnoreCase("admin")){
+			adminFlag=true;
+		}
+		
 		// 접속한 회원의 권한을 조회하고 Main의 권한변수에 대입한다
+		// 접속한 유저의 Aptuser_perm=9 인 경우, admin Menu 권한 지정.
 		if (userList.get(0).getAptuser_perm()==9){
-			adminFlag = true;
+			adminMenuFlag = true;
 		}
 		System.out.println("serverIP = "+serverIP);
 
@@ -208,6 +217,10 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	
 	public boolean getAdminFlag(){
 		return adminFlag;
+	}
+	
+	public String getAdminUserID(){
+		return adminUserID;
 	}
 	
 	// 프로그램 종료를 위한 메서드
@@ -293,9 +306,8 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 				// system user 인 경우,
 				// Admin 유저이고 admin 권한 화면인 경우, 
 				// 또는 admin 유저가 아니고, 유저 권한이 있는 화면 인 경우. 메뉴 추가
-				if ( systemUserFlag = true ||
-					 (adminFlag==true && rs.getString("admin_role_flag").equalsIgnoreCase("Y")) ||
-					 (adminFlag==false && rs.getString("user_role_flag").equalsIgnoreCase("Y"))	) {
+				if ( (adminMenuFlag==true && rs.getString("admin_role_flag").equalsIgnoreCase("Y")) ||
+					 (adminMenuFlag==false && rs.getString("user_role_flag").equalsIgnoreCase("Y"))	) {
 					
 					root.add(node);
 					menuDtoList.add(menuDto);				
@@ -328,9 +340,8 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 						menuSubDto.setMenu_use_flag(rsSub.getString("menu_use_flag"));		
 
 						// Admin 유저이고 admin 권한 화면인 경우, 또는 admin 유저가 아니고, 유저 권한이 있는 화면 인 경우. 메뉴 추가
-						if ( systemUserFlag = true ||
-							 (adminFlag==true && rsSub.getString("admin_role_flag").equalsIgnoreCase("Y")) ||
-							 (adminFlag==false && rsSub.getString("user_role_flag").equalsIgnoreCase("Y"))	) {
+						if ( (adminMenuFlag==true && rsSub.getString("admin_role_flag").equalsIgnoreCase("Y")) ||
+							 (adminMenuFlag==false && rsSub.getString("user_role_flag").equalsIgnoreCase("Y"))	) {
 							
 							node.add(nodeSub);
 							menuDtoList.add(menuSubDto);
@@ -382,7 +393,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		
 		// 초기 선택 화면 지정
 		String firstMenuClasssName="";
-		if (adminFlag){ // 관리자
+		if (adminMenuFlag){ // 관리자
 			firstMenuClasssName = "Admin_InvoiceView";  // 관리자물품목록			
 		} else {
 			firstMenuClasssName = "User"; // 사용자물품목록
