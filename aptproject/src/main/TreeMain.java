@@ -153,6 +153,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		setTitle("***** 환영합니다 *****");
 		setVisible(true);
 		setSize(winWidth, winHeight);
+		setResizable(false);
 		setLocationRelativeTo(null);
 		
 		// 초기 작업
@@ -200,6 +201,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		// Tree 구성 작업
 		makeTree();
 		
+		// (송장, 반송 체크하여 Message Insert 하는 Thread 시동)
 		msgAutoInsertThread = new MessageAutoInsertThread(this);
 		//msgAutoInsertThread.start();
 	}
@@ -401,9 +403,6 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 			tree.expandRow(r);
 			r++;
 		}
-		
-		// ChatServer 는 무조건 생성한다.
-		
 		
 		// 초기 선택 화면 지정
 		String firstMenuClasssName="";
