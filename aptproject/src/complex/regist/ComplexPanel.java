@@ -71,11 +71,11 @@ public class ComplexPanel extends JPanel implements ActionListener {
 		// 라디오 디자인
 
 		ra_regist.setFont(new Font("맑은고딕", Font.BOLD, 20));
-		ra_regist.setBackground(Color.ORANGE);
+		ra_regist.setBackground(Color.pink);
 		ra_regist.setFocusPainted(false);
 
 		ra_add.setFont(new Font("맑은고딕", Font.BOLD, 20));
-		ra_add.setBackground(Color.ORANGE);
+		ra_add.setBackground(Color.pink);
 		ra_add.setFocusPainted(false);
 
 		// 버튼 디자인
