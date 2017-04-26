@@ -67,8 +67,9 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 	//빈벡터 판단용벡터
 	Vector<Vector> company=new  Vector<Vector>();
 	//운송사 테이블 정보를 가진 벡터
-	
 
+	boolean classflag=false;
+	boolean userflag=false;
 	
 	public InvEditPan(Connection con) {
 		this.con=con;
@@ -203,7 +204,7 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 	public void complexSet(){
 		PreparedStatement pstmt=null;
 		ResultSet rs=null;
-		String sql="select * from view_cput";
+		String sql="select * from view_cput order by complex_name,unit_name asc ";
 		ViewCPUT dto=new ViewCPUT();
 		try {
 			pstmt=con.prepareStatement(sql);
@@ -223,7 +224,7 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 			}
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			System.out.println("조회된호수 x");
 		}finally{
 			try {
 				if(rs!=null)
@@ -319,10 +320,17 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 		ch_class.removeAll();
 		PreparedStatement pstmt=null;
 		ResultSet rs=null;
-	
+		
 		for(int i=0;i<cput.size();i++){
 			if(cput.get(i).get(1).toString().equals(ch_block.getSelectedItem().toString())){
-			   ch_class.add(cput.get(i).get(3).toString());
+			
+				if(cput.get(i).get(3)==null){
+					ch_class.add("해당 동에 호수가 없음");
+					classflag=false;
+					return;
+				}
+				classflag=true;
+				ch_class.add(cput.get(i).get(3).toString());
 			}
 		}
 	}
@@ -431,7 +439,7 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 				rs.next();
 				userid=rs.getString("aptuser_id");
 			} catch (SQLException e1) {
-				// TODO Auto-generated catch block
+				System.out.println("조회된 사람 x");
 			
 			}
 			

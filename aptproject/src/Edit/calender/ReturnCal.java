@@ -43,10 +43,11 @@ public class ReturnCal extends JFrame  {
 	String dataData;
    ImageIcon i_next;
    
+   
 	RetunPan rp;
 	URL url;
 public ReturnCal(RetunPan rp) {
-	
+
 	this.rp=rp;
 	p_cal=new JPanel();
 	p_cal.setPreferredSize(new Dimension(400, 40));
@@ -88,7 +89,7 @@ public ReturnCal(RetunPan rp) {
 	
 	
 	setVisible(true);
-	setBounds(700, 0, 400, 400);
+	setBounds(1200, 300, 300,300);
 
 	
 	

@@ -14,6 +14,7 @@ import java.awt.geom.Area;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.SQLException;
+import java.util.ArrayList;
 
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
@@ -25,6 +26,7 @@ import javax.swing.JTextField;
 
 import Edit.calender.ReturnCal;
 import db.DBManager;
+import dto.Aptuser;
 
 
 
@@ -58,13 +60,16 @@ public class RetunPan extends JPanel implements ActionListener{
 	PopUpTable p;
 	
 	String date;
-	
+	String user;
+	ArrayList<Aptuser> userList;
 	Connection con;
-	public RetunPan(Connection con) {
+	public RetunPan(Connection con,ArrayList<Aptuser> userList) {
+		this.userList=userList;
 		this.con=con;
+		System.out.println();
 		
 		
-		p=new PopUpTable(this, con,"admin");
+		p=new PopUpTable(this, con);
 		gbl=new GridBagLayout();
 		gdc=new GridBagConstraints();
 		
@@ -90,8 +95,8 @@ public class RetunPan extends JPanel implements ActionListener{
 		lb_taker=new JLabel("수거예정일");//입고시간
 		
 	
-		lb_outTime=new JLabel("출고시간");
-		lb_Time =new JLabel("110:33:33");
+		lb_outTime=new JLabel("");
+		lb_Time =new JLabel("");
 		lb_txt=new JLabel("보네는 말");
 		tf_id=new JTextField(20);
 		
@@ -130,10 +135,10 @@ public class RetunPan extends JPanel implements ActionListener{
 		
 		
 		add(p_down,BorderLayout.SOUTH);
-		p_down.setPreferredSize(new Dimension(700, 200));
+		p_down.setPreferredSize(new Dimension(700, 180));
 		p_down.setBackground(Color.pink);
 		p_down.add(p_emp);
-		p_emp.setPreferredSize(new Dimension(700, 50));
+		p_emp.setPreferredSize(new Dimension(700, 20));
 		//p_emp.add(rple);
 		p_emp.setBackground(Color.pink);
 		p_down.add(bt_reset);
@@ -150,6 +155,8 @@ public class RetunPan extends JPanel implements ActionListener{
 		/////////////////////////////////////////////////////////////////////////////
 		//이벤트 구현부분///////////////////////////////////////////////////////////
 		
+		tf_id.setEditable(false);
+		
 		tf_id.addMouseListener(invoiceClick);
 		tf_takeTime.addMouseListener(TakerClick);
 		bt_regist.addActionListener(this);
@@ -165,7 +172,7 @@ public class RetunPan extends JPanel implements ActionListener{
 	
 		
 		setSize(700,700);
-		System.out.println(this.getLocale());
+	
 	}
 	public void print(){
 
@@ -214,15 +221,7 @@ public class RetunPan extends JPanel implements ActionListener{
 			pstmt=con.prepareStatement(sql.toString());
 			pstmt.setString(1,tf_takeTime.getText());
 			pstmt.setString(2,rple.getText());
-			int code=0;
-			try {
-				code = Integer.parseInt(tf_code.getText());
-			} catch (NumberFormatException e) {
-				JOptionPane.showMessageDialog(this, "바코드에  숫자를 입력해주세요!");
-				tf_code.setText(null);
-				tf_code.requestFocus();
-			}
-			pstmt.setInt(3, code);
+			pstmt.setString(3,tf_code.getText());
 			
 			pstmt.setInt(4,Integer.parseInt(tf_id.getText()));
 			int reset=pstmt.executeUpdate();
