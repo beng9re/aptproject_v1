@@ -2,6 +2,7 @@ package apt.test;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.sql.Connection;
 
 import javax.swing.JFrame;
 import javax.swing.JPanel;

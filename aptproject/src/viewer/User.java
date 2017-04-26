@@ -166,14 +166,15 @@ public class User extends JPanel implements ActionListener, ItemListener {
 	public void itemStateChanged(ItemEvent e) {
 		int unit = userList.get(0).getUnit_id();
 		String id = userList.get(0).getAptuser_id();
-		System.out.println(unit + "  " + id);
+	
+	
 		StringBuffer sb = new StringBuffer();
 		if (rb_a.isSelected()) {
 			if (choice.getSelectedIndex() == 1) {
 				sb.append(
 						"select i.INVOICE_ID as 상품ID, a.COMPLEX_NAME 동, a.UNIT_NAME 호,a.aptuser_name as 택배주인, i.INVOICE_ARRTIME 입고시간, i.INVOICE_TAKETIME as 수령시간, INVOICE_TAKER as 수령인,i.INVOICE_TAKEFLAG 수령여부");
-				sb.append(" from view_is i inner join view_ac a on i.aptuser_id =a.aptuser_id and a.UNIT_ID=" + unit);
-
+				sb.append(" from view_is i inner join view_ac a on i.aptuser_id =a.aptuser_id and a.unit_id=" + unit);
+				
 				getList(sb);
 			} else if (choice.getSelectedIndex() == 2) {
 				sb.append(
@@ -202,10 +203,11 @@ public class User extends JPanel implements ActionListener, ItemListener {
 				sb.append(
 						"select returninv_id as 상품, i.aptuser_name as 택배주인 ,returninv_barcode as 바코드,returninv_arr as 입고시간 ,returninv_dep as 출고시간,returninv_comment as 메모");
 				sb.append(
-						" from returninv r inner join (select INVOICE_ID, aptuser_name, aptuser_perm , INVOICE_TAKETIME, INVOICE_TAKER");
+						" from returninv r inner join (select INVOICE_ID, aptuser_name, aptuser_perm , INVOICE_TAKETIME, INVOICE_TAKER, a.UNIT_ID");
 				sb.append(
-						" from invoice i inner join aptuser a on a.aptuser_id = i.aptuser_id) i on i.invoice_id = r.invoice_id and i.aptuser_perm="
+						" from invoice i inner join aptuser a on a.aptuser_id = i.aptuser_id) i on i.invoice_id = r.invoice_id and i.unit_id="
 								+ unit);
+				System.out.println(sb.toString());
 				getList(sb);
 			} else if (choice.getSelectedIndex() == 2) {
 				sb.append(
@@ -221,9 +223,9 @@ public class User extends JPanel implements ActionListener, ItemListener {
 				sb.append(
 						"select returninv_id as 상품, i.aptuser_name as 택배주인 ,returninv_barcode as 바코드,returninv_arr as 입고시간 ,returninv_dep as 출고시간,returninv_comment as 메모");
 				sb.append(
-						" from returninv r inner join (select INVOICE_ID, aptuser_name, aptuser_perm , INVOICE_TAKETIME, INVOICE_TAKER ");
+						" from returninv r inner join (select INVOICE_ID, aptuser_name, aptuser_perm , INVOICE_TAKETIME, INVOICE_TAKER,a.UNIT_ID ");
 				sb.append(
-						" from invoice i inner join aptuser a on a.aptuser_id = i.aptuser_id) i on i.invoice_id = r.invoice_id and r.returninv_dep is null and i.aptuser_perm="
+						" from invoice i inner join aptuser a on a.aptuser_id = i.aptuser_id) i on i.invoice_id = r.invoice_id and r.returninv_dep is null and i.unit_id="
 								+ unit);
 
 				getList(sb);
@@ -231,9 +233,9 @@ public class User extends JPanel implements ActionListener, ItemListener {
 				sb.append(
 						"select returninv_id as 상품, i.aptuser_name as 택배주인 ,returninv_barcode as 바코드,returninv_arr as 입고시간 ,returninv_dep as 출고시간,returninv_comment as 메모 ");
 				sb.append(
-						"from returninv r inner join (select INVOICE_ID, aptuser_name, aptuser_perm , INVOICE_TAKETIME, INVOICE_TAKER  ");
+						"from returninv r inner join (select INVOICE_ID, aptuser_name, aptuser_perm , INVOICE_TAKETIME, INVOICE_TAKER, a.UNIT_ID");
 				sb.append(
-						" from invoice i inner join aptuser a on a.aptuser_id = i.aptuser_id) i on i.invoice_id = r.invoice_id and r.returninv_dep is not null and i.aptuser_perm="
+						" from invoice i inner join aptuser a on a.aptuser_id = i.aptuser_id) i on i.invoice_id = r.invoice_id and r.returninv_dep is not null and i.unit_id="
 								+ unit);
 				getList(sb);
 			}

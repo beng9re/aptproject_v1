@@ -160,7 +160,7 @@ public class Admin_UserView extends JPanel implements ActionListener {
 	public void getUser() {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
-		String sql = "select aptuser_id 주민ID,aptuser_name 이름 ,aptuser_phone 전화번호, aptuser_regdate 등록날짜, aptuser_live 거주여부, aptuser_perm 먼대,unit_id 동호수  from aptuser order by unit_id asc";
+		String sql = "select aptuser_id 주민ID,aptuser_name 이름 ,aptuser_phone 전화번호, aptuser_regdate 등록날짜, aptuser_live 거주여부, complex_name 동 ,unit_name 호  from view_ac order by aptuser_id asc";
 
 		try {
 			pstmt = con.prepareStatement(sql);
@@ -179,9 +179,9 @@ public class Admin_UserView extends JPanel implements ActionListener {
 				dto.setAptuser_ip(rs.getString("이름"));
 				dto.setAptuser_live(rs.getString("전화번호"));
 				dto.setAptuser_name(rs.getString("등록날짜"));
-				dto.setAptuser_perm(rs.getInt("먼대"));
+				//dto.setAptuser_perm(rs.getInt("먼대"));
 				dto.setAptuser_phone(rs.getString("거주여부"));
-				dto.setAptuser_regdate(rs.getString("동호수"));
+				//dto.setAptuser_regdate(rs.getString(""));
 				user.add(dto);
 			}
 		} catch (SQLException e) {
@@ -212,14 +212,14 @@ public class Admin_UserView extends JPanel implements ActionListener {
 			option = "aptuser_regdate";
 		} else if (data.equals("거주여부")) {
 			option = "aptuser_live";
-		} else if (data.equals("먼대")) {
-			option = "aptuser_perm";
-		} else if (data.equals("동호수")) {
-			option = "unit_id";
+		} else if (data.equals("동")) {
+			option = "complex_name";
+		} else if (data.equals("호")) {
+			option = "unit_name";
 		}
 
-		String sql = "select aptuser_id 주민ID,aptuser_name 이름 ,aptuser_phone 전화번호, aptuser_regdate 등록날짜, aptuser_live 거주여부, aptuser_perm 먼대,unit_id 동호수 from "
-				+ tableName + " where " + option + "= '" + msg + "' order by unit_id asc";
+		String sql = "select aptuser_id 주민ID,aptuser_name 이름 ,aptuser_phone 전화번호, aptuser_regdate 등록날짜, aptuser_live 거주여부, complex_name 동 ,unit_name 호  from view_ac where " + option + "= '" + msg + "' order by aptuser_id asc";
+		
 		adminModel.getList(sql);
 
 		table.updateUI();
@@ -257,10 +257,10 @@ public class Admin_UserView extends JPanel implements ActionListener {
 			option = "aptuser_regdate";
 		} else if (data.equals("거주여부")) {
 			option = "aptuser_live";
-		} else if (data.equals("먼대")) {
-			option = "aptuser_perm";
-		} else if (data.equals("동호수")) {
-			option = "unit_id";
+		} else if (data.equals("동")) {
+			option = "complex_name";
+		} else if (data.equals("호")) {
+			option = "unit_name";
 		}
 
 		String sql = "update " + tableName + " set " + option + "=" + "'" + value + "' ";
