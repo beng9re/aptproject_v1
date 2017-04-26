@@ -15,7 +15,7 @@ public class RecieveUserListModel extends AbstractTableModel{
 	Vector<Vector> data = new Vector<Vector>();
 	
 	public RecieveUserListModel(Connection con, int msg_send_id ) {
-		System.out.println("RecieveUserLIstModel");
+		//System.out.println("RecieveUserLIstModel");
 		this.con = con;
 		
 		columnName = new Vector<String>();
@@ -30,7 +30,7 @@ public class RecieveUserListModel extends AbstractTableModel{
 	}
 	
 	public void getList(int msg_send_id){
-		System.out.println("RecieveUserListModel -getList - msg_send_id : "+msg_send_id);
+		//System.out.println("RecieveUserListModel -getList - msg_send_id : "+msg_send_id);
 		PreparedStatement pstmt=null;
 		ResultSet  rs=null;
 		
@@ -48,7 +48,7 @@ public class RecieveUserListModel extends AbstractTableModel{
 		sql.append(" and     rcv.msg_send_id = ? \n");
 		sql.append(" order by 1,2 \n");
 		
-		System.out.println("RecieveUserListModel - sql \n" +sql.toString());
+		//System.out.println("RecieveUserListModel - sql \n" +sql.toString());
 		
 		try {
 			pstmt = con.prepareStatement(sql.toString());
@@ -67,7 +67,7 @@ public class RecieveUserListModel extends AbstractTableModel{
 				
 				data.add(vec);
 			}
-			System.out.println("RecieveMsgModel -> getList -> OK");
+			//System.out.println("RecieveMsgModel -> getList -> OK");
 		} catch (SQLException e) {
 			System.out.println("RecieveMsgModel -> getList -> SQLException : "+e.getMessage());
 			e.printStackTrace();
