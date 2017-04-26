@@ -55,7 +55,7 @@ public class RetunPan extends JPanel implements ActionListener{
 	JButton bt_regist;
 	GridBagLayout gbl;
 	GridBagConstraints gdc;
-	
+	PopUpTable p;
 	
 	String date;
 	
@@ -63,6 +63,8 @@ public class RetunPan extends JPanel implements ActionListener{
 	public RetunPan(Connection con) {
 		this.con=con;
 		
+		
+		p=new PopUpTable(this, con,"admin");
 		gbl=new GridBagLayout();
 		gdc=new GridBagConstraints();
 		
@@ -182,7 +184,7 @@ public class RetunPan extends JPanel implements ActionListener{
 	}
 	MouseListener invoiceClick=new MouseAdapter() {
 		public void mouseClicked(java.awt.event.MouseEvent e) {
-			new PopUpTable(con, "admin");
+			p.setVisible(true);
 		};
 	};
 	
