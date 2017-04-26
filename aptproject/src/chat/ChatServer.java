@@ -6,19 +6,19 @@
 
 package chat;
 
+import java.awt.BorderLayout;
 import java.awt.Color;
 import java.awt.Dimension;
-import java.awt.FlowLayout;
-import java.awt.event.MouseAdapter;
-import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.BorderFactory;
-import javax.swing.JLabel;
+import javax.swing.Box;
+import javax.swing.BoxLayout;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 
 import main.TreeMain;
 
@@ -29,18 +29,28 @@ public class ChatServer extends JPanel {
 	Socket socket;
 	int port = 7777;
 	boolean flag = true;
+	
 	ConcurrentHashMap<String, ServerSideChatClient> userList;
 	ConcurrentHashMap<String, JPanel> pnlList;
+	
+	JPanel pnl_content;
+	JScrollPane scroll;
 
 	public ChatServer(TreeMain main) {
 		this.main = main;
 		userList = new ConcurrentHashMap<String, ServerSideChatClient>();
 		pnlList = new ConcurrentHashMap<String, JPanel>();
 		
-		setLayout(new FlowLayout(FlowLayout.CENTER));
-		setBorder(BorderFactory.createEmptyBorder(50, 50, 50, 50));
-		setBackground(Color.CYAN);
-		setPreferredSize(new Dimension(700, 700));
+		setLayout(new BorderLayout());
+		pnl_content = new JPanel();
+		scroll = new JScrollPane(pnl_content, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
+		pnl_content.setLayout(new BoxLayout(pnl_content, BoxLayout.PAGE_AXIS));
+		
+		add(scroll, BorderLayout.CENTER);
+		
+		scroll.getVerticalScrollBar().setUnitIncrement(15);
+		pnl_content.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50));
+		setSize(680, 655);
 		
 		// 서버기능을 시작한다
 		mkServer();
@@ -78,25 +88,27 @@ public class ChatServer extends JPanel {
 		}
 	}
 	
-	public void addUser(String user_id, ServerSideChatClient serverChat) {
+	public void addList(String user_id, ServerSideChatClient serverChat) {
 		// 대화중인 주민목록을 보여주는 패널을 접속자가 생길때 마다 붙여넣는다
-		JPanel pnl = new JPanel();
-		pnl.add(new JLabel(user_id+"님과의 대화"));
-		pnl.add(new JLabel("이곳을 누르시면 대화를 다시 시작합니다"));
-		pnl.addMouseListener(new MouseAdapter() {
-			@Override
-			public void mouseClicked(MouseEvent e) {
-				// 채팅창을 다시 보여준다
-				userList.get(user_id).setVisible(true);
-			}
-		});
-		pnl.setBackground(Color.GRAY);
-		pnl.setPreferredSize(new Dimension(500,100));
-		add(pnl);
+		ChatUserList list = new ChatUserList(this, user_id);
+		JPanel listpan = new JPanel();
+		listpan.add(list);
+		listpan.add(Box.createVerticalStrut(5));
+		listpan.add(Box.createVerticalGlue());
+		pnl_content.add(listpan);
 		
 		//대화리스트 목록를 관리한다
 		userList.put(user_id, serverChat);
-		pnlList.put(user_id, pnl);
+		pnlList.put(user_id, listpan);
+		updateUI();
+	}
+	
+	public void removeList(String id) {
+		// 서버측 채팅 클라이언트를 종료한다 >> 종료하지말고 목록에서 삭제 가능하게 한다
+		pnl_content.remove(pnlList.get(id));
+		userList.remove(id);
+		pnlList.remove(id);
+		updateUI();
 	}
 	
 	public void close()	{
