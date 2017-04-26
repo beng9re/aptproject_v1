@@ -177,38 +177,8 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		if (userList.get(0).getAptuser_perm()==9){
 			adminFlag = true;
 		}
-<<<<<<< HEAD
-	
-		// 관리자 IP를 가지고 온다 (채팅 클라이언트에서 서버에 접속할 때 사용)
-		aptuser.selectData("admin");
-		serverIP = ((Aptuser)aptuser.getData().get(0)).getAptuser_ip();
-//<<<<<<< HEAD
-//<<<<<<< HEAD
-//=======
-
-//>>>>>>> 2a49dad8e12aa61a81eb65b34f18a50861ef5a7e
-		
-		aptuser.selectData(userID);
-		
-		// Tree 구성 작업
-		makeTree();
-//<<<<<<< HEAD
-//=======
-		System.out.println("serverIP = "+serverIP);
-//>>>>>>> cde0a4764f076d126979fd63f9ba168a81602b3b
-//=======
-
 		System.out.println("serverIP = "+serverIP);
 
-//>>>>>>> 2a49dad8e12aa61a81eb65b34f18a50861ef5a7e
-
-		// 서버관리자(admin)인 경우 Chat Server 생성
-		//if (userID.equalsIgnoreCase("admin")){
-		//	chatServer=  new ChatServer(this);
-		//}
-=======
-		
->>>>>>> 4628e48755c4e3c9fc3896272c4e8e6d8ae93e83
 		/* --------------- Chat 관련 End -------------------------------------- */
 		
 		//System.out.println("adminFlag="+adminFlag);
@@ -673,7 +643,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	    	for (int i=0; i<panelList.size(); i++){
 	    		if (panelList.get(i)==menuOpenList.get(index)){
 	    			// panel 사이즈 p_center 의 사이즈로 만들기
-					panelList.get(i).setPreferredSize(new Dimension(centerWidth, centerHeight));
+					//panelList.get(i).setPreferredSize(new Dimension(centerWidth, centerHeight));
 					// panel 보이기
 					panelList.get(i).setVisible(true);
 					// Title 변경
