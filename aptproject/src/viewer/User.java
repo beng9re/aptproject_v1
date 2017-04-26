@@ -234,7 +234,7 @@ public class User extends JPanel implements ActionListener, ItemListener {
 				sb.append(
 						" from invoice i inner join aptuser a on a.aptuser_id = i.aptuser_id) i on i.invoice_id = r.invoice_id and i.unit_id="
 								+ unit);
-				System.out.println(sb.toString());
+				
 				getList(sb);
 			} else if (choice.getSelectedIndex() == 2) {
 				sb.append(
@@ -244,7 +244,7 @@ public class User extends JPanel implements ActionListener, ItemListener {
 				sb.append(
 						" from invoice i inner join aptuser a on a.aptuser_id = i.aptuser_id) i on i.invoice_id = r.invoice_id and i.aptuser_id='"
 								+ id + "'");
-				// System.out.println(sb.toString());
+				
 				getList(sb);
 			} else if (choice.getSelectedIndex() == 3) {
 				sb.append(
