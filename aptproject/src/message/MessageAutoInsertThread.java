@@ -49,6 +49,7 @@ public class MessageAutoInsertThread extends  Thread{
 		PreparedStatement pstmt=null;
 		ResultSet rs=null;
 		StringBuffer sql=new StringBuffer();
+		
 		int msg_send_id;
 		int invoice_id;
 		String invoice_barcode;
@@ -204,6 +205,13 @@ public class MessageAutoInsertThread extends  Thread{
 	public void ReturnCheck(){
 		
 		if (threadFlag==false ) return;
+		
+		if (con==null) return;
+		
+		PreparedStatement pstmt=null;
+		ResultSet rs=null;
+		StringBuffer sql=new StringBuffer();
+		
 		
 	}
 	

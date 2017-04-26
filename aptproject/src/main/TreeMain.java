@@ -240,17 +240,21 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		for (Object obj : menuOpenList) {
 			if (obj == chatClient) {
 				chatClient.getThread().disconnect();
-			} else if (obj==recieveMessage){
-				// 수신 메세지 Thread 종료
-				recieveMessage.setThreadFlag(false);
-			} else if (obj==sendMessageList){
-				// 송신 메세지 List Thread 종료
-				sendMessageList.setThreadFlag(false);
-			} else if (obj==msgAutoInsertThread){
-				// Message 
-				msgAutoInsertThread.setThreadFlag(false);
-			} else {
 			}
+		}
+		
+		if (msgAutoInsertThread!=null){
+			msgAutoInsertThread.setThreadFlag(false);
+		}
+		
+		// 송신 메세지 List Thread 종료
+		if (sendMessageList!=null){
+			sendMessageList.setThreadFlag(false);
+		}
+		
+		// 수신 메세지 Thread 종료
+		if (recieveMessage!=null){
+			recieveMessage.setThreadFlag(false);
 		}
 		
 		// Connection 종료
@@ -595,7 +599,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		
 		// 이미 열려 있는 menu 인치 체크
 		int index=findOpenClassIndex(className);
-		//System.out.println(menuName + ", "+className + ", open index = "+index);
+		System.out.println(menuName + ", "+className + ", open index = "+index);
 				
 	    // 열려 있지 않은 경우, 해당 Panel 을 new 한다.
 	    if (index==-1){
@@ -667,13 +671,15 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	    if (index!=-1){
 	    	for (int i=0; i<panelList.size(); i++){
 	    		if (panelList.get(i)==menuOpenList.get(index)){
-	    			// panel 사이즈 p_center 의 사이즈로 만들기
-					//panelList.get(i).setPreferredSize(new Dimension(centerWidth, centerHeight));
-	    			panelList.get(i).setSize(centerWidth, centerHeight);
-					// panel 보이기
-					panelList.get(i).setVisible(true);
 					// Title 변경
 					setTitle(menuName);
+
+					// panel 사이즈 p_center 의 사이즈로 만들기
+					//panelList.get(i).setPreferredSize(new Dimension(centerWidth, centerHeight));
+	    			panelList.get(i).setSize(centerWidth, centerHeight);
+
+	    			// panel 보이기
+					panelList.get(i).setVisible(true);
 	    		}
 	    	}
 	    } else {
@@ -689,11 +695,4 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		}
 	}
 
-//	TreeMain은 단독 실행되지 않고 login에서 생성됨
-/*
-	public static void main(String[] args) {
-		new TreeMain(con);
-
-	}
-*/
 }
