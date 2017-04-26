@@ -156,8 +156,7 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 					}
 				} else if (rb_breturn.isSelected()) {
 					for (int i = 0; i < returninv.size(); i++) {
-						System.out.println(table.getValueAt(row, 0));
-						System.out.println(returninv.get(i));
+
 						if (returninv.get(i).getReturninv_id().equals(table.getValueAt(row, 0))) {
 							String memo = returninv.get(i).getReturninv_commennt();
 							area.setText(memo);
@@ -175,8 +174,12 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 						}
 					}
 				} else if (rb_areturn.isSelected()) {
-					String memo = returninv.get(row).getReturninv_commennt();
-					area.setText(memo);
+					for (int i = 0; i < returninv.size(); i++) {
+						if (returninv.get(i).getReturninv_id().equals(table.getValueAt(row, 0))) {
+							String memo = returninv.get(i).getReturninv_commennt();
+							area.setText(memo);
+						}
+					}
 				}
 			}
 		});
@@ -217,7 +220,7 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 				"select r.returninv_id as 반송ID, r.returninv_barcode 반송바코드 ,i.aptuser_id 회원ID, i.aptuser_name 이름, i.COMPLEX_NAME 동,i.UNIT_NAME 호,r.returninv_time 등록시간, r.returninv_arr 입고시간, r.returninv_dep 출고시간,r.returninv_comment 메모");
 		sql.append(" from returninv r inner join view_acis i");
 		sql.append(" on i.invoice_id = r.invoice_id ");
-		
+
 		try {
 			pstmt = con.prepareStatement(sql.toString());
 			rs = pstmt.executeQuery();
@@ -230,13 +233,13 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 			}
 			while (rs.next()) {
 				Returninv dto = new Returninv();
-				dto.setReturninv_arr(rs.getString("반송ID"));
-				dto.setReturninv_barcode(rs.getString("등록시간"));
+				dto.setReturninv_id(rs.getString("반송ID"));
+				dto.setReturninv_barcode(rs.getString("반송바코드"));
 				// dto.setReturninv_date(rs.getString("반송날짜"));
 				dto.setReturninv_commennt(rs.getString("메모"));
-				dto.setReturninv_dep(rs.getString("입고시간"));
-				dto.setReturninv_id(rs.getString("출고시간"));
-				dto.setReturninv_time(rs.getString("반송바코드"));
+				dto.setReturninv_arr(rs.getString("입고시간"));
+				dto.setReturninv_dep(rs.getString("출고시간"));
+				dto.setReturninv_time(rs.getString("등록시간"));
 				returninv.add(dto);
 
 			}
