@@ -207,7 +207,7 @@ public class RetunPan extends JPanel implements ActionListener{
 		
 		StringBuffer sql=new StringBuffer();
 		sql.append("INSERT INTO RETURNINV ");
-		sql.append("(RETURNINV_ID,RETURNINV_DATE, RETURNINV_COMMENT, RETURNINV_BARCODE, INVOICEINV_ID)");
+		sql.append("(RETURNINV_ID,RETURNINV_DATE, RETURNINV_COMMENT, RETURNINV_BARCODE, INVOICE_ID)");
 		sql.append(" values (seq_RETURNINV.nextval,?,?,?,?)");
 		
 		try {
