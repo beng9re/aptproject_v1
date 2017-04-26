@@ -64,7 +64,7 @@ public class SendMessageList extends JFrame implements ActionListener , Runnable
 		this.con = treeMain.getConnection();
 		this.userId = this.treeMain.getUserID();
 		
-		System.out.println("SendMessageList : userId="+userId);
+		//System.out.println("SendMessageList : userId="+userId);
 		
 		p_north = new JPanel();
 		p_center = new JPanel();
@@ -225,7 +225,7 @@ public class SendMessageList extends JFrame implements ActionListener , Runnable
 		} else {
 			msg_send_id = -1;
 		}
-		System.out.println("msg_send_id ="+msg_send_id);
+		//System.out.println("msg_send_id ="+msg_send_id);
 		
 		// 力格, 郴侩 焊咯林扁.
 		//showMessage();		
@@ -274,7 +274,7 @@ public class SendMessageList extends JFrame implements ActionListener , Runnable
 		if (searchType.equals("I")){
 			table.clearSelection();
 		}
-		System.out.println("search");
+		//System.out.println("search");
 		String srch = t_input.getText();
 		model.getList(userId, srch);
 		table.updateUI();
@@ -296,11 +296,11 @@ public class SendMessageList extends JFrame implements ActionListener , Runnable
 		if (table.getRowCount()!=0){
 			row = table.getSelectedRow();
 		}
-		System.out.println("showMessage : sel row = "+row);
+		//System.out.println("showMessage : sel row = "+row);
 		if (row != -1){		
 			// title
 			col =  table.getColumn("力格").getModelIndex();
-			System.out.println("力格="+col);
+			//System.out.println("力格="+col);
 			String title = (String)table.getValueAt(row, col);
 			t_title.setText(title);
 			
@@ -324,7 +324,8 @@ public class SendMessageList extends JFrame implements ActionListener , Runnable
 		} else {
 			msg_send_id = -1;
 		}
-		System.out.println("showRecvList : msg_send_id="+msg_send_id);
+
+		//System.out.println("showRecvList : msg_send_id="+msg_send_id);
 		recvListModel.getList(msg_send_id);
 		tableList.updateUI();
 	}
@@ -424,7 +425,7 @@ public class SendMessageList extends JFrame implements ActionListener , Runnable
 	public void run() {
 		while (threadFlag){
 			try {
-				System.out.println("t_input.isEditable = "+t_input.isEditable());
+				//System.out.println("t_input.isEditable = "+t_input.isEditable());
 				thread.sleep(1000);
 				checkNewSendMsg();
 			} catch (InterruptedException e) {

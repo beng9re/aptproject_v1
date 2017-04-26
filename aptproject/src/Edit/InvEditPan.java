@@ -17,8 +17,10 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.PseudoColumnUsage;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Vector;
@@ -32,6 +34,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 
+import Edit.locker.PostBoxMain;
+import apt.test.NewAptPanel;
 import db.DBManager;
 import dto.Company;
 import dto.ComplexDto;
@@ -39,17 +43,17 @@ import dto.ViewCPUT;
 
 public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 	
-	JLabel lb_block,lb_class,lb_code,lb_com,lb_id,lb_takerTime,lb_Time;
+	JLabel lb_block,lb_class,lb_code,lb_com,lb_id,lb_takerTime,lb_Time,lb_box;
 				//동			//호수
 	JLabel title;
 	
-	JTextField tf_code,tf_taker;
+	public JTextField tf_code,tf_taker,tf_box;
 	Choice ch_block,ch_class,ch_com,ch_id;
 	
 	
 	Vector <String> u_id=new Vector<String>();
 	String userid; //회원아이디 값이 들어갈것
-	
+	String err="해당 집에 사는 회원이 없음";
 	JPanel p_info;
 	JPanel p_up;
 	JPanel p_down;
@@ -58,7 +62,7 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 	JButton bt_regist;
 	GridBagLayout gbl;
 	GridBagConstraints gdc;
-	
+	int invoce_id;
 	Connection con;
 	
 	Vector<Vector> cput=new  Vector<Vector>();
@@ -71,9 +75,13 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 	boolean classflag=false;
 	boolean userflag=false;
 	
+	PostBoxMain pm;
+	
 	public InvEditPan(Connection con) {
 		this.con=con;
-	
+		tf_box=new JTextField(20);
+		lb_box=new JLabel("박스번호");
+				
 		
 		
 		title=new JLabel("INVOICE");
@@ -105,7 +113,8 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 		ch_class=new  Choice();
 		ch_com=new Choice();
 		
-		tf_code=new JTextField(20);
+		tf_code=new JTextField("스캐너를 사용해주세요",20);
+		tf_code.setForeground(Color.gray);
 		ch_id=new Choice();
 		tf_taker=new JTextField(20);
 		
@@ -114,6 +123,7 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 		ch_class.setPreferredSize(new Dimension(220,30));
 		tf_code.setPreferredSize(new Dimension(20,30));
 		ch_com.setPreferredSize(new Dimension(220,30));
+		tf_box.setPreferredSize(new Dimension(20,30));
 		
 		
 		bt_regist=new JButton("입력");
@@ -132,7 +142,7 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 		ch_class.setBackground(Color.pink);
 		ch_id.setBackground(Color.pink);
 		ch_com.setBackground(Color.pink);
-	
+		tf_box.setBorder(BorderFactory.createLineBorder(Color.PINK, 2));
 		tf_code.setBorder(BorderFactory.createLineBorder(Color.PINK, 2));
 		
 		
@@ -160,11 +170,13 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 		//이벤트 리스너 연결 부분------------------------------------------------------------------------------//
 		tf_code.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
-				JOptionPane.showMessageDialog(tf_code, "스캐너를 사용해주세요");
+				tf_code.setText("");
 				
 			}
 		});
+		tf_box.addMouseListener(boxL);
 		
+		tf_box.setEditable(false);
 		ch_block.addItemListener(this);
 		ch_class.addItemListener(this);
 		
@@ -175,6 +187,7 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 		
 		
 		setSize(700,700);
+		pm=new PostBoxMain(this);
 	}
 	
 	
@@ -192,6 +205,8 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 		GridCom g_l4=new GridCom(p_info, gbl, gdc, tf_code, 			    1, 3, 1,1,0, 0);
 		GridCom g_t5=new GridCom(p_info, gbl, gdc, lb_com,					0, 4, 1,1,0, 0);
 		GridCom g_l5=new GridCom(p_info, gbl, gdc, ch_com, 			    1, 4, 1,1,0, 0);
+		GridCom g_t6=new GridCom(p_info, gbl, gdc, lb_box, 			   		0, 5, 1,1,0, 0);
+		GridCom g_l6=new GridCom(p_info, gbl, gdc, tf_box, 			    	1, 5, 1,1,0, 0);
 		
 		
 	}
@@ -247,7 +262,9 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 	
 	//동수 및 운송사 
 	public void listadd(){
+		ch_block.removeAll();
 		checkv.add(cput.get(0).get(1).toString());
+		ch_block.add("▼ 동을 선택하세요");
 		ch_block.add(cput.get(0).get(1).toString());
 		String listval=null;
 		boolean flag =false;
@@ -281,9 +298,11 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 		PreparedStatement pstmt=null;
 		ResultSet rs=null;
 		String sql="select * from company";
+		
 		try {
 			pstmt=con.prepareStatement(sql);
 			rs=pstmt.executeQuery();
+			
 			while(rs.next()){
 				Company dto=new Company();
 				Vector vec=new Vector();
@@ -320,7 +339,7 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 		ch_class.removeAll();
 		PreparedStatement pstmt=null;
 		ResultSet rs=null;
-		
+		ch_class.add("▼호수를 선택해줘요");
 		for(int i=0;i<cput.size();i++){
 			if(cput.get(i).get(1).toString().equals(ch_block.getSelectedItem().toString())){
 			
@@ -336,13 +355,73 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 	}
 	public void addIdlist(){
 		ch_class.removeAll();
-		
+		pm.setVisible(true);
 	}
 	
 	
 	//등록
+	public void selectId(){
+		PreparedStatement pstmt=null;
+		ResultSet rs=null;
+		String sql="select invoice_id from invoice order by invoice_id desc";
+		try {
+			pstmt=con.prepareStatement(sql);
+			rs=pstmt.executeQuery();
+			rs.next();
+			invoce_id=rs.getInt("invoice_id");
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally {
+			try {
+				if(pstmt!=null)pstmt.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				if(rs!=null)rs.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+		
+		
+	}
+	public void boxInsert(){
+		PreparedStatement pstmt=null;
+		String sql="update storagebox set invoice_id=?,box_use='Y' where box_num=?";
+		
+		try {
+			pstmt=con.prepareStatement(sql);
+			pstmt.setInt(1, invoce_id);
+			pstmt.setInt(2, Integer.parseInt(tf_box.getText()));
+			pstmt.executeUpdate();
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}finally{
+			try {
+				if(pstmt!=null)pstmt.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+		}
+				
+		
+	}
 	public void regist(){
 		//userSelect();
+		
+		if(ch_block.getSelectedIndex()==0){
+			JOptionPane.showMessageDialog(this, "동수를 골라주세요");
+			return;
+		}else if(ch_class.getSelectedIndex()==0){
+			JOptionPane.showMessageDialog(this, "호수를 골라주세요");
+			return;
+		}
 		
 		
 		String a=ch_com.getSelectedItem();
@@ -364,19 +443,23 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 		sql.append("(seq_invoice.nextval,");
 		sql.append("?,?,?,?)");
 			
-		
+		String ch_idv="admin";
 	
 		
 		try {
 			pstmt=con.prepareStatement(sql.toString());
-		
+			
 			pstmt.setString(1,tf_code.getText());
 			pstmt.setString(2,tf_taker.getText());
-			pstmt.setString(3,ch_id.getSelectedItem()); //나중에 아이디 값뽑아야됨
+			if(!ch_id.getSelectedItem().equals(err)){
+				ch_idv=ch_id.getSelectedItem();
+			}
+			pstmt.setString(3,ch_idv); //나중에 아이디 값뽑아야됨
 			pstmt.setInt(4,Integer.parseInt(companyid));
 
 			
-			int reset=pstmt.executeUpdate();	
+			int reset=pstmt.executeUpdate();
+			con.commit();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -389,10 +472,20 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 			}
 		}
 	
+		selectId();//마지막 invoice_id 값가져옴 즉 방금입력한 invoice임
+		boxInsert();//박스 선택!
+		pm.p_south.removeAll();
+		pm.setBox();
+		pm.addList();
+		JOptionPane.showMessageDialog(this, "등록완료!");
+	
 	}
 	///리셋
 	public void reset(){
-		
+		 listadd();
+		ch_class.removeAll();
+		ch_id.removeAll();
+		tf_box.setText(null);
 		tf_code.setText(null);
 		tf_taker.setText(null);
 		
@@ -401,6 +494,7 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 	public void userSelect(){
 		
 		ch_id.removeAll();
+	
 		u_id.removeAll(u_id);
 		
 		int unit=1;
@@ -437,28 +531,47 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 				pstmt.setInt(1,1);
 				rs=pstmt.executeQuery();
 				rs.next();
-				userid=rs.getString("aptuser_id");
+				userflag=true;
+				userid=rs.getString("aptuser_id");  //해당사람이 없다면 관리자로 등록됨
+				
 			} catch (SQLException e1) {
 				System.out.println("조회된 사람 x");
 			
 			}
 			
 		}
+		if(userflag){
+			ch_id.add(err);
+		}
 		for(int i=0;i<u_id.size();i++){
 			ch_id.add(u_id.get(i));
 		}
 	}
+	
+	MouseListener boxL=new MouseAdapter() {
+		
+		public void mouseClicked(MouseEvent e) {
+			pm.setVisible(true);
+			
+		};
+	};
 	
 	
 	@Override
 	public void actionPerformed(ActionEvent e) {
 		Object bt=e.getSource();
 		if(bt==bt_regist){
-			System.out.println("등록");
+			if(classflag==false){
+				System.out.println("해당 값 x");
+				
+			}else{
 			regist();
+			System.out.println("등록");
+			reset();
+			}
 		}
 		else if(bt==bt_reset){
-			System.out.println("초기화");
+			
 			reset();
 		}
 		
