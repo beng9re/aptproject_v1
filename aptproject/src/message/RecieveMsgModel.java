@@ -16,7 +16,7 @@ public class RecieveMsgModel extends AbstractTableModel{
 	Vector<Vector> data = new Vector<Vector>();
 	
 	public RecieveMsgModel(Connection con, String userId ) {
-		System.out.println("CompUnitModel");
+		//System.out.println("CompUnitModel");
 		this.con = con;
 		this.userId = userId;
 		
@@ -34,7 +34,7 @@ public class RecieveMsgModel extends AbstractTableModel{
 	}
 	
 	public void getList(String search){
-		System.out.println("CompUnitModel - getList : "+search);
+		//System.out.println("CompUnitModel - getList : "+search);
 		PreparedStatement pstmt=null;
 		ResultSet  rs=null;
 		
@@ -52,8 +52,8 @@ public class RecieveMsgModel extends AbstractTableModel{
 		sql.append("            s.msg_send_title like ? )  \n");
 		sql.append(" order by r.msg_recieve_time desc ");
 		
-		System.out.println(sql.toString());
-		System.out.println("userId = "+userId);
+		//System.out.println(sql.toString());
+		//System.out.println("userId = "+userId);
 		
 		try {
 			pstmt = con.prepareStatement(sql.toString());
@@ -76,7 +76,7 @@ public class RecieveMsgModel extends AbstractTableModel{
 				
 				data.add(vec);
 			}
-			System.out.println("RecieveMsgModel -> getList -> OK");
+			//System.out.println("RecieveMsgModel -> getList -> OK");
 		} catch (SQLException e) {
 			System.out.println("RecieveMsgModel -> getList -> SQLException : "+e.getMessage());
 			e.printStackTrace();

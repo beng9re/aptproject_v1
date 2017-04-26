@@ -15,7 +15,7 @@ public class CompUnitModel extends AbstractTableModel{
 	Vector<Vector> data = new Vector<Vector>();
 	
 	public CompUnitModel(Connection con ) {
-		System.out.println("CompUnitModel");
+		//System.out.println("CompUnitModel");
 		this.con = con;
 		
 		columnName = new Vector<String>();
@@ -28,7 +28,7 @@ public class CompUnitModel extends AbstractTableModel{
 	}
 	
 	public void getList(String search){
-		System.out.println("CompUnitModel - getList : "+search);
+		//System.out.println("CompUnitModel - getList : "+search);
 		PreparedStatement pstmt=null;
 		ResultSet  rs=null;
 		
@@ -42,7 +42,7 @@ public class CompUnitModel extends AbstractTableModel{
 		sql.append("         a.APTUSER_NAME like ? ) \n");
 		sql.append(" order by 1, 2 ");
 		
-		System.out.println(sql.toString());
+		//System.out.println(sql.toString());
 		
 		try {
 			pstmt = con.prepareStatement(sql.toString());
