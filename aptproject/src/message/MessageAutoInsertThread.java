@@ -102,7 +102,7 @@ public class MessageAutoInsertThread extends  Thread{
 				msgContent.append("동, 호수 : "+complex_name + " - " + unit_name + "\n");
 				msgContent.append("송장번호 : "+invoice_barcode + "\n");
 				msgContent.append("운송사 : "+company_name + "\n");
-				msgContent.append("도착시간 : "+invoice_arrtime + "\n");
+				msgContent.append("도착시간 : "+invoice_arrtime );
 				
 				// next seq_send_message check
 				sql.delete(0, sql.length());

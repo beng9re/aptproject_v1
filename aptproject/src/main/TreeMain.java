@@ -202,8 +202,8 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		makeTree();
 		
 		// (송장, 반송 체크하여 Message Insert 하는 Thread 시동)
-		//msgAutoInsertThread = new MessageAutoInsertThread(this);
-		//msgAutoInsertThread.setThreadFlag(true);
+		msgAutoInsertThread = new MessageAutoInsertThread(this);
+		msgAutoInsertThread.setThreadFlag(true);
 	}
 	
 	// get Connection 
