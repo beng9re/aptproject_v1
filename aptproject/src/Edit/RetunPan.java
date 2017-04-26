@@ -55,7 +55,7 @@ public class RetunPan extends JPanel implements ActionListener{
 	JButton bt_regist;
 	GridBagLayout gbl;
 	GridBagConstraints gdc;
-	
+	PopUpTable p;
 	
 	String date;
 	
@@ -63,6 +63,8 @@ public class RetunPan extends JPanel implements ActionListener{
 	public RetunPan(Connection con) {
 		this.con=con;
 		
+		
+		p=new PopUpTable(this, con,"admin");
 		gbl=new GridBagLayout();
 		gdc=new GridBagConstraints();
 		
@@ -182,7 +184,7 @@ public class RetunPan extends JPanel implements ActionListener{
 	}
 	MouseListener invoiceClick=new MouseAdapter() {
 		public void mouseClicked(java.awt.event.MouseEvent e) {
-			new PopUpTable(con, "admin");
+			p.setVisible(true);
 		};
 	};
 	
@@ -205,7 +207,7 @@ public class RetunPan extends JPanel implements ActionListener{
 		
 		StringBuffer sql=new StringBuffer();
 		sql.append("INSERT INTO RETURNINV ");
-		sql.append("(RETURNINV_ID,RETURNINV_DATE, RETURNINV_COMMENT, RETURNINV_BARCODE, INVOICEINV_ID)");
+		sql.append("(RETURNINV_ID,RETURNINV_DATE, RETURNINV_COMMENT, RETURNINV_BARCODE, INVOICE_ID)");
 		sql.append(" values (seq_RETURNINV.nextval,?,?,?,?)");
 		
 		try {

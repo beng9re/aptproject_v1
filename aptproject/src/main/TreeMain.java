@@ -177,6 +177,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		if (userList.get(0).getAptuser_perm()==9){
 			adminFlag = true;
 		}
+<<<<<<< HEAD
 
 	
 		// 관리자 IP를 가지고 온다 (채팅 클라이언트에서 서버에 접속할 때 사용)
@@ -207,6 +208,10 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		//	chatServer=  new ChatServer(this);
 		//}
 
+=======
+		System.out.println("serverIP = "+serverIP);
+
+>>>>>>> 67c6e4c6cc8f7cf80d76a4c932b868a9c9818b03
 		/* --------------- Chat 관련 End -------------------------------------- */
 		
 		//System.out.println("adminFlag="+adminFlag);
@@ -671,7 +676,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	    	for (int i=0; i<panelList.size(); i++){
 	    		if (panelList.get(i)==menuOpenList.get(index)){
 	    			// panel 사이즈 p_center 의 사이즈로 만들기
-					panelList.get(i).setPreferredSize(new Dimension(centerWidth, centerHeight));
+					//panelList.get(i).setPreferredSize(new Dimension(centerWidth, centerHeight));
 					// panel 보이기
 					panelList.get(i).setVisible(true);
 					// Title 변경
