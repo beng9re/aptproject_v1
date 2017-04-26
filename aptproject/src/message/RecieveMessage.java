@@ -195,9 +195,14 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 		
 	}
 	
+	public void setThreadFlag(boolean threadFlag){
+		this.threadFlag = threadFlag;
+	}
+	
 	public void close(){
 		this.treeMain.removeMenuOpenList(this);
 		threadFlag=false;
+		System.out.println("recieve_message : threadFlag="+threadFlag);
 	}
 	
 	public void search(){

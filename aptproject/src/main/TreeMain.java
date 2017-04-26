@@ -38,6 +38,7 @@ import db.AptuserModelByID;
 import db.DBManager;
 import dto.Aptuser;
 import dto.MenuDto;
+import message.MessageAutoInsertThread;
 import message.RecieveMessage;
 import message.SendMessage;
 import message.SendMessageList;
@@ -60,10 +61,14 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	private String userID;
 	private String userName;
 	private boolean  adminFlag=false;
-	private boolean  systemUserFlag=false;
+	private boolean  adminMenuFlag=false; // admin menu 권한
+	private String adminUserId;
 	private String serverIP;
 	private ChatServer chatSrv;
 	private ChatClient chatClient;
+	private RecieveMessage  recieveMessage;
+	private SendMessageList sendMessageList;
+	private MessageAutoInsertThread  msgAutoInsertThread;
 	
 	JTree  tree;
 	JScrollPane  scroll;	
@@ -84,10 +89,6 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		this.instance = instance;
 		this.con = instance.getConnection();
 		this.userID = userID;
-		
-		if (userID.equalsIgnoreCase("system")){
-			systemUserFlag=true;
-		}
 		
 		p_west = new JPanel();
 		p_west_center = new JPanel();
@@ -146,7 +147,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
 				close();
-			}
+			}			
 		});
 		
 		setTitle("***** 환영합니다 *****");
@@ -165,63 +166,38 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		AptuserModelByID aptuser = new AptuserModelByID(con, "admin");
 		userList = aptuser.getData();
 		
+		adminUserId = ((Aptuser)aptuser.getData().get(0)).getAptuser_id();
+		System.out.println("adminUserId="+adminUserId);
+		
 		// 관리자 IP를 가지고 온다 (채팅 클라이언트에서 서버에 접속할 때 사용)
 		serverIP = ((Aptuser)aptuser.getData().get(0)).getAptuser_ip();
-		//System.out.println("serverIP = "+serverIP);
+		System.out.println("serverIP = "+serverIP);
 		
 		// UserName 조회
 		aptuser.selectData(userID);
 		userName = userList.get(0).getAptuser_name();
 		
+		// user 가 admin 인 경우 adminFlag=true
+		if (userID.equalsIgnoreCase("admin")){
+			adminFlag=true;
+		}		
+		System.out.println("adminFlag="+adminFlag);
+		
 		// 접속한 회원의 권한을 조회하고 Main의 권한변수에 대입한다
+		// 9 인 경우, admin Menu 로 지정.
 		if (userList.get(0).getAptuser_perm()==9){
-			adminFlag = true;
+			adminMenuFlag = true;
 		}
-<<<<<<< HEAD
 
-	
-		// 관리자 IP를 가지고 온다 (채팅 클라이언트에서 서버에 접속할 때 사용)
-		aptuser.selectData("admin");
-		serverIP = ((Aptuser)aptuser.getData().get(0)).getAptuser_ip();
-//<<<<<<< HEAD
-//<<<<<<< HEAD
-//=======
-
-//>>>>>>> 2a49dad8e12aa61a81eb65b34f18a50861ef5a7e
-		
-		aptuser.selectData(userID);
-		
-		// Tree 구성 작업
-		makeTree();
-//<<<<<<< HEAD
-//=======
-		System.out.println("serverIP = "+serverIP);
-//>>>>>>> cde0a4764f076d126979fd63f9ba168a81602b3b
-//=======
-
-		System.out.println("serverIP = "+serverIP);
-
-//>>>>>>> 2a49dad8e12aa61a81eb65b34f18a50861ef5a7e
-
-		// 서버관리자(admin)인 경우 Chat Server 생성
-		//if (userID.equalsIgnoreCase("admin")){
-		//	chatServer=  new ChatServer(this);
-		//}
-
-=======
-		System.out.println("serverIP = "+serverIP);
-
->>>>>>> 67c6e4c6cc8f7cf80d76a4c932b868a9c9818b03
 		/* --------------- Chat 관련 End -------------------------------------- */
 		
-		//System.out.println("adminFlag="+adminFlag);
 		la_welcom.setText(userName+" 님 환영합니다");
 		
 		// Tree 구성 작업
 		makeTree();
 		
-		//MessageInsertThread msgThread = new MessageInsertThread(this);
-		//msgThread.start();
+		// Message Insert Thread 생성.
+		//msgAutoInsertThread = new MessageAutoInsertThread(this);
 	}
 	
 	// get Connection 
@@ -234,12 +210,17 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		return userID;
 	}
 	
+	public String getAdminUserID(){
+		return adminUserId;
+	}
+	
 	// get ServrIP
 	public String getSeverIP() {
 		return serverIP;
 	}
 	
-	public boolean getAdminFlag(){
+	// get adminFlag
+	public boolean getAdminflag(){
 		return adminFlag;
 	}
 	
@@ -250,10 +231,25 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 			chatSrv.close(); 
 		}
 		
-		// 채팅 Client 종료
+		// 채팅 Client 종료, 각종 Thread 종료
+		int count=-1;
 		for (Object obj : menuOpenList) {
+			count++;
 			if (obj == chatClient) {
+				// 채팅 Client 종료
 				chatClient.getThread().disconnect();
+			} else if (obj==recieveMessage){
+				recieveMessage.setThreadFlag(false);
+				// 수신 메세지 Thread 종료
+			} else if (obj==sendMessageList){
+				// 송신 메세지 List Thread 종료
+				sendMessageList.setThreadFlag(false);
+			} else if (obj==msgAutoInsertThread){
+				// Message 
+				msgAutoInsertThread.setThreadFlag(false);
+				System.out.println("obj"+count+"="+"msgAutoInsertThread");
+			} else {
+				System.out.println("obj"+count+"="+"other");
 			}
 		}
 		
@@ -326,9 +322,8 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 				// system user 인 경우,
 				// Admin 유저이고 admin 권한 화면인 경우, 
 				// 또는 admin 유저가 아니고, 유저 권한이 있는 화면 인 경우. 메뉴 추가
-				if ( systemUserFlag = true ||
-					 (adminFlag==true && rs.getString("admin_role_flag").equalsIgnoreCase("Y")) ||
-					 (adminFlag==false && rs.getString("user_role_flag").equalsIgnoreCase("Y"))	) {
+				if ( (adminMenuFlag==true && rs.getString("admin_role_flag").equalsIgnoreCase("Y")) ||
+					 (adminMenuFlag==false && rs.getString("user_role_flag").equalsIgnoreCase("Y"))	) {
 					
 					root.add(node);
 					menuDtoList.add(menuDto);				
@@ -361,9 +356,8 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 						menuSubDto.setMenu_use_flag(rsSub.getString("menu_use_flag"));		
 
 						// Admin 유저이고 admin 권한 화면인 경우, 또는 admin 유저가 아니고, 유저 권한이 있는 화면 인 경우. 메뉴 추가
-						if ( systemUserFlag = true ||
-							 (adminFlag==true && rsSub.getString("admin_role_flag").equalsIgnoreCase("Y")) ||
-							 (adminFlag==false && rsSub.getString("user_role_flag").equalsIgnoreCase("Y"))	) {
+						if ( (adminMenuFlag==true && rsSub.getString("admin_role_flag").equalsIgnoreCase("Y")) ||
+							 (adminMenuFlag==false && rsSub.getString("user_role_flag").equalsIgnoreCase("Y"))	) {
 							
 							node.add(nodeSub);
 							menuDtoList.add(menuSubDto);
@@ -410,12 +404,9 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 			r++;
 		}
 		
-		// ChatServer 는 무조건 생성한다.
-		
-		
 		// 초기 선택 화면 지정
 		String firstMenuClasssName="";
-		if (adminFlag){ // 관리자
+		if (adminMenuFlag){ // 관리자
 			firstMenuClasssName = "Admin_InvoiceView";  // 관리자물품목록			
 		} else {
 			firstMenuClasssName = "User"; // 사용자물품목록
@@ -559,21 +550,21 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 				
 			} else if (className.equalsIgnoreCase("SendMessage")){  
 				// 쪽지 보내기
-				SendMessage  send = new SendMessage(this);
-				menuOpenList.add(send);
-				currObject=send;
+				SendMessage  sendMessage = new SendMessage(this);
+				menuOpenList.add(sendMessage);
+				currObject=sendMessage;
 				
 			} else if (className.equalsIgnoreCase("SendMessageList")){  
 				// 쪽지 송신함
-				SendMessageList sendMsgList = new SendMessageList(this);
-				menuOpenList.add(sendMsgList);
-				currObject=sendMsgList;
+				sendMessageList = new SendMessageList(this);
+				menuOpenList.add(sendMessageList);
+				currObject=sendMessageList;
 				
 			} else if (className.equalsIgnoreCase("RecieveMessage")){  
 				// 쪽지 수신함
-				RecieveMessage  recm = new RecieveMessage(this);
-				menuOpenList.add(recm);		
-				currObject=recm;
+				recieveMessage = new RecieveMessage(this);
+				menuOpenList.add(recieveMessage);		
+				currObject=recieveMessage;
 			}
 			
 			// 추가된 Frame 의 위치를 현재 treeFrame 의 위치에 맞게 조정한다.
@@ -696,11 +687,4 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		}
 	}
 
-//	TreeMain은 단독 실행되지 않고 login에서 생성됨
-/*
-	public static void main(String[] args) {
-		new TreeMain(con);
-
-	}
-*/
 }

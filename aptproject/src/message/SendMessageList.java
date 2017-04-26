@@ -255,9 +255,14 @@ public class SendMessageList extends JFrame implements ActionListener , Runnable
 		thread.start();
 	}
 	
+	public void setThreadFlag(boolean threadFlag){
+		this.threadFlag = threadFlag;
+		System.out.println("SendMessageList : threadFlag = "+this.threadFlag);
+	}
+	
 	public void close(){
 		this.treeMain.removeMenuOpenList(this);
-		threadFlag=false;
+		setThreadFlag(false);
 		dispose();
 	}
 	
@@ -276,8 +281,7 @@ public class SendMessageList extends JFrame implements ActionListener , Runnable
 		
 		if (searchType.equals("I") && table.getRowCount()!=0){
 			table.setRowSelectionInterval(0, 0);
-		}
-		
+		}		
 		
 	}
 	
@@ -326,6 +330,10 @@ public class SendMessageList extends JFrame implements ActionListener , Runnable
 	}
 	
 	public void checkNewSendMsg(){
+		
+		// threadFlag 가 false 일때는 수행하지 않는다.
+		if (threadFlag==false)  return;
+		
 		PreparedStatement pstmt=null;
 		ResultSet  rs=null;
 		StringBuffer sql=new StringBuffer();
