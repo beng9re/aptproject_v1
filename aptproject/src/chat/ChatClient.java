@@ -115,8 +115,9 @@ public class ChatClient extends JFrame {
 		// 소켓연결, 쓰레드 종료를 위해 윈도우리스너 사용
 		this.addWindowListener(new WindowAdapter() {
 			public void windowClosing(WindowEvent e) {
-				// flag 값으로 쓰레드 종료하고, 동시에 서버의 쓰레드와 스트림버퍼도 닫는다
-				thread.flag = false;
+				// 쓰레드 종료하고, 동시에 서버의 쓰레드와 스트림버퍼도 닫는다
+				thread.disconnect();
+				
 				// 채팅창 종료
 				main.removeMenuOpenList(ChatClient.this);
 				ChatClient.this.dispose();

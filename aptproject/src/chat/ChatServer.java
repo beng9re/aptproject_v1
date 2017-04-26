@@ -14,7 +14,6 @@ import java.awt.event.MouseEvent;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
-import java.util.Vector;
 import java.util.concurrent.ConcurrentHashMap;
 
 import javax.swing.BorderFactory;
@@ -36,9 +35,11 @@ public class ChatServer extends JPanel {
 	public ChatServer(TreeMain main) {
 		this.main = main;
 		userList = new ConcurrentHashMap<String, ServerSideChatClient>();
+		pnlList = new ConcurrentHashMap<String, JPanel>();
 		
 		setLayout(new FlowLayout(FlowLayout.CENTER));
 		setBorder(BorderFactory.createEmptyBorder(50, 50, 50, 50));
+		setBackground(Color.CYAN);
 		setPreferredSize(new Dimension(700, 700));
 		
 		// 서버기능을 시작한다
@@ -78,7 +79,6 @@ public class ChatServer extends JPanel {
 	}
 	
 	public void addUser(String user_id, ServerSideChatClient serverChat) {
-		userList.put(user_id, serverChat);
 		// 대화중인 주민목록을 보여주는 패널을 접속자가 생길때 마다 붙여넣는다
 		JPanel pnl = new JPanel();
 		pnl.add(new JLabel(user_id+"님과의 대화"));
@@ -91,10 +91,11 @@ public class ChatServer extends JPanel {
 			}
 		});
 		pnl.setBackground(Color.GRAY);
-		pnl.setPreferredSize(new Dimension(600,100));
+		pnl.setPreferredSize(new Dimension(500,100));
 		add(pnl);
 		
 		//대화리스트 목록를 관리한다
+		userList.put(user_id, serverChat);
 		pnlList.put(user_id, pnl);
 	}
 	

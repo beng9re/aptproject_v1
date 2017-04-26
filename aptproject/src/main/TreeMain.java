@@ -62,7 +62,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	private boolean  adminFlag=false;
 	private boolean  systemUserFlag=false;
 	private String serverIP;
-	private ChatServer chatServer;
+	private ChatServer chatSrv;
 	private ChatClient chatClient;
 	
 	JTree  tree;
@@ -177,7 +177,8 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		if (userList.get(0).getAptuser_perm()==9){
 			adminFlag = true;
 		}
-		
+		System.out.println("serverIP = "+serverIP);
+
 		/* --------------- Chat 관련 End -------------------------------------- */
 		
 		//System.out.println("adminFlag="+adminFlag);
@@ -185,6 +186,9 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		
 		// Tree 구성 작업
 		makeTree();
+		
+		//MessageInsertThread msgThread = new MessageInsertThread(this);
+		//msgThread.start();
 	}
 	
 	// get Connection 
@@ -202,15 +206,24 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		return serverIP;
 	}
 	
+	public boolean getAdminFlag(){
+		return adminFlag;
+	}
+	
 	// 프로그램 종료를 위한 메서드
 	public void close(){
 		// 채팅 Server 종료
-		if (chatServer!=null) {
-			chatServer.close(); 
+		if (chatSrv!=null) {
+			chatSrv.close(); 
 		}
-		if (chatClient != null) {
-			chatClient.getThread().disconnect();
+		
+		// 채팅 Client 종료
+		for (Object obj : menuOpenList) {
+			if (obj == chatClient) {
+				chatClient.getThread().disconnect();
+			}
 		}
+		
 		// Connection 종료
 		instance.disConnect(con);
 		
@@ -601,7 +614,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	    		curPanel = complexPanel;	
 	    	} else if (className.equalsIgnoreCase("ChatServer")){
 	    		// 채팅(서버)
-	    		ChatServer chatSrv = new ChatServer(this);
+	    		chatSrv = new ChatServer(this);
 	    		curPanel = chatSrv;	
 	    	} else {
 	    		//System.out.println("menu 없음.");
@@ -630,7 +643,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	    	for (int i=0; i<panelList.size(); i++){
 	    		if (panelList.get(i)==menuOpenList.get(index)){
 	    			// panel 사이즈 p_center 의 사이즈로 만들기
-					panelList.get(i).setPreferredSize(new Dimension(centerWidth, centerHeight));
+					//panelList.get(i).setPreferredSize(new Dimension(centerWidth, centerHeight));
 					// panel 보이기
 					panelList.get(i).setVisible(true);
 					// Title 변경

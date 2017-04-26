@@ -47,9 +47,10 @@ public class User extends JPanel implements ActionListener, ItemListener {
 	FileOutputStream fos;
 	Aptuser aptUser;
 	ArrayList<Aptuser> userList;
-	public User(ArrayList userList,Connection con) {
-		this.con=con;
-		this.userList=userList;
+
+	public User(ArrayList userList, Connection con) {
+		this.con = con;
+		this.userList = userList;
 		chooser = new JFileChooser();
 		p_radio = new JPanel();
 		p_north = new JPanel();
@@ -65,7 +66,7 @@ public class User extends JPanel implements ActionListener, ItemListener {
 		choice = new Choice();
 
 		choice.addItem("▼목록을 선택하세요");
-		
+
 		ButtonGroup group = new ButtonGroup();
 		group.add(rb_a);
 		group.add(rb_b);
@@ -114,7 +115,7 @@ public class User extends JPanel implements ActionListener, ItemListener {
 
 		setVisible(true);
 		setSize(700, 700);
-		
+
 	}
 
 	public void getList(StringBuffer sb) {
@@ -123,7 +124,7 @@ public class User extends JPanel implements ActionListener, ItemListener {
 		table.setRowSorter(new TableRowSorter(userModel));
 		JTableHeader header = table.getTableHeader();
 		header.setBackground(Color.PINK);
-				table.updateUI();
+		table.updateUI();
 	}
 
 	public void createExcel() {
@@ -163,72 +164,77 @@ public class User extends JPanel implements ActionListener, ItemListener {
 	}
 
 	public void itemStateChanged(ItemEvent e) {
-		int perm=userList.get(0).getAptuser_perm();
-		String id=userList.get(0).getAptuser_id();
-		System.out.println(perm+"  "+id);
+		int unit = userList.get(0).getUnit_id();
+		String id = userList.get(0).getAptuser_id();
+		System.out.println(unit + "  " + id);
+		StringBuffer sb = new StringBuffer();
 		if (rb_a.isSelected()) {
 			if (choice.getSelectedIndex() == 1) {
-				StringBuffer sb = new StringBuffer();
-				
 				sb.append(
-						"select INVOICE_ID as 상품, aptuser_name as 택배주인 , INVOICE_TAKETIME as 수령시간, INVOICE_TAKER as 수령인");
-				sb.append(" from invoice i inner join aptuser a on a.aptuser_id = i.aptuser_id and a.aptuser_perm="+perm);
+						"select i.INVOICE_ID as 상품ID, a.COMPLEX_NAME 동, a.UNIT_NAME 호,a.aptuser_name as 택배주인, i.INVOICE_ARRTIME 입고시간, i.INVOICE_TAKETIME as 수령시간, INVOICE_TAKER as 수령인,i.INVOICE_TAKEFLAG 수령여부");
+				sb.append(" from view_is i inner join view_ac a on i.aptuser_id =a.aptuser_id and a.UNIT_ID=" + unit);
+
 				getList(sb);
 			} else if (choice.getSelectedIndex() == 2) {
-				StringBuffer sb = new StringBuffer();
-				
 				sb.append(
-						"select INVOICE_ID as 상품, aptuser_name as 택배주인 , INVOICE_TAKETIME as 수령시간, INVOICE_TAKER as 수령인");
-				sb.append(" from invoice i inner join aptuser a on a.aptuser_id = i.aptuser_id and a.aptuser_id='"+id+"'");
+						"select i.INVOICE_ID as 상품ID, a.COMPLEX_NAME 동, a.UNIT_NAME 호,a.aptuser_name as 택배주인, i.INVOICE_ARRTIME 입고시간, i.INVOICE_TAKETIME as 수령시간, INVOICE_TAKER as 수령인,i.INVOICE_TAKEFLAG 수령여부");
+				sb.append(" from view_is i inner join view_ac a on i.aptuser_id =a.aptuser_id and a.aptuser_id='" + id
+						+ "'");
+
 				getList(sb);
 			} else if (choice.getSelectedIndex() == 3) {
-				StringBuffer sb = new StringBuffer();
 				sb.append(
-						"select INVOICE_ID as 상품, aptuser_name as 택배주인 , INVOICE_TAKETIME as 수령시간, INVOICE_TAKER as 수령인");
+						"select i.INVOICE_ID as 상품ID, a.COMPLEX_NAME 동, a.UNIT_NAME 호,a.aptuser_name as 택배주인, i.INVOICE_ARRTIME 입고시간, i.INVOICE_TAKETIME as 수령시간, INVOICE_TAKER as 수령인,i.INVOICE_TAKEFLAG 수령여부");
 				sb.append(
-						" from invoice i inner join aptuser a on a.aptuser_id = i.aptuser_id and i.invoice_takeflag ='N' and a.aptuser_perm="+perm);
+						" from view_is i inner join view_ac a on i.aptuser_id =a.aptuser_id and i.invoice_takeflag ='N' and a.unit_id="
+								+ unit);
 				getList(sb);
 			} else if (choice.getSelectedIndex() == 4) {
-				StringBuffer sb = new StringBuffer();
 				sb.append(
-						"select INVOICE_ID as 상품, aptuser_name as 택배주인 , INVOICE_TAKETIME as 수령시간, INVOICE_TAKER as 수령인");
+						"select i.INVOICE_ID as 상품ID, a.COMPLEX_NAME 동, a.UNIT_NAME 호,a.aptuser_name as 택배주인, i.INVOICE_ARRTIME 입고시간, i.INVOICE_TAKETIME as 수령시간, INVOICE_TAKER as 수령인,i.INVOICE_TAKEFLAG 수령여부");
 				sb.append(
-						" from invoice i inner join aptuser a on a.aptuser_id = i.aptuser_id and i.invoice_takeflag ='Y' and a.aptuser_perm="+perm);
+						" from view_is i inner join view_ac a on i.aptuser_id =a.aptuser_id and i.invoice_takeflag ='Y' and a.unit_id="
+								+ unit);
 				getList(sb);
 			}
 		} else if (rb_b.isSelected()) {
 			if (choice.getSelectedIndex() == 1) {
-				StringBuffer sb = new StringBuffer();
 				sb.append(
 						"select returninv_id as 상품, i.aptuser_name as 택배주인 ,returninv_barcode as 바코드,returninv_arr as 입고시간 ,returninv_dep as 출고시간,returninv_comment as 메모");
-				sb.append(" from returninv r inner join (select INVOICE_ID, aptuser_name, aptuser_perm , INVOICE_TAKETIME, INVOICE_TAKER");
-				sb.append(" from invoice i inner join aptuser a on a.aptuser_id = i.aptuser_id) i on i.invoice_id = r.invoice_id and i.aptuser_perm="+perm);
+				sb.append(
+						" from returninv r inner join (select INVOICE_ID, aptuser_name, aptuser_perm , INVOICE_TAKETIME, INVOICE_TAKER");
+				sb.append(
+						" from invoice i inner join aptuser a on a.aptuser_id = i.aptuser_id) i on i.invoice_id = r.invoice_id and i.aptuser_perm="
+								+ unit);
 				getList(sb);
 			} else if (choice.getSelectedIndex() == 2) {
-				StringBuffer sb = new StringBuffer();
 				sb.append(
 						"select returninv_id as 상품, i.aptuser_name as 택배주인 ,returninv_barcode as 바코드,returninv_arr as 입고시간 ,returninv_dep as 출고시간,returninv_comment as 메모 ");
-				sb.append(" from returninv r inner join (select INVOICE_ID, aptuser_name,a.aptuser_id, aptuser_perm , INVOICE_TAKETIME, INVOICE_TAKER");
-				sb.append(" from invoice i inner join aptuser a on a.aptuser_id = i.aptuser_id) i on i.invoice_id = r.invoice_id and i.aptuser_id='"+id+"'");
-				//System.out.println(sb.toString());
+				sb.append(
+						" from returninv r inner join (select INVOICE_ID, aptuser_name,a.aptuser_id, aptuser_perm , INVOICE_TAKETIME, INVOICE_TAKER");
+				sb.append(
+						" from invoice i inner join aptuser a on a.aptuser_id = i.aptuser_id) i on i.invoice_id = r.invoice_id and i.aptuser_id='"
+								+ id + "'");
+				// System.out.println(sb.toString());
 				getList(sb);
 			} else if (choice.getSelectedIndex() == 3) {
-				StringBuffer sb = new StringBuffer();
 				sb.append(
 						"select returninv_id as 상품, i.aptuser_name as 택배주인 ,returninv_barcode as 바코드,returninv_arr as 입고시간 ,returninv_dep as 출고시간,returninv_comment as 메모");
 				sb.append(
 						" from returninv r inner join (select INVOICE_ID, aptuser_name, aptuser_perm , INVOICE_TAKETIME, INVOICE_TAKER ");
-				sb.append(" from invoice i inner join aptuser a on a.aptuser_id = i.aptuser_id) i on i.invoice_id = r.invoice_id and r.returninv_dep is null and i.aptuser_perm="+perm);
-				
+				sb.append(
+						" from invoice i inner join aptuser a on a.aptuser_id = i.aptuser_id) i on i.invoice_id = r.invoice_id and r.returninv_dep is null and i.aptuser_perm="
+								+ unit);
+
 				getList(sb);
 			} else if (choice.getSelectedIndex() == 4) {
-				StringBuffer sb = new StringBuffer();
 				sb.append(
 						"select returninv_id as 상품, i.aptuser_name as 택배주인 ,returninv_barcode as 바코드,returninv_arr as 입고시간 ,returninv_dep as 출고시간,returninv_comment as 메모 ");
 				sb.append(
 						"from returninv r inner join (select INVOICE_ID, aptuser_name, aptuser_perm , INVOICE_TAKETIME, INVOICE_TAKER  ");
 				sb.append(
-						" from invoice i inner join aptuser a on a.aptuser_id = i.aptuser_id) i on i.invoice_id = r.invoice_id and r.returninv_dep is not null and i.aptuser_perm="+perm);
+						" from invoice i inner join aptuser a on a.aptuser_id = i.aptuser_id) i on i.invoice_id = r.invoice_id and r.returninv_dep is not null and i.aptuser_perm="
+								+ unit);
 				getList(sb);
 			}
 		}

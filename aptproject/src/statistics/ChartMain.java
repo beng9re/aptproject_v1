@@ -2,6 +2,8 @@ package statistics;
 
 import java.awt.Color;
 
+import javax.swing.JFrame;
+
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
 import org.jfree.chart.JFreeChart;
@@ -17,64 +19,54 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.ui.ApplicationFrame;
 import org.jfree.ui.RefineryUtilities;
 
-public class ChartMain extends ApplicationFrame {
+public class ChartMain extends JFrame {
 
-	public ChartMain(final String title) {
-
-		super(title);
-
-		final CategoryDataset dataset1 = createDataset1();
-
-		// create the chart...
-		final JFreeChart chart = ChartFactory.createBarChart("Dual Axis Chart", // chart
-				"Category", // domain axis label
-				"Value", // range axis label
-				dataset1, // data
-				PlotOrientation.VERTICAL, true, // include legend
-				true, // tooltips?
-				false // URL generator? Not required...
+	public ChartMain() {
+		// 차트 생성
+		CategoryDataset dataset1 = createDataset1();
+		JFreeChart chart = ChartFactory.createBarChart("택배 처리 통계",
+				"날짜", // X축
+				"처리량", // Y축 1번
+				dataset1, // 1번 데이터
+				PlotOrientation.VERTICAL, true, // 범주 표시
+				true, // 툴팁
+				false // URL
 		);
 
-		// NOW DO SOME OPTIONAL CUSTOMISATION OF THE CHART...
 		chart.setBackgroundPaint(Color.white);
-		// chart.getLegend().setAnchor(Legend.SOUTH);
 
-		// get a reference to the plot for further customisation...
-		final CategoryPlot plot = chart.getCategoryPlot();
+		CategoryPlot plot = chart.getCategoryPlot();
 		plot.setBackgroundPaint(new Color(0xEE, 0xEE, 0xFF));
 		plot.setDomainAxisLocation(AxisLocation.BOTTOM_OR_RIGHT);
 
-		final CategoryDataset dataset2 = createDataset2();
+		CategoryDataset dataset2 = createDataset2();
 		plot.setDataset(1, dataset2);
 		plot.mapDatasetToRangeAxis(1, 1);
 
-		final CategoryAxis domainAxis = plot.getDomainAxis();
+		CategoryAxis domainAxis = plot.getDomainAxis();
 		domainAxis.setCategoryLabelPositions(CategoryLabelPositions.DOWN_45);
-		final ValueAxis axis2 = new NumberAxis("Secondary");
+		ValueAxis axis2 = new NumberAxis("일일 처리율");
 		plot.setRangeAxis(1, axis2);
 
-		final LineAndShapeRenderer renderer2 = new LineAndShapeRenderer();
-		renderer2.setToolTipGenerator(new StandardCategoryToolTipGenerator());
+		LineAndShapeRenderer renderer2 = new LineAndShapeRenderer();
+		renderer2.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
 		plot.setRenderer(1, renderer2);
 		plot.setDatasetRenderingOrder(DatasetRenderingOrder.REVERSE);
-		// OPTIONAL CUSTOMISATION COMPLETED.
 
-		// add the chart to a panel...
-		final ChartPanel chartPanel = new ChartPanel(chart);
+		ChartPanel chartPanel = new ChartPanel(chart);
 		chartPanel.setPreferredSize(new java.awt.Dimension(500, 270));
 		setContentPane(chartPanel);
-
+	}
+	
+	private void setData() {
+		// select * from invoice where invoice_arrtime < to_date('20170426','YYYYMMDD') and invoice_arrtime > to_date('20170425','YYYYMMDD')		
 	}
 
 	private CategoryDataset createDataset1() {
-
 		// row keys...
 		final String series1 = "First";
-		final String series2 = "Second";
-		final String series3 = "Third";
 
 		// column keys...
 		final String category1 = "Category 1";
@@ -97,24 +89,6 @@ public class ChartMain extends ApplicationFrame {
 		dataset.addValue(7.0, series1, category6);
 		dataset.addValue(7.0, series1, category7);
 		dataset.addValue(8.0, series1, category8);
-
-		dataset.addValue(5.0, series2, category1);
-		dataset.addValue(7.0, series2, category2);
-		dataset.addValue(6.0, series2, category3);
-		dataset.addValue(8.0, series2, category4);
-		dataset.addValue(4.0, series2, category5);
-		dataset.addValue(4.0, series2, category6);
-		dataset.addValue(2.0, series2, category7);
-		dataset.addValue(1.0, series2, category8);
-
-		dataset.addValue(4.0, series3, category1);
-		dataset.addValue(3.0, series3, category2);
-		dataset.addValue(2.0, series3, category3);
-		dataset.addValue(3.0, series3, category4);
-		dataset.addValue(6.0, series3, category5);
-		dataset.addValue(3.0, series3, category6);
-		dataset.addValue(4.0, series3, category7);
-		dataset.addValue(3.0, series3, category8);
 
 		return dataset;
 
@@ -151,12 +125,13 @@ public class ChartMain extends ApplicationFrame {
 
 	}
 
-	public static void main(final String[] args) {
+	public static void main(String[] args) {
 
-		final ChartMain demo = new ChartMain("Dual Axis Demo");
+		ChartMain demo = new ChartMain();
 		demo.pack();
 		RefineryUtilities.centerFrameOnScreen(demo);
 		demo.setVisible(true);
+		demo.setDefaultCloseOperation(EXIT_ON_CLOSE);
 
 	}
 
