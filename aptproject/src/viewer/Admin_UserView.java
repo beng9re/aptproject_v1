@@ -155,6 +155,14 @@ public class Admin_UserView extends JPanel implements ActionListener {
 
 		setVisible(true);
 		setSize(700, 700);
+		init();
+	}
+	public void init(){
+		rb_user.setSelected(true);
+		tableName = "aptuser";
+		getUser();
+		getList();
+		
 	}
 	
 	public void getUser() {
