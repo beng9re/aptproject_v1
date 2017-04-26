@@ -11,6 +11,7 @@ import java.awt.event.MouseAdapter;
 import java.awt.event.MouseListener;
 import java.io.File;
 import java.net.URL;
+import java.sql.Connection;
 import java.util.ArrayList;
 import java.util.Calendar;
 
@@ -30,7 +31,7 @@ public class ReturnCal extends JFrame  {
 	JLabel lb_cal;
 	JLabel prev,next; //이전 이후 라벨
 
-	JPanel p_cal,p_day;
+	JPanel p_cal,p_day,p_cal2,p_dayin;
 	Calendar cal;
 	ArrayList<DayPan> dplist=new ArrayList<DayPan>();
 	
@@ -42,14 +43,18 @@ public class ReturnCal extends JFrame  {
 	int date;
 	String dataData;
    ImageIcon i_next;
-   
+   Todaypan tp;
    
 	RetunPan rp;
 	URL url;
+	
 public ReturnCal(RetunPan rp) {
 
+	tp=new Todaypan();
 	this.rp=rp;
 	p_cal=new JPanel();
+	p_cal2=new JPanel(new BorderLayout());
+	p_dayin=new JPanel();
 	p_cal.setPreferredSize(new Dimension(400, 40));
 	p_day=new JPanel(new GridLayout(6, 7));
 	
@@ -73,11 +78,16 @@ public ReturnCal(RetunPan rp) {
 	lb_cal.setFont(new Font("고딕체", Font.BOLD, 20));
 	
 	
-	add(p_cal,BorderLayout.NORTH);
+	
+	
+	add(p_cal2,BorderLayout.NORTH);
 	//p_cal.setBackground(Color.cyan);
+	p_cal2.add(p_cal,BorderLayout.NORTH);
 	p_cal.add(prev);
 	p_cal.add(lb_cal);
 	p_cal.add(next);
+	p_cal2.add(p_dayin);
+	p_cal2.add(tp);
 	
 	add(p_day);
 	p_day.setBackground(Color.yellow);
@@ -160,5 +170,5 @@ public ReturnCal(RetunPan rp) {
 	 }
  }
  
-	
+
 }

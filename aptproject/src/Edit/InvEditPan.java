@@ -17,8 +17,10 @@ import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
+import java.awt.event.MouseListener;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
+import java.sql.PseudoColumnUsage;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.Vector;
@@ -32,6 +34,8 @@ import javax.swing.JPanel;
 import javax.swing.JTextField;
 import javax.swing.border.Border;
 
+import Edit.locker.PostBoxMain;
+import apt.test.NewAptPanel;
 import db.DBManager;
 import dto.Company;
 import dto.ComplexDto;
@@ -39,11 +43,11 @@ import dto.ViewCPUT;
 
 public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 	
-	JLabel lb_block,lb_class,lb_code,lb_com,lb_id,lb_takerTime,lb_Time;
+	JLabel lb_block,lb_class,lb_code,lb_com,lb_id,lb_takerTime,lb_Time,lb_box;
 				//동			//호수
 	JLabel title;
 	
-	JTextField tf_code,tf_taker;
+	public JTextField tf_code,tf_taker,tf_box;
 	Choice ch_block,ch_class,ch_com,ch_id;
 	
 	
@@ -71,9 +75,13 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 	boolean classflag=false;
 	boolean userflag=false;
 	
+	PostBoxMain pm;
+	
 	public InvEditPan(Connection con) {
 		this.con=con;
-	
+		tf_box=new JTextField(20);
+		lb_box=new JLabel("박스번호");
+				
 		
 		
 		title=new JLabel("INVOICE");
@@ -114,6 +122,7 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 		ch_class.setPreferredSize(new Dimension(220,30));
 		tf_code.setPreferredSize(new Dimension(20,30));
 		ch_com.setPreferredSize(new Dimension(220,30));
+		tf_box.setPreferredSize(new Dimension(20,30));
 		
 		
 		bt_regist=new JButton("입력");
@@ -164,6 +173,7 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 				
 			}
 		});
+		tf_box.addMouseListener(boxL);
 		
 		ch_block.addItemListener(this);
 		ch_class.addItemListener(this);
@@ -175,6 +185,7 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 		
 		
 		setSize(700,700);
+		pm=new PostBoxMain(this);
 	}
 	
 	
@@ -192,6 +203,8 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 		GridCom g_l4=new GridCom(p_info, gbl, gdc, tf_code, 			    1, 3, 1,1,0, 0);
 		GridCom g_t5=new GridCom(p_info, gbl, gdc, lb_com,					0, 4, 1,1,0, 0);
 		GridCom g_l5=new GridCom(p_info, gbl, gdc, ch_com, 			    1, 4, 1,1,0, 0);
+		GridCom g_t6=new GridCom(p_info, gbl, gdc, lb_box, 			   		 0, 5, 1,1,0, 0);
+		GridCom g_l6=new GridCom(p_info, gbl, gdc, tf_box, 			    	1, 5, 1,1,0, 0);
 		
 		
 	}
@@ -340,7 +353,7 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 	}
 	public void addIdlist(){
 		ch_class.removeAll();
-		
+		pm.setVisible(true);
 	}
 	
 	
@@ -469,6 +482,14 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 			ch_id.add(u_id.get(i));
 		}
 	}
+	
+	MouseListener boxL=new MouseAdapter() {
+		
+		public void mouseClicked(MouseEvent e) {
+			pm.setVisible(true);
+			
+		};
+	};
 	
 	
 	@Override

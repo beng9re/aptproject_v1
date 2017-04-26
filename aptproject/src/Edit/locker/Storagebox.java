@@ -1,4 +1,4 @@
-package locker;
+package Edit.locker;
 
 public class Storagebox {
 

@@ -63,6 +63,10 @@ public class RetunPan extends JPanel implements ActionListener{
 	String user;
 	ArrayList<Aptuser> userList;
 	Connection con;
+	public RetunPan(){
+		
+	}
+	
 	public RetunPan(Connection con,ArrayList<Aptuser> userList) {
 		this.userList=userList;
 		this.con=con;

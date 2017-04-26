@@ -668,6 +668,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	    		if (panelList.get(i)==menuOpenList.get(index)){
 	    			// panel 사이즈 p_center 의 사이즈로 만들기
 					//panelList.get(i).setPreferredSize(new Dimension(centerWidth, centerHeight));
+	    			panelList.get(i).setSize(centerWidth, centerHeight);
 					// panel 보이기
 					panelList.get(i).setVisible(true);
 					// Title 변경
