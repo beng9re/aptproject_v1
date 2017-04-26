@@ -71,7 +71,7 @@ public class ChatServerThread extends Thread {
 			serverChat.setServerThread(this);
 			serverChat.setTitle(user_id + "님 과의 대화");
 			// 접속한 사람들을 관리하는 배열에 유저를 추가한다
-			server.addUser(user_id, serverChat);
+			server.addList(user_id, serverChat);
 		}
 		// 창을 닫았을 때라도 다시 보이게 한다
 		serverChat.setVisible(true);
@@ -96,11 +96,6 @@ public class ChatServerThread extends Thread {
 
 	private void disconnect() {
 		flag = false;
-		////////////////////////////////////////////////////////////////////////////////
-		// 서버측 채팅 클라이언트를 종료한다 >> 종료하지말고 목록에서 삭제 가능하게 한다
-		server.userList.remove(req_id);
-		server.pnlList.remove(req_id);
-		server.revalidate();
 
 		if (buffR != null) {
 			try {

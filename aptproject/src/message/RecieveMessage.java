@@ -133,9 +133,9 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 		// size
 		t_input.setPreferredSize(new Dimension(frameWidth-200, 20));
 		p_north.setPreferredSize(new Dimension(frameWidth, 60));
-		p_south.setPreferredSize(new Dimension(frameWidth, 90));
+		p_south.setPreferredSize(new Dimension(frameWidth, 150));
 		t_title.setPreferredSize(new Dimension(frameWidth-160, 20));
-		areaScroll.setPreferredSize(new Dimension(frameWidth-110, 50));
+		areaScroll.setPreferredSize(new Dimension(frameWidth-110, 110));
 		
 		// font
 		la_new_msg_chk.setFont(new Font("굴림", Font.ITALIC, 13));
@@ -213,7 +213,7 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 		model.getList(srch);
 		table.updateUI();
 		
-		showMessage();
+		//showMessage();
 	}
 
 	public void actionPerformed(ActionEvent e) {
@@ -236,7 +236,7 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 		if (row!=-1){
 			// title
 			col =  table.getColumn("제목").getModelIndex();
-			System.out.println("제목="+col);
+			//System.out.println("제목="+col);
 			String title = (String)table.getValueAt(row, col);
 			t_title.setText(title);
 			
@@ -255,7 +255,7 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 				
 				// msg_recieve_id
 				col =  table.getColumn("msg_recieve_id").getModelIndex();
-				System.out.println("msg_recieve_id="+col + "value="+table.getValueAt(row, col));
+				//System.out.println("msg_recieve_id="+col + "value="+table.getValueAt(row, col));
 				int msg_recieve_id=(Integer)table.getValueAt(row, col);
 				
 				StringBuffer sql = new StringBuffer();
@@ -287,7 +287,10 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 	}
 	
 	public void checkNewMsg(){
-		System.out.println("checkNewMsg");
+		
+		if (threadFlag==false) return;
+		
+		//System.out.println("checkNewMsg");
 		PreparedStatement  pstmt=null;
 		ResultSet  rs=null;
 		StringBuffer sql = new StringBuffer();
@@ -295,18 +298,17 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 		int msg_recieve_id;
 		int chk_msg_recieve_id;
 		int findRow;
-		int rowCount;
-		
+		int rowCount;		
 		
 		int msg_recieve_id_col=table.getColumn("msg_recieve_id").getModelIndex();
-		System.out.println("msg_recieve_id_col="+msg_recieve_id_col);
+		//System.out.println("msg_recieve_id_col="+msg_recieve_id_col);
 		int currSelectedRow=table.getSelectedRow();
 		// 현재 선택된 row 의 msg_recieve_id 값 얻어 놓기
 		int sel_msg_recieve_id=-1;
 		if (currSelectedRow!=-1 && table.getRowCount()!=0){
-			System.out.println("currSelectedRow = "+currSelectedRow + ", msg_recieve_id_col = "+msg_recieve_id_col);
+			//System.out.println("currSelectedRow = "+currSelectedRow + ", msg_recieve_id_col = "+msg_recieve_id_col);
 			sel_msg_recieve_id=(Integer)table.getValueAt(currSelectedRow, msg_recieve_id_col);
-			System.out.println( ", sel_msg_recieve_id = "+sel_msg_recieve_id);
+			//System.out.println( ", sel_msg_recieve_id = "+sel_msg_recieve_id);
 		}
 		
 		// 미확인 메세지 건수, 마지막 id
@@ -314,7 +316,7 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 		sql.append(" from recieve_message r \n");
 		sql.append(" where r.msg_recv_user_id = ?  \n");
 		sql.append(" and NVL(r.msg_confirm_flag,'N')='N'  \n");
-		System.out.println("checkNewMsg - sql : "+sql.toString());
+		//System.out.println("checkNewMsg - sql : "+sql.toString());
 		try {
 			pstmt = con.prepareStatement(sql.toString());
 			pstmt.setString(1, userID);
@@ -331,7 +333,7 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 					findRow=-1;
 					rowCount = table.getRowCount();
 					for (int i=0; i<rowCount; i++){
-						System.out.println("row="+i+", col="+msg_recieve_id_col);
+						//System.out.println("row="+i+", col="+msg_recieve_id_col);
 						msg_recieve_id =(Integer)table.getValueAt(i, msg_recieve_id_col);
 						if (max_msg_recieve_id==msg_recieve_id){
 							findRow=i;
@@ -357,7 +359,7 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 							
 							// 선택되었던 id 값을 가진 row 를 찾은 경우. 해당 row 로 선택
 							if (findRow!=-1){
-								System.out.println("findRow = "+findRow);
+								//System.out.println("findRow = "+findRow);
 								table.setRowSelectionInterval(findRow, findRow);
 								// showMessage();
 							}

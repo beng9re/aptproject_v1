@@ -296,11 +296,12 @@ public class ComplexPanel extends JPanel implements ActionListener {
 					}
 					con.commit();
 					System.out.println("커밋 ㄱㄱ");
-					JOptionPane.showMessageDialog(this, "등록에 성공하였습니다");
+					
 				}
-
+				
 			}
-
+			JOptionPane.showMessageDialog(this, "등록에 성공하였습니다");
+			
 		} catch (SQLException e) {
 			e.printStackTrace();
 			try {
