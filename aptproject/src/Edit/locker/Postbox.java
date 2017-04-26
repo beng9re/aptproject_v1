@@ -150,6 +150,7 @@ public class Postbox extends JPanel implements MouseListener{
 					"수거예정일",JOptionPane.YES_NO_OPTION);
 			if(result==0){
 				pm.iep.tf_box.setText(vec.get(8).toString());
+				pm.setVisible(false);
 			
 			}
 			else{

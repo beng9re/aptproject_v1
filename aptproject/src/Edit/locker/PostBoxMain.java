@@ -30,7 +30,7 @@ import dto.View_inbox;
 
 public class PostBoxMain  extends JFrame{
 	
-	JPanel p_south,p_north,p_boxgrid,p_emp;
+	public JPanel p_south,p_north,p_boxgrid,p_emp;
 	JLabel lb_title;
 	
 	Postbox ps;
@@ -94,7 +94,7 @@ public class PostBoxMain  extends JFrame{
 	}
 	
 	public void setBox(){
-	
+		box.removeAll(box);
 		PreparedStatement pstmt=null;
 		ResultSet rs=null;
 		
