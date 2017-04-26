@@ -9,6 +9,8 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.io.File;
 import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
@@ -24,6 +26,7 @@ import javax.swing.JPanel;
 import javax.swing.JRadioButton;
 import javax.swing.JScrollPane;
 import javax.swing.JTable;
+import javax.swing.JTextArea;
 import javax.swing.border.EtchedBorder;
 import javax.swing.table.JTableHeader;
 import javax.swing.table.TableRowSorter;
@@ -47,6 +50,7 @@ public class User extends JPanel implements ActionListener, ItemListener {
 	FileOutputStream fos;
 	Aptuser aptUser;
 	ArrayList<Aptuser> userList;
+	JTextArea area;
 
 	public User(ArrayList userList, Connection con) {
 		this.con = con;
@@ -64,6 +68,7 @@ public class User extends JPanel implements ActionListener, ItemListener {
 		rb_a = new JRadioButton("주문 물품");
 		rb_b = new JRadioButton("반송 물품");
 		choice = new Choice();
+		area = new JTextArea(4, 60);
 
 		choice.addItem("▼목록을 선택하세요");
 
@@ -87,6 +92,7 @@ public class User extends JPanel implements ActionListener, ItemListener {
 		p_north.setBorder(new EtchedBorder(EtchedBorder.RAISED));
 
 		p_center.add(scroll);
+		p_south.add(area);
 
 		scroll.setPreferredSize(new Dimension(680, 500));
 
@@ -98,6 +104,17 @@ public class User extends JPanel implements ActionListener, ItemListener {
 		rb_a.addActionListener(this);
 		rb_b.addActionListener(this);
 		choice.addItemListener(this);
+		table.addMouseListener(new MouseAdapter() {
+			@Override
+			public void mouseClicked(MouseEvent e) {
+				int row = table.getSelectedRow();
+				int col = table.getSelectedColumn();
+				if(rb_b.isSelected()){
+					String memo=(String)table.getValueAt(row, 5);
+					area.setText(memo);
+				}
+			}
+		});
 
 		rb_a.setBackground(Color.pink);
 		rb_b.setBackground(Color.pink);
@@ -115,7 +132,18 @@ public class User extends JPanel implements ActionListener, ItemListener {
 
 		setVisible(true);
 		setSize(700, 700);
+		
+		init();
+	}
+	public void init(){
+		rb_a.setSelected(true);
+		int unit = userList.get(0).getUnit_id();
+		StringBuffer sb = new StringBuffer();
+		sb.append(
+				"select i.INVOICE_ID as 상품ID, a.COMPLEX_NAME 동, a.UNIT_NAME 호,a.aptuser_name as 택배주인, i.INVOICE_ARRTIME 입고시간, i.INVOICE_TAKETIME as 수령시간, INVOICE_TAKER as 수령인,i.INVOICE_TAKEFLAG 수령여부");
+		sb.append(" from view_is i inner join view_ac a on i.aptuser_id =a.aptuser_id and a.unit_id=" + unit);
 
+		getList(sb);
 	}
 
 	public void getList(StringBuffer sb) {
@@ -166,15 +194,14 @@ public class User extends JPanel implements ActionListener, ItemListener {
 	public void itemStateChanged(ItemEvent e) {
 		int unit = userList.get(0).getUnit_id();
 		String id = userList.get(0).getAptuser_id();
-	
-	
+
 		StringBuffer sb = new StringBuffer();
 		if (rb_a.isSelected()) {
 			if (choice.getSelectedIndex() == 1) {
 				sb.append(
 						"select i.INVOICE_ID as 상품ID, a.COMPLEX_NAME 동, a.UNIT_NAME 호,a.aptuser_name as 택배주인, i.INVOICE_ARRTIME 입고시간, i.INVOICE_TAKETIME as 수령시간, INVOICE_TAKER as 수령인,i.INVOICE_TAKEFLAG 수령여부");
 				sb.append(" from view_is i inner join view_ac a on i.aptuser_id =a.aptuser_id and a.unit_id=" + unit);
-				
+
 				getList(sb);
 			} else if (choice.getSelectedIndex() == 2) {
 				sb.append(
@@ -207,7 +234,7 @@ public class User extends JPanel implements ActionListener, ItemListener {
 				sb.append(
 						" from invoice i inner join aptuser a on a.aptuser_id = i.aptuser_id) i on i.invoice_id = r.invoice_id and i.unit_id="
 								+ unit);
-				System.out.println(sb.toString());
+				
 				getList(sb);
 			} else if (choice.getSelectedIndex() == 2) {
 				sb.append(
@@ -217,7 +244,7 @@ public class User extends JPanel implements ActionListener, ItemListener {
 				sb.append(
 						" from invoice i inner join aptuser a on a.aptuser_id = i.aptuser_id) i on i.invoice_id = r.invoice_id and i.aptuser_id='"
 								+ id + "'");
-				// System.out.println(sb.toString());
+				
 				getList(sb);
 			} else if (choice.getSelectedIndex() == 3) {
 				sb.append(
@@ -249,8 +276,9 @@ public class User extends JPanel implements ActionListener, ItemListener {
 		} else if (obj == bt_xls) {
 			createExcel();
 		} else if (obj == rb_a) {
+			area.setText("안녕하세요");
 			choice.removeAll();
-			choice.addItem("▼목록을 선택하세요");
+			//choice.addItem("▼목록을 선택하세요");
 			choice.addItem("전체 목록보기");
 			choice.addItem("내 목록보기");
 			choice.addItem("수령 전 목록보기");
@@ -263,5 +291,6 @@ public class User extends JPanel implements ActionListener, ItemListener {
 			choice.addItem("반송 전 목록보기");
 			choice.addItem("반송 완료  목록보기");
 		}
+		
 	}
 }
