@@ -188,44 +188,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		if (userList.get(0).getAptuser_perm()==9){
 			adminMenuFlag = true;
 		}
-<<<<<<< HEAD
-=======
-<<<<<<< HEAD
 
-	
-		// 관리자 IP를 가지고 온다 (채팅 클라이언트에서 서버에 접속할 때 사용)
-		aptuser.selectData("admin");
-		serverIP = ((Aptuser)aptuser.getData().get(0)).getAptuser_ip();
-//<<<<<<< HEAD
-//<<<<<<< HEAD
-//=======
-
-//>>>>>>> 2a49dad8e12aa61a81eb65b34f18a50861ef5a7e
-		
-		aptuser.selectData(userID);
-		
-		// Tree 구성 작업
-		makeTree();
-//<<<<<<< HEAD
-//=======
-		System.out.println("serverIP = "+serverIP);
-//>>>>>>> cde0a4764f076d126979fd63f9ba168a81602b3b
-//=======
-
-		System.out.println("serverIP = "+serverIP);
-
-//>>>>>>> 2a49dad8e12aa61a81eb65b34f18a50861ef5a7e
-
-		// 서버관리자(admin)인 경우 Chat Server 생성
-		//if (userID.equalsIgnoreCase("admin")){
-		//	chatServer=  new ChatServer(this);
-		//}
-
-=======
-		System.out.println("serverIP = "+serverIP);
->>>>>>> 0271b4667e5ed310a7a8b6ae8204f0a9f55b72f6
-
->>>>>>> 67c6e4c6cc8f7cf80d76a4c932b868a9c9818b03
 		/* --------------- Chat 관련 End -------------------------------------- */
 		
 		la_welcom.setText(userName+" 님 환영합니다");
