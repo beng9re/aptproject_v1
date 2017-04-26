@@ -177,7 +177,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		if (userList.get(0).getAptuser_perm()==9){
 			adminFlag = true;
 		}
-<<<<<<< HEAD
+
 	
 		// 관리자 IP를 가지고 온다 (채팅 클라이언트에서 서버에 접속할 때 사용)
 		aptuser.selectData("admin");
@@ -206,9 +206,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		//if (userID.equalsIgnoreCase("admin")){
 		//	chatServer=  new ChatServer(this);
 		//}
-=======
-		
->>>>>>> 4628e48755c4e3c9fc3896272c4e8e6d8ae93e83
+
 		/* --------------- Chat 관련 End -------------------------------------- */
 		
 		//System.out.println("adminFlag="+adminFlag);

@@ -302,7 +302,7 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 					" i.invoice_barcode as 송장바코드, i.invoice_arrtime as 등록시간, i.invoice_taker as 수령인, i.invoice_taketime as 수령시간, i.invoice_takeflag as 수령여부 ");
 			sb.append(" from  view_is i inner join view_ac a on i.APTUSER_ID=a.APTUSER_ID and " + option + "= '" + msg
 					+ "' order by invoice_arrtime desc");
-			System.out.println(sb.toString());
+
 			if (rb_allInvoice.isSelected()) {
 				invoiceModel.getList(sb.toString());
 			} else if (rb_invoice.isSelected()) {
@@ -310,15 +310,13 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 			}
 		} else if (boxflag == false) {
 			if (data.equals("반송ID")) {
-				option = "returninv_id";
+				option = "r.returninv_id";
 			} else if (data.equals("회원ID")) {
 				option = "i.aptuser_id";
 			} else if (data.equals("이름")) {
 				option = "i.aptuser_name";
-			} else if (data.equals("이름")) {
-				option = "i.COMPLEX_NAME";
 			} else if (data.equals("동")) {
-				option = "i.aptuser_perm";
+				option = "i.COMPLEX_NAME";
 			} else if (data.equals("호")) {
 				option = "i.UNIT_NAME";
 			} else if (data.equals("등록시간")) {
@@ -363,7 +361,7 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 			sb.append(
 					" i.invoice_barcode as 송장바코드, i.invoice_arrtime as 등록시간, i.invoice_taker as 수령인, i.invoice_taketime as 수령시간, i.invoice_takeflag as 수령여부 ");
 			sb.append(" from  view_is i inner join view_ac a on i.APTUSER_ID=a.APTUSER_ID");
-			System.out.println(sb);
+			
 			getInvoice(sb.toString());
 			getList(sb.toString());
 		} else if (obj == rb_invoice) {
@@ -384,7 +382,7 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 					"select r.returninv_id as 반송ID,i.aptuser_id 회원ID, i.aptuser_name 이름, i.COMPLEX_NAME 동,i.UNIT_NAME 호,r.returninv_time 등록시간,r.returninv_comment 메모, r.returninv_arr 입고시간, r.returninv_dep 출고시간, r.returninv_barcode 반송바코드  ");
 			sb.append(" from returninv r inner join view_acis i");
 			sb.append(" on i.invoice_id = r.invoice_id and returninv_dep is null");
-			System.out.println(sb);
+
 			getReturninv(sb.toString());
 			getList(sb.toString());
 		} else if (obj == rb_areturn) {
@@ -404,7 +402,7 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 		PreparedStatement pstmt = null;
 		int col = 8;
 		String value = (String) table.getValueAt(row, col);
-		System.out.println(value);
+		
 		String sql = "update " + tableName + " set invoice_taker =" + "'" + value
 				+ "', invoice_taketime= sysdate, invoice_takeflag='Y'";
 		sql += " where invoice_id=" + table.getValueAt(row, 0);
@@ -412,10 +410,14 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 		try {
 			pstmt = con.prepareStatement(sql);
 			int result = pstmt.executeUpdate();
-
-			String re = "select * from " + tableName;
-			invoiceModel.getList(re);
-			String a = (String) invoiceModel.getValueAt(row, 4);
+			StringBuffer sb = new StringBuffer();
+			sb.append(
+					"select i.invoice_id as 송장ID, a.aptuser_id 회원ID, a.aptuser_name 이름, a.COMPLEX_NAME 동, a.unit_name 호, i.box_num 무인함번호,");
+			sb.append(
+					" i.invoice_barcode as 송장바코드, i.invoice_arrtime as 등록시간, i.invoice_taker as 수령인, i.invoice_taketime as 수령시간, i.invoice_takeflag as 수령여부 ");
+			sb.append(" from  view_is i inner join view_ac a on i.APTUSER_ID=a.APTUSER_ID ");
+			invoiceModel.getList(sb.toString());
+			String a = (String) invoiceModel.getValueAt(row, 9);
 			table.setValueAt(a, row, 9);
 
 			if (result != 0) {
