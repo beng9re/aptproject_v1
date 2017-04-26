@@ -17,6 +17,7 @@ import java.util.Vector;
 
 import javax.swing.JFrame;
 import javax.swing.JLabel;
+import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.border.Border;
 
@@ -141,6 +142,8 @@ public class PostBoxMain  extends JFrame{
 			}
 		}
 	}
+	
+
 	
 	public void addList(){
 		p_south.setLayout(new GridLayout(8,6));

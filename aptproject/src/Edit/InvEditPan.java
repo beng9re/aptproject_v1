@@ -49,7 +49,7 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 	
 	Vector <String> u_id=new Vector<String>();
 	String userid; //회원아이디 값이 들어갈것
-	
+	String err="해당 집에 사는 회원이 없음";
 	JPanel p_info;
 	JPanel p_up;
 	JPanel p_down;
@@ -247,7 +247,9 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 	
 	//동수 및 운송사 
 	public void listadd(){
+		
 		checkv.add(cput.get(0).get(1).toString());
+		ch_block.add("▼ 동을 선택하세요");
 		ch_block.add(cput.get(0).get(1).toString());
 		String listval=null;
 		boolean flag =false;
@@ -281,9 +283,11 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 		PreparedStatement pstmt=null;
 		ResultSet rs=null;
 		String sql="select * from company";
+		
 		try {
 			pstmt=con.prepareStatement(sql);
 			rs=pstmt.executeQuery();
+			
 			while(rs.next()){
 				Company dto=new Company();
 				Vector vec=new Vector();
@@ -320,7 +324,7 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 		ch_class.removeAll();
 		PreparedStatement pstmt=null;
 		ResultSet rs=null;
-		
+		ch_class.add("▼호수를 선택해줘요");
 		for(int i=0;i<cput.size();i++){
 			if(cput.get(i).get(1).toString().equals(ch_block.getSelectedItem().toString())){
 			
@@ -344,6 +348,14 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 	public void regist(){
 		//userSelect();
 		
+		if(ch_block.getSelectedIndex()==0){
+			JOptionPane.showMessageDialog(this, "동수를 골라주세요");
+			return;
+		}else if(ch_class.getSelectedIndex()==0){
+			JOptionPane.showMessageDialog(this, "호수를 골라주세요");
+			return;
+		}
+		
 		
 		String a=ch_com.getSelectedItem();
 		String companyid=null;
@@ -364,15 +376,18 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 		sql.append("(seq_invoice.nextval,");
 		sql.append("?,?,?,?)");
 			
-		
+		String ch_idv="admin";
 	
 		
 		try {
 			pstmt=con.prepareStatement(sql.toString());
-		
+			
 			pstmt.setString(1,tf_code.getText());
 			pstmt.setString(2,tf_taker.getText());
-			pstmt.setString(3,ch_id.getSelectedItem()); //나중에 아이디 값뽑아야됨
+			if(!ch_id.getSelectedItem().equals(err)){
+				ch_idv=ch_id.getSelectedItem();
+			}
+			pstmt.setString(3,ch_idv); //나중에 아이디 값뽑아야됨
 			pstmt.setInt(4,Integer.parseInt(companyid));
 
 			
@@ -401,6 +416,7 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 	public void userSelect(){
 		
 		ch_id.removeAll();
+	
 		u_id.removeAll(u_id);
 		
 		int unit=1;
@@ -437,12 +453,17 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 				pstmt.setInt(1,1);
 				rs=pstmt.executeQuery();
 				rs.next();
-				userid=rs.getString("aptuser_id");
+				userflag=true;
+				userid=rs.getString("aptuser_id");  //해당사람이 없다면 관리자로 등록됨
+				
 			} catch (SQLException e1) {
 				System.out.println("조회된 사람 x");
 			
 			}
 			
+		}
+		if(userflag){
+			ch_id.add(err);
 		}
 		for(int i=0;i<u_id.size();i++){
 			ch_id.add(u_id.get(i));
@@ -454,8 +475,13 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 	public void actionPerformed(ActionEvent e) {
 		Object bt=e.getSource();
 		if(bt==bt_regist){
-			System.out.println("등록");
+			if(classflag==false){
+				System.out.println("해당 값 x");
+				
+			}else{
 			regist();
+			System.out.println("등록");
+			}
 		}
 		else if(bt==bt_reset){
 			System.out.println("초기화");

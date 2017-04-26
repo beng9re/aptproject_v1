@@ -119,6 +119,8 @@ public class Postbox extends JPanel implements MouseListener{
 			
 		}
 		new PostInfo(vec);
+		
+		
 	
 	
 		
