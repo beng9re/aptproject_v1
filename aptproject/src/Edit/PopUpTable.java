@@ -31,9 +31,9 @@ public class PopUpTable extends JFrame{
 		String where="";
 		
 		
-		String name=rp.userList.get(0).getAptuser_name();
+		String name=rp.userList.get(0).getAptuser_id();
 		
-		System.out.println(rp.userList.get(0).getAptuser_perm());
+		//System.out.println(rp.userList.get(0).getAptuser_perm());
 		
 			where=" where aptuser_id="+"'"+name+"'";
 	
