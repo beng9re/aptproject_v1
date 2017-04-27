@@ -53,7 +53,6 @@ public class ChatClientThread extends Thread {
 					chatbox = new ChatMessage(client, user_id, msg, false);
 				}
 				client.pnl_chat.add(chatbox);
-				client.pnl_chat.add(Box.createHorizontalGlue());
 				client.pnl_chat.revalidate();
 			}
 

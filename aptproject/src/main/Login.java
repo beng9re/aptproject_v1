@@ -32,6 +32,7 @@ public class Login extends JFrame implements ActionListener {
 	private JTextField txf_id;
 	private JPasswordField txf_pw;
 	private JButton btn_login, btn_barcode;
+	private String verified_id;
 
 	private DBManager dbMgr = DBManager.getInstance();
 	private Connection conn;
@@ -113,6 +114,7 @@ public class Login extends JFrame implements ActionListener {
 		// DB에서 회원정보 조회해서 id pw 일치여부 확인 (admin//4321)
 		if (model.loginChk(txf_id.getText(), txf_pw.getPassword())) {
 			JOptionPane.showMessageDialog(this, "로그인 성공");
+			verified_id = model.getVerifiedID();
 			goMain();
 		} else {
 			JOptionPane.showMessageDialog(this, "회원정보가 일치하지 않습니다");
@@ -123,6 +125,7 @@ public class Login extends JFrame implements ActionListener {
 		String barcode = JOptionPane.showInputDialog(this, "스캐너로 바코드를 읽어주세요");
 		if (model.barcodeChk(barcode)) {
 			JOptionPane.showMessageDialog(this, "로그인 성공");
+			verified_id = model.getVerifiedID();
 			goMain();
 		} else {
 			JOptionPane.showMessageDialog(this, "회원정보가 일치하지 않습니다");
@@ -140,7 +143,7 @@ public class Login extends JFrame implements ActionListener {
 	}
 
 	private void goMain() {
-		new TreeMain(dbMgr, txf_id.getText());
+		new TreeMain(dbMgr, verified_id);
 		dispose();
 	}
 

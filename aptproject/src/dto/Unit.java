@@ -2,7 +2,7 @@ package dto;
 
 public class Unit {
 	private int unit_id;
-	private String unit_name;
+	private int unit_name;
 	private int complex_id;
 	
 	public int getUnit_id() {
@@ -11,10 +11,10 @@ public class Unit {
 	public void setUnit_id(int unit_id) {
 		this.unit_id = unit_id;
 	}
-	public String getUnit_name() {
+	public int getUnit_name() {
 		return unit_name;
 	}
-	public void setUnit_name(String unit_name) {
+	public void setUnit_name(int unit_name) {
 		this.unit_name = unit_name;
 	}
 	public int getComplex_id() {
