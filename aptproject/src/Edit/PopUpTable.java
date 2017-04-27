@@ -22,28 +22,37 @@ public class PopUpTable extends JFrame{
 	AdminModel ad;
 	Connection con;
 	RetunPan rp;
+	
 	int clickCount=-1;
 	int selectrow;
 	
 	public PopUpTable(RetunPan rp,Connection con) {
 		this.con=con;
 		this.rp=rp;
-		String where="";
+		StringBuffer sql =new StringBuffer();
 		
 		
 		String name=rp.userList.get(0).getAptuser_id();
 		
 		//System.out.println(rp.userList.get(0).getAptuser_perm());
 		
-			where=" where aptuser_id="+"'"+name+"'";
-	
 		
-		String sql="select invoice_id as 송장ID, invoice_barcode as 송장바코드, invoice_arrtime as 등록시간, invoice_taker as 수령인, invoice_taketime as 수령시간, invoice_takeflag as 수령여부, aptuser_id as 회원ID "
-				+" from view_acis "+where;
+	
+			sql.append("select invoice_id as 송장ID, invoice_barcode as 송장바코드, invoice_arrtime as 등록시간,");
+			sql.append("invoice_taker as 수령인, invoice_taketime as 수령시간, invoice_takeflag as 수령여부, aptuser_id as 회원ID ");
+			sql.append(" from view_acis where invoice_id not in(");
+			sql.append("select invoice_id  from RETURNINV r where r.INVOICE_ID  in(");
+			sql.append("select v.invoice_id  from view_acis v where  aptuser_id=");
+			sql.append("'");
+			sql.append(name);
+			sql.append("'))");
+			
 		
 
 		ad=new AdminModel(con);
-		ad.getList(sql);
+		System.out.println(sql.toString());
+		ad.getList(sql.toString());
+		
 		ta=new JTable(ad);
 		sp=new JScrollPane(ta);
 		

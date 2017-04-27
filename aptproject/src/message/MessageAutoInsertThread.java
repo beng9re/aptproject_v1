@@ -101,10 +101,10 @@ public class MessageAutoInsertThread extends  Thread{
 				title.append("택배도착 (수신자 : "+recv_user_name+")");
 				
 				msgContent.delete(0, msgContent.length());
-				msgContent.append("수신자 : "+recv_user_name + "\n");
+				msgContent.append("수 신 자 : "+recv_user_name + "\n");
 				msgContent.append("동, 호수 : "+complex_name + " - " + unit_name + "\n");
 				msgContent.append("송장번호 : "+invoice_barcode + "\n");
-				msgContent.append("운송사 : "+company_name + "\n");
+				msgContent.append("운 송 사 : "+company_name + "\n");
 				msgContent.append("도착시간 : "+invoice_arrtime );
 				
 				// next seq_send_message check
