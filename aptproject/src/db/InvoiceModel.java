@@ -21,8 +21,8 @@ public class InvoiceModel extends DBModel {
 		this.eDay = eDay;
 		
 		StringBuffer sb = new StringBuffer();
-		sb.append("select to_char(invoice_arrtime,'YYYYMMDD') as 날짜, count(invoice_id) as 합계 from invoice");
-		sb.append("	where invoice_arrtime");
+		sb.append("select to_char(invoice_arrtime,'YYYYMMDD') as 날짜, count(invoice_id) as 합계");
+		sb.append("	from invoice where invoice_arrtime");
 		sb.append("	between to_date(?,'YYYYMMDD') and to_date(?,'YYYYMMDD')");
 		sb.append("	group by to_char(invoice_arrtime, 'YYYYMMDD')");
 		sql = sb.toString();

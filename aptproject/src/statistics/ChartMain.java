@@ -7,8 +7,9 @@ import java.sql.Connection;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
 
-import javax.swing.JFrame;
+import javax.swing.JPanel;
 
 import org.jfree.chart.ChartFactory;
 import org.jfree.chart.ChartPanel;
@@ -25,21 +26,21 @@ import org.jfree.chart.plot.PlotOrientation;
 import org.jfree.chart.renderer.category.LineAndShapeRenderer;
 import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
-import org.jfree.ui.RefineryUtilities;
 
 import db.DBManager;
 import db.InvoiceModel;
 
-public class ChartMain extends JFrame {
+public class ChartMain extends JPanel {
 	Connection conn = DBManager.getInstance().getConnection();
-	InvoiceModel model;
-	ArrayList<ArrayList> byDay;
-	ArrayList<ArrayList> byPer;
+	InvoiceModel Dmodel;
+	InvoiceModel Pmodel;
+	ArrayList<String[]> byDay;
+	ArrayList<String[]> byPer;
+	HashMap<String, Integer> byPerMap;
 	SimpleDateFormat dateFormat;
 	Font font;
 	
 	public ChartMain() {
-		font = new Font("맑은 고딕", Font.PLAIN, 14);
 		// 날짜정보를 입력한다
 		dateFormat = new SimpleDateFormat("yyyyMMdd");
 		Calendar cal = Calendar.getInstance();
@@ -48,30 +49,27 @@ public class ChartMain extends JFrame {
 		cal.add(Calendar.DATE, -8);
 		String bDay = dateFormat.format(cal.getTime());
 		
-		model = new InvoiceModel(conn);
-		byDay = new ArrayList<ArrayList>();
-		byPer = new ArrayList<ArrayList>();
+		font = new Font("맑은 고딕", Font.BOLD, 16);
+		Dmodel = new InvoiceModel(conn);
+		Pmodel = new InvoiceModel(conn);
+		byDay = new ArrayList<String[]>();
+		byPer = new ArrayList<String[]>();
+		byPerMap = new HashMap<String, Integer>();
 		
 		setData(bDay, eDay);
 		
-		System.out.println(byDay);
-		System.out.println(byPer);
-		
 		// 차트 생성
 		CategoryDataset dataset1 = createDataset1();
-		JFreeChart chart = ChartFactory.createBarChart("택배 처리 통계",
+		
+		JFreeChart chart = ChartFactory.createBarChart("최근 일주일간 택배 통계",
 				"날짜", // X축
 				"처리량", // Y축 1번
 				dataset1, // 1번 데이터
 				PlotOrientation.VERTICAL, true, // 범주 표시
 				true, // 툴팁
 				false // URL
-		);
+				);
 
-		chart.setBackgroundPaint(Color.white);
-		chart.getTitle().setFont(new Font("맑은 고딕", Font.BOLD, 20));
-		chart.getLegend().setItemFont(font);
-		
 		CategoryPlot plot = chart.getCategoryPlot();
 		plot.setBackgroundPaint(new Color(0xEE, 0xEE, 0xFF));
 		plot.setDomainAxisLocation(AxisLocation.BOTTOM_OR_RIGHT);
@@ -85,38 +83,46 @@ public class ChartMain extends JFrame {
 		ValueAxis axis2 = new NumberAxis("일일 처리율");
 		axis2.setLabelFont(font);
 		plot.setRangeAxis(1, axis2);
-
-		LineAndShapeRenderer renderer2 = new LineAndShapeRenderer();
-		renderer2.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
-		plot.setRenderer(1, renderer2);
-		plot.setDatasetRenderingOrder(DatasetRenderingOrder.REVERSE);
-
-		ChartPanel chartPanel = new ChartPanel(chart);
-//		chartPanel.setPreferredSize(new Dimension(500, 270));
-		setContentPane(chartPanel);
 		
+		LineAndShapeRenderer d2Renderer = new LineAndShapeRenderer();
+		d2Renderer.setBaseToolTipGenerator(new StandardCategoryToolTipGenerator());
+		plot.setRenderer(1, d2Renderer);
+		plot.setDatasetRenderingOrder(DatasetRenderingOrder.FORWARD);
+
+		chart.setBackgroundPaint(Color.white);
+		chart.getTitle().setFont(new Font("맑은 고딕", Font.BOLD, 20));
+		chart.getLegend().setItemFont(font);
+		chart.getCategoryPlot().getRangeAxis().setLabelFont(font);
+		chart.getCategoryPlot().getDomainAxis().setLabelFont(font);
+		
+		add(new ChartPanel(chart));
 		setPreferredSize(new Dimension(700,700));
-		
+		setBackground(Color.CYAN);
 	}
 	
 	private void setData(String bDay, String eDay) {
-		model.selectByDAY(bDay, eDay);
-		byDay = model.getData();
-		model.selectProportion(bDay, eDay);
-		byPer = model.getData();
-		
+		Dmodel.selectByDAY(bDay, eDay);
+		byDay = Dmodel.getData();
+		Pmodel.selectProportion(bDay, eDay);
+		byPer = Pmodel.getData();
 	}
 
 	private CategoryDataset createDataset1() {
 		// row keys...
-		String series1 = "일 처리량";
+		String series1 = "전체 물품";
+		String series2 = "당일 처리량";
 
 		// create the dataset...
 		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
 		// column keys...
-		for (ArrayList list : byDay) {
-			dataset.addValue(Integer.parseInt(list.get(0).toString()), series1, list.get(0).toString());
+		for (String[] s1 : byDay) {
+			dataset.addValue(Integer.parseInt(s1[1]), series1, s1[0]);
+		}
+		
+		for (String[] s2 : byPer) {
+			dataset.addValue(Integer.parseInt(s2[1]), series2, s2[0]);
+			byPerMap.put(s2[0], Integer.parseInt(s2[1]));
 		}
 
 		return dataset;
@@ -130,22 +136,11 @@ public class ChartMain extends JFrame {
 		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
 		// column keys...
-		
-		for (ArrayList list : byPer) {
-			dataset.addValue(Integer.parseInt(list.get(0).toString()), series1, list.get(0).toString());
+		for (String[] list : byDay) {
+			int numer = (byPerMap.get(list[0])==null) ? 0 : byPerMap.get(list[0]);
+			dataset.addValue(numer*100/Integer.parseInt(list[1]), series1, list[0]);
 		}
 		
 		return dataset;
-
 	}
-
-	public static void main(String[] args) {
-		ChartMain demo = new ChartMain();
-		demo.pack();
-		RefineryUtilities.centerFrameOnScreen(demo);
-		demo.setVisible(true);
-		demo.setDefaultCloseOperation(EXIT_ON_CLOSE);
-
-	}
-
 }
