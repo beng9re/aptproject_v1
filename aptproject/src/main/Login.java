@@ -37,6 +37,7 @@ public class Login extends JFrame implements ActionListener {
 	private Connection conn;
 	private LoginModel model;
 
+	
 	public Login() {
 		pnl_top = new JPanel();
 		pnl_field = new JPanel();
@@ -47,7 +48,7 @@ public class Login extends JFrame implements ActionListener {
 		txf_pw = new JPasswordField(15);
 		btn_barcode = new JButton("바코드 로그인");
 		btn_login = new JButton("로그인");
-
+		
 		pnl_field.setLayout(new GridLayout(3, 2));
 		pnl_bot.setLayout(new FlowLayout(FlowLayout.RIGHT));
 

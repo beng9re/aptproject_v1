@@ -111,7 +111,7 @@ public DayPan(ReturnCal returnCal,JTextField taker) {
 				return;
 			}
 			
-			
+			taker.setForeground(Color.black);
 			taker.setText(selectedDay());
 			returnCal.setVisible(false);
 			}

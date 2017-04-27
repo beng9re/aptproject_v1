@@ -65,6 +65,8 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 	int invoce_id;
 	Connection con;
 	
+	String initba="스캐너로 바코드를 읽어주세요";
+	
 	Vector<Vector> cput=new  Vector<Vector>();
 	//뷰의의 정보를 가진 벡터
 	Vector<String> checkv=new Vector<String>();
@@ -113,7 +115,7 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 		ch_class=new  Choice();
 		ch_com=new Choice();
 		
-		tf_code=new JTextField("스캐너를 사용해주세요",20);
+		tf_code=new JTextField(initba,20);
 		tf_code.setForeground(Color.gray);
 		ch_id=new Choice();
 		tf_taker=new JTextField(20);
@@ -171,6 +173,7 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 		tf_code.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
 				tf_code.setText("");
+				tf_code.setForeground(Color.BLACK);
 				
 			}
 		});
@@ -486,7 +489,8 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 		ch_class.removeAll();
 		ch_id.removeAll();
 		tf_box.setText(null);
-		tf_code.setText(null);
+		tf_code.setText(initba);
+		tf_code.setForeground(Color.gray);
 		tf_taker.setText(null);
 		
 	}
@@ -561,7 +565,13 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 	public void actionPerformed(ActionEvent e) {
 		Object bt=e.getSource();
 		if(bt==bt_regist){
-			if(classflag==false){
+			
+			
+			if(initba.equals(tf_code.getText())){
+				JOptionPane.showMessageDialog(this, "바코드 값을 설정해주세요");
+				return;
+			}
+			else if(classflag==false){
 				System.out.println("해당 값 x");
 				
 			}else{
