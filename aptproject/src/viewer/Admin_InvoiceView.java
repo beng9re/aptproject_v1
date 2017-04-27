@@ -139,7 +139,9 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 
 		p_north.setPreferredSize(new Dimension(700, 80));
 		p_south.setPreferredSize(new Dimension(700, 80));
-
+		
+		table.setRowHeight(20);
+		
 		bt_find.addActionListener(this);
 		bt_xls.addActionListener(this);
 		rb_allInvoice.addActionListener(this);
@@ -199,7 +201,7 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 		sb.append(
 				" i.invoice_barcode as 송장바코드, i.invoice_arrtime as 등록시간, i.invoice_taker as 수령인, i.invoice_taketime as 수령시간, i.invoice_takeflag as 수령여부 ");
 		sb.append(" from  view_is i inner join view_ac a on i.APTUSER_ID=a.APTUSER_ID");
-
+		System.out.println(sb.toString());
 		getInvoice(sb.toString());
 		getList(sb.toString());
 	}
@@ -326,10 +328,8 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 					"select i.invoice_id as 송장ID, a.aptuser_id 회원ID, a.aptuser_name 이름, a.COMPLEX_NAME 동, a.unit_name 호, i.box_num 무인함번호,");
 			sb.append(
 					" i.invoice_barcode as 송장바코드, i.invoice_arrtime as 등록시간, i.invoice_taker as 수령인, i.invoice_taketime as 수령시간, i.invoice_takeflag as 수령여부 ");
-			sb.append(" from  view_is i inner join view_ac a on i.APTUSER_ID=a.APTUSER_ID and " + option + "= '" + msg
-					+ "' order by invoice_arrtime desc");
-			
-
+			sb.append(" from  view_is i inner join view_ac a on i.APTUSER_ID=a.APTUSER_ID and " + option + "= '" + msg+ "' order by invoice_arrtime desc");
+		
 			invoiceModel.getList(sb.toString());
 
 		} else if (boxflag == false) {
