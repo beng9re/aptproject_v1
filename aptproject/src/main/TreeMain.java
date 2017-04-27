@@ -1,17 +1,22 @@
 package main;
 
 import java.awt.BorderLayout;
+import java.awt.Canvas;
 import java.awt.Color;
 import java.awt.Component;
-import java.awt.Container;
 import java.awt.Dimension;
 import java.awt.Font;
+import java.awt.Graphics;
+import java.awt.Insets;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.MouseAdapter;
 import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
+import java.awt.image.BufferedImage;
+import java.io.IOException;
+import java.net.URL;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
@@ -19,6 +24,7 @@ import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.Vector;
 
+import javax.imageio.ImageIO;
 import javax.swing.BorderFactory;
 import javax.swing.JButton;
 import javax.swing.JFrame;
@@ -27,13 +33,13 @@ import javax.swing.JOptionPane;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 import javax.swing.JTree;
+import javax.swing.border.Border;
 import javax.swing.event.TreeSelectionEvent;
 import javax.swing.event.TreeSelectionListener;
 import javax.swing.tree.DefaultMutableTreeNode;
 
 import Edit.InvEditPan;
 import Edit.RetunPan;
-import apt.test.NewAptPanel;
 import aptuser.ModifyAdmin;
 import aptuser.ModifyUser;
 import aptuser.RegistUser;
@@ -60,10 +66,12 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 
 	int winWidth = 900;
 	int winHeight = 700;
-	int treeScrollHeight = 520;
 	int westWidth = 200;
 	int centerWidth = 700;
 	int centerHeight = 700;
+	int westNorthHeight=150;
+	int westSouthHeight=150;
+	int treeScrollHeight = winHeight-westNorthHeight-westSouthHeight;
 
 	private AptuserModel aptuser;
 	private String userID;
@@ -80,9 +88,11 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 
 	JTree tree;
 	JScrollPane scroll;
-	JPanel p_west, p_center, p_west_center, p_west_south;
+	JPanel p_west, p_center, p_west_center, p_west_south, p_west_north;
 	JLabel la_welcom;
 	JButton bt_exit;
+	BufferedImage image=null;
+	Canvas  canLogo;
 
 	Object currObject = new Object();
 
@@ -99,6 +109,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		this.userID = userID;
 
 		p_west = new JPanel();
+		p_west_north = new JPanel();
 		p_west_center = new JPanel();
 		p_west_south = new JPanel();
 		p_center = new JPanel();
@@ -109,6 +120,22 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 
 		la_welcom = new JLabel("");
 		bt_exit = new JButton("종료");
+		
+		// Logo Image
+		try {
+			// Image Url
+			URL url = this.getClass().getResource("/AptLogo.png");
+			image = ImageIO.read(url);
+		} catch (IOException e1) {
+			e1.printStackTrace();
+		}
+		
+		// Logo Canvas
+		canLogo = new Canvas(){
+			public void paint(Graphics g) {
+				g.drawImage(image, 0, 0, westWidth, westNorthHeight, this);
+			}
+		};
 
 		// root menu menuDtoList 에 추가
 		MenuDto menuDto = new MenuDto();
@@ -122,7 +149,9 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		scroll.setPreferredSize(new Dimension(westWidth, treeScrollHeight));
 		p_west_center.setPreferredSize(new Dimension(westWidth, treeScrollHeight));
 		// System.out.println(p_west_center.getHeight());
-		p_west_south.setPreferredSize(new Dimension(westWidth, winHeight - treeScrollHeight - 50));
+		canLogo.setPreferredSize(new Dimension(westWidth, westNorthHeight));
+		p_west_north.setPreferredSize(new Dimension(westWidth, westNorthHeight));
+		p_west_south.setPreferredSize(new Dimension(westWidth, westSouthHeight));
 		la_welcom.setPreferredSize(new Dimension(westWidth - 10, 50));
 		bt_exit.setPreferredSize(new Dimension(100, 30));
 		la_welcom.setPreferredSize(new Dimension(westWidth - 10, 50));
@@ -132,14 +161,21 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		la_welcom.setHorizontalAlignment(JLabel.CENTER);
 		la_welcom.setForeground(Color.BLUE);
 
+		p_west_center.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 		p_west_center.setLayout(new BorderLayout());
 		p_west_center.add(scroll);
 
+		p_west_south.setBorder(BorderFactory.createLineBorder(Color.GRAY));
 		p_west_south.setBackground(Color.WHITE);
 		p_west_south.add(la_welcom);
 		p_west_south.add(bt_exit);
+		
+		p_west_north.setLayout(new BorderLayout());
+		p_west_north.setBorder(BorderFactory.createLineBorder(Color.GRAY));
+		p_west_north.add(canLogo);
 
 		p_west.setLayout(new BorderLayout());
+		p_west.add(p_west_north, BorderLayout.NORTH);
 		p_west.add(p_west_center);
 		p_west.add(p_west_south, BorderLayout.SOUTH);
 

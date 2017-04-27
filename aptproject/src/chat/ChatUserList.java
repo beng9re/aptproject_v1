@@ -60,7 +60,7 @@ public class ChatUserList extends JPanel {
 		btn_close.setFont(font);
 		btn_close.setBackground(Color.WHITE);
 		setBorder(BorderFactory.createEmptyBorder(5,50,5,50));
-		setBackground(Color.GRAY);
+		setBackground(Color.PINK);
 		setPreferredSize(new Dimension(500,100));
 	}
 }
