@@ -86,7 +86,7 @@ public class RetunPan extends JPanel implements ActionListener{
 		lb_taker=new JLabel("수거예정일");//입고시간
 		lb_outTime=new JLabel("");
 		lb_Time =new JLabel("");
-		lb_txt=new JLabel("보네는 말");
+		lb_txt=new JLabel("보내는 말");
 		
 		tf_id=new JTextField(20);
 		tf_code=new JTextField(initba,20);//바코드
@@ -96,7 +96,7 @@ public class RetunPan extends JPanel implements ActionListener{
 		bt_regist=new JButton("입력");
 		bt_reset=new JButton("초기화");
 		rple=new JTextArea();//남김글
-
+	
 		
 		//-----------------------------------------사이즈조정
 		p_down.setPreferredSize(new Dimension(700, 180));
@@ -277,6 +277,7 @@ public class RetunPan extends JPanel implements ActionListener{
 		tf_code.setForeground(Color.gray);
 		tf_takeTime.setForeground(Color.gray);
 		
+		rple.setText(null);
 		System.out.println("초기화");
 		
 		
