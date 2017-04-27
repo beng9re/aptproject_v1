@@ -43,30 +43,23 @@ import dto.ViewCPUT;
 
 public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 	
-	JLabel lb_block,lb_class,lb_code,lb_com,lb_id,lb_takerTime,lb_Time,lb_box;
-				//동			//호수
-	JLabel title;
+	JLabel lb_block,lb_class,lb_code,lb_com,lb_id,lb_takerTime,lb_Time,lb_box,title;
 	
 	public JTextField tf_code,tf_taker,tf_box;
 	Choice ch_block,ch_class,ch_com,ch_id;
 	
 	
-	Vector <String> u_id=new Vector<String>();
-	String userid; //회원아이디 값이 들어갈것
-	String err="해당 집에 사는 회원이 없음";
-	JPanel p_info;
-	JPanel p_up;
-	JPanel p_down;
-	JPanel p_emp; //여백용 패널
-	JButton bt_reset;
-	JButton bt_regist;
+	JPanel p_info,p_up,p_down,p_emp; //여백용 패널
+	JButton bt_reset,bt_regist;
 	GridBagLayout gbl;
 	GridBagConstraints gdc;
-	int invoce_id;
+	
 	Connection con;
+	PostBoxMain pm;
 	
 	String initba="스캐너로 바코드를 읽어주세요";
 	
+	Vector <String> u_id=new Vector<String>();
 	Vector<Vector> cput=new  Vector<Vector>();
 	//뷰의의 정보를 가진 벡터
 	Vector<String> checkv=new Vector<String>();
@@ -74,100 +67,113 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 	Vector<Vector> company=new  Vector<Vector>();
 	//운송사 테이블 정보를 가진 벡터
 
+	String userid; //회원아이디 값이 들어갈것
+	String err="해당 집에 사는 회원이 없음";
 	boolean classflag=false;
 	boolean userflag=false;
+	int invoce_id;
+	boolean adminflag=false;
 	
-	PostBoxMain pm;
 	
 	public InvEditPan(Connection con) {
 		this.con=con;
-		tf_box=new JTextField(20);
-		lb_box=new JLabel("박스번호");
-				
+		setLayout(new BorderLayout());
 		
-		
-		title=new JLabel("INVOICE");
-		title.setFont(new  Font("고딕",Font.BOLD , 60));
-		title.setForeground(Color.white);
-		
+		//---------------------객체생성부분
 		gbl=new GridBagLayout();
 		gdc=new GridBagConstraints();
-		
-		setLayout(new BorderLayout());
 		
 		p_up=new JPanel();
 		p_info=new JPanel(gbl);
 		p_down=new JPanel();
 		p_emp=new JPanel();
-		//p_info.setPreferredSize(new Dimension(700, 500));
 		
-		p_up.setPreferredSize(new Dimension(700, 100));
-		p_up.add(title);
+		lb_box=new JLabel("박스번호");
+		title=new JLabel("INVOICE");
 		lb_block=new JLabel("동"); //동 id
 		lb_class=new JLabel("호수");
 		lb_id=new JLabel("회원ID");//수령인
 		lb_code=new JLabel("바코드"); //바코드
-		
 		lb_com=new JLabel("운송사"); //운송사
-	
 		
 		ch_block=new Choice();
 		ch_class=new  Choice();
 		ch_com=new Choice();
-		
-		tf_code=new JTextField(initba,20);
-		tf_code.setForeground(Color.gray);
 		ch_id=new Choice();
+		
+		tf_box=new JTextField(20);
 		tf_taker=new JTextField(20);
+		tf_code=new JTextField(initba,20);
+		
+		bt_regist=new JButton("입력");
+		bt_reset=new JButton("초기화");
+		//p_info.setPreferredSize(new Dimension(700, 500));
+		//----------------------사이즈조정
+		
+		p_up.setPreferredSize(new Dimension(700, 100));
+		p_down.setPreferredSize(new Dimension(700, 180));
+		p_emp.setPreferredSize(new Dimension(700, 20));
+		
+		bt_reset.setPreferredSize(new Dimension(180, 50));
+		bt_regist.setPreferredSize(new Dimension(180, 50));
+		
 		
 		ch_id.setPreferredSize(new Dimension(220,30));
 		ch_block.setPreferredSize(new Dimension(220,30));
 		ch_class.setPreferredSize(new Dimension(220,30));
-		tf_code.setPreferredSize(new Dimension(20,30));
 		ch_com.setPreferredSize(new Dimension(220,30));
+		
+		tf_code.setPreferredSize(new Dimension(20,30));
 		tf_box.setPreferredSize(new Dimension(20,30));
 		
 		
-		bt_regist=new JButton("입력");
-		bt_reset=new JButton("초기화");
-		
-		add(p_up,BorderLayout.NORTH);
-		p_up.setBackground(Color.pink);
-		
-		add(p_info);
-		p_info.setBackground(Color.white);
-		
-		
-		print();
-	
+		//--------------------------------------바탕색
 		ch_block.setBackground(Color.PINK);
 		ch_class.setBackground(Color.pink);
 		ch_id.setBackground(Color.pink);
 		ch_com.setBackground(Color.pink);
+		
+		p_up.setBackground(Color.pink);
+		p_info.setBackground(Color.white);
+		p_emp.setBackground(new Color(255,255,128));
+		p_down.setBackground(Color.pink);
+	
+		bt_reset.setBackground(new Color(137, 210, 245));
+		bt_regist.setBackground(new Color(137, 210, 245));
+		
+		//---------------------------------선색
 		tf_box.setBorder(BorderFactory.createLineBorder(Color.PINK, 2));
 		tf_code.setBorder(BorderFactory.createLineBorder(Color.PINK, 2));
-		
-		
-		
-		add(p_down,BorderLayout.SOUTH);
-		p_down.setPreferredSize(new Dimension(700, 180));
-		p_down.setBackground(Color.pink);
-		p_down.add(p_emp);
-		p_emp.setPreferredSize(new Dimension(700, 20));
-		p_emp.setBackground(new Color(255,255,128));
-		p_down.add(bt_reset);
-		bt_reset.setPreferredSize(new Dimension(180, 50));
-		bt_reset.setBackground(new Color(137, 210, 245));
 		bt_reset.setBorder(BorderFactory.createLineBorder(Color.white,2));
-		
-		p_down.add(bt_regist);
-		bt_regist.setPreferredSize(new Dimension(180, 50));
-		bt_regist.setBackground(new Color(137, 210, 245));
 		bt_regist.setBorder(BorderFactory.createLineBorder(Color.white,2));
+		
+		
+		//----------------라벨 글자관련
+		title.setFont(new  Font("고딕",Font.BOLD , 60));
+		title.setForeground(Color.white);
+		tf_code.setForeground(Color.gray);
+		
+		
+		//---------------------------------------객체추가
+		
+		add(p_up,BorderLayout.NORTH);
+		p_up.add(title);
+		add(p_info);
+		add(p_down,BorderLayout.SOUTH);
+		p_down.add(p_emp);
+		p_down.add(bt_reset);
+		p_down.add(bt_regist);
+		
+		
+		print();
+	
+		
 		
 		
 		complexSet();
 		listadd();
+		//---------------------------------텍스트 에디트 속성
+		tf_box.setEditable(false);
 		
 		//이벤트 리스너 연결 부분------------------------------------------------------------------------------//
 		tf_code.addMouseListener(new MouseAdapter() {
@@ -178,8 +184,6 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 			}
 		});
 		tf_box.addMouseListener(boxL);
-		
-		tf_box.setEditable(false);
 		ch_block.addItemListener(this);
 		ch_class.addItemListener(this);
 		
@@ -266,6 +270,8 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 	//동수 및 운송사 
 	public void listadd(){
 		ch_block.removeAll();
+		checkv.removeAll(checkv);
+		
 		checkv.add(cput.get(0).get(1).toString());
 		ch_block.add("▼ 동을 선택하세요");
 		ch_block.add(cput.get(0).get(1).toString());
@@ -297,7 +303,11 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 			}
 			comListAdd();
 	}
+	
+	
+	
 	public void comListAdd(){  //운송테이블 추가
+		ch_com.removeAll();
 		PreparedStatement pstmt=null;
 		ResultSet rs=null;
 		String sql="select * from company";
@@ -337,6 +347,7 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 		
 		
 	}
+	
 	public void addClasslist(){ // 클레스 리스트 추가
 		
 		ch_class.removeAll();
@@ -347,6 +358,7 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 			if(cput.get(i).get(1).toString().equals(ch_block.getSelectedItem().toString())){
 			
 				if(cput.get(i).get(3)==null){
+					ch_class.removeAll();
 					ch_class.add("해당 동에 호수가 없음");
 					classflag=false;
 					return;
@@ -356,6 +368,7 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 			}
 		}
 	}
+	
 	public void addIdlist(){
 		ch_class.removeAll();
 		pm.setVisible(true);
@@ -392,6 +405,7 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 		
 		
 	}
+	
 	public void boxInsert(){
 		PreparedStatement pstmt=null;
 		String sql="update storagebox set invoice_id=?,box_use='Y' where box_num=?";
@@ -415,6 +429,7 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 				
 		
 	}
+	
 	public void regist(){
 		//userSelect();
 		
@@ -454,8 +469,11 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 			
 			pstmt.setString(1,tf_code.getText());
 			pstmt.setString(2,tf_taker.getText());
-			if(!ch_id.getSelectedItem().equals(err)){
+			if(ch_id.getSelectedItem()!=null){
 				ch_idv=ch_id.getSelectedItem();
+				adminflag=false;
+			}else{
+				adminflag=true;
 			}
 			pstmt.setString(3,ch_idv); //나중에 아이디 값뽑아야됨
 			pstmt.setInt(4,Integer.parseInt(companyid));
@@ -463,8 +481,17 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 			
 			int reset=pstmt.executeUpdate();
 			con.commit();
+			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			try {
+				con.rollback();
+				JOptionPane.showMessageDialog(this, "해당바코드번호가 이미존재 함!!!!");
+				return;
+			} catch (SQLException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}
+			
 			e.printStackTrace();
 		}finally{
 			try {
@@ -480,14 +507,17 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 		pm.p_south.removeAll();
 		pm.setBox();
 		pm.addList();
+		if(adminflag==false){
 		JOptionPane.showMessageDialog(this, "등록완료!");
-	
+		}else{
+			JOptionPane.showMessageDialog(this, "해당호수에 사람이 없어서 \n 관리자로 등록완료!");
+		}
 	}
 	///리셋
 	public void reset(){
-		 listadd();
 		ch_class.removeAll();
 		ch_id.removeAll();
+		listadd();
 		tf_box.setText(null);
 		tf_code.setText(initba);
 		tf_code.setForeground(Color.gray);
@@ -537,10 +567,24 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 				rs.next();
 				userflag=true;
 				userid=rs.getString("aptuser_id");  //해당사람이 없다면 관리자로 등록됨
-				
+				ch_id.add(err);
 			} catch (SQLException e1) {
 				System.out.println("조회된 사람 x");
 			
+			}finally{
+				
+				try {
+					if(rs!=null)rs.close();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
+				try {
+					if(pstmt!=null)pstmt.close();
+				} catch (SQLException e1) {
+					// TODO Auto-generated catch block
+					e1.printStackTrace();
+				}
 			}
 			
 		}
@@ -565,8 +609,6 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 	public void actionPerformed(ActionEvent e) {
 		Object bt=e.getSource();
 		if(bt==bt_regist){
-			
-			
 			if(initba.equals(tf_code.getText())){
 				JOptionPane.showMessageDialog(this, "바코드 값을 설정해주세요");
 				return;
