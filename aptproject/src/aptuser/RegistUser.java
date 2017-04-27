@@ -18,10 +18,9 @@ import javax.swing.JPasswordField;
 import javax.swing.JRadioButton;
 import javax.swing.JTextField;
 
-import db.AptuserModelByID;
+import db.AptuserModel;
 import db.ComplexModel;
 import db.UnitModel;
-import db.UnitModelByID;
 import dto.Aptuser;
 import dto.Unit;
 
@@ -32,9 +31,9 @@ public class RegistUser extends UserInfo implements ItemListener {
 	String titleStr = "회원등록";
 	String btnTxt = "등 록";
 	// 중복되는 ID가 있는지 확인하는데 사용하고, 중복되는 ID가 없으면 null값이 되므로 입력에 재활용
-	AptuserModelByID duChkModel;
-	TreeMap<String, Integer> complex;
-	TreeMap<String, TreeSet<String>> unitTotal;
+	AptuserModel duChkModel;
+	TreeMap<Integer, Integer> complex;
+	TreeMap<Integer, TreeSet<Integer>> unitTotal;
 	
 	Choice ch_complex, ch_floor, ch_unit;
 
@@ -88,13 +87,13 @@ public class RegistUser extends UserInfo implements ItemListener {
 	private void setComplex() {
 		ch_complex.removeAll();
 		ch_complex.add("동");
-		for (String item : complex.keySet()) {
-			ch_complex.add(item + "동");
+		for (Integer item : complex.keySet()) {
+			ch_complex.add(item.toString() + "동");
 		}
 	}
 
 	private void setFloor(String selectedItem) {
-		UnitModelByID utModel = new UnitModelByID(conn, complex.get(selectedItem.replaceAll("\\D", "")));
+		UnitModel utModel = new UnitModel(conn, complex.get(conversion(selectedItem)));
 		ArrayList unit = utModel.getData();
 		ch_floor.removeAll();
 		ch_floor.add("층");
@@ -102,22 +101,22 @@ public class RegistUser extends UserInfo implements ItemListener {
 		ch_unit.add("호");
 
 		// 맵에 층과 호를 담는다
-		unitTotal = new TreeMap<String, TreeSet<String>>();
+		unitTotal = new TreeMap<Integer, TreeSet<Integer>>();
 		int res = 0;
-		TreeSet<String> unitList = null;
+		TreeSet<Integer> unitList = null;
 		for (int i = 0; i < unit.size(); i++) {
-			res = Integer.parseInt(((Unit) unit.get(i)).getUnit_name());
-			String floor = Integer.toString(res / 100);
+			res = ((Unit) unit.get(i)).getUnit_name();
+			int floor = res / 100;
 			if (unitTotal.get(floor) == null) {
-				unitTotal.put(floor, new TreeSet<String>());
+				unitTotal.put(floor, new TreeSet<Integer>());
 			}
-			unitList = unitTotal.get(floor);
-			unitList.add(Integer.toString(res % 100));
+			unitList = unitTotal.get(Integer.valueOf(floor));
+			unitList.add(Integer.valueOf(res % 100));
 		}
 
 		// 초이스 컴포넌트에 추가한다
-		for (String item : unitTotal.keySet()) {
-			ch_floor.add(item + "층");
+		for (Integer item : unitTotal.keySet()) {
+			ch_floor.add(item.toString() + "층");
 		}
 	}
 
@@ -126,9 +125,13 @@ public class RegistUser extends UserInfo implements ItemListener {
 		ch_unit.add("호");
 		
 		// 초이스 컴포넌트에 추가한다
-		for (String item : unitTotal.get(selectedItem.replaceAll("\\D", ""))) {
+		for (Integer item : unitTotal.get(conversion(selectedItem))) {
 			ch_unit.add(item + "호");
 		}
+	}
+	
+	private int conversion(String str) {
+		return Integer.parseInt(str.replaceAll("\\D", ""));
 	}
 
 	@Override
@@ -143,7 +146,7 @@ public class RegistUser extends UserInfo implements ItemListener {
 	// 회원ID 중복확인, 주소입력 여부 확인 : 비어있는 필드확인에서 연속으로 실행 됨
 	protected boolean regFieldChk() {
 		String new_id = ((JTextField) fieldData.get("회원ID")).getText();
-		duChkModel = new AptuserModelByID(conn, new_id);
+		duChkModel = new AptuserModel(conn, new_id);
 		ArrayList<Aptuser> res_id = duChkModel.getData();
 		// 중복되는 ID가 있으면 true를 반환한다
 		if (res_id.size() != 0) {
@@ -174,16 +177,16 @@ public class RegistUser extends UserInfo implements ItemListener {
 	
 	// 입력필드의 주소를 가지고 와서 unit_id로 변환한다
 	private int searchAddress() {
-		int complex_id = complex.get(ch_complex.getSelectedItem().replaceAll("\\D", "")).intValue();
-		int floor = Integer.parseInt(ch_floor.getSelectedItem().replaceAll("\\D", ""));
-		int unit = Integer.parseInt(ch_unit.getSelectedItem().replaceAll("\\D", ""));
-		String unit_name = Integer.toString(floor*100+unit);
+		int complex_id = complex.get(conversion(ch_complex.getSelectedItem()));
+		int floor = conversion(ch_floor.getSelectedItem());
+		int unit = conversion(ch_unit.getSelectedItem());
+		int unit_name = floor*100+unit;
 		// Unit 테이블 정보를 가지고 온다
 		UnitModel unitModel = new UnitModel(conn);
 		ArrayList<Unit> unitData = unitModel.getData();
 		// 일치하는 unit_id를 검색한다
 		for (int i=0; i<unitData.size(); i++) {
-			if(unitData.get(i).getComplex_id()==complex_id && unitData.get(i).getUnit_name().equals(unit_name)) {
+			if(unitData.get(i).getComplex_id()==complex_id && unitData.get(i).getUnit_name()==unit_name) {
 				return unitData.get(i).getUnit_id();
 			}
 		}

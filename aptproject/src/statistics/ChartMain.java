@@ -61,7 +61,8 @@ public class ChartMain extends JFrame {
 	}
 	
 	private void setData() {
-		// select * from invoice where invoice_arrtime < to_date('20170426','YYYYMMDD') and invoice_arrtime > to_date('20170425','YYYYMMDD')		
+		// select * from invoice where invoice_arrtime < to_date('20170426','YYYYMMDD') and invoice_arrtime > to_date('20170425','YYYYMMDD')
+		// select group by to_date??
 	}
 
 	private CategoryDataset createDataset1() {
