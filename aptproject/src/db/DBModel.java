@@ -6,6 +6,33 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 
+import dto.Unit;
+
+/*
+ * 상속받을 클래스에서 사용해야 하는 method	
+	
+	생성자에서 init 호출
+	Constructor {
+		init(colName, sql);
+	}
+	
+	바인드 변수 연결
+	protected void setSQL() throws SQLException {
+		pstmt = conn.prepareStatement(sql);
+	}
+	
+	DTO와 연결
+	protected void setTable(ResultSet rs) throws SQLException {
+		arrList.clear();
+		while (rs.next()) {
+			DTO dto = new DTO();
+			dto.set---(rs.getString(---));
+			arrList.add(dto);
+		}
+	}
+ 
+ */
+
 public abstract class DBModel {
 	protected Connection conn;
 	protected PreparedStatement pstmt;

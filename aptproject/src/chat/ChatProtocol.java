@@ -9,8 +9,7 @@ public final class ChatProtocol {
 
 	/*
 	 * requestType의 종류
-	 * chat(채팅), disconnect(서버측 thread종료), message(메시지 알림),
-	 * update(물품 입출 알림)
+	 * chat(채팅), disconnect(서버측 thread종료), update(클라이언트 활동 알림)
 	 */
 	public static String toJSON(String requestType, String user_id, String message) {
 		StringBuffer sb = new StringBuffer();
