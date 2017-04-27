@@ -74,7 +74,7 @@ public class AptuserModel extends DBModel {
 	public void selectData() {
 		mode = "default";
 		sql = "select * from aptuser A, (select * from complex C inner join unit U on C.complex_id = U.complex_id)"
-				+ " B where A.unit_id = B.unit_id";
+				+ " B where A.unit_id = B.unit_id(+)";
 		appendix = true;
 		init(colName, sql);
 	}
@@ -83,7 +83,7 @@ public class AptuserModel extends DBModel {
 		this.id = id;
 		mode = "select";
 		sql = "select * from aptuser A, (select * from complex C inner join unit U on C.complex_id = U.complex_id)"
-				+ " B where A.unit_id = B.unit_id and aptuser_id = ?";
+				+ " B where A.unit_id = B.unit_id(+) and aptuser_id = ?";
 		appendix = true;
 		init(colName, sql);
 	}
