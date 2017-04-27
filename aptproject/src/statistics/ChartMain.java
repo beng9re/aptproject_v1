@@ -95,9 +95,10 @@ public class ChartMain extends JPanel {
 		chart.getCategoryPlot().getRangeAxis().setLabelFont(font);
 		chart.getCategoryPlot().getDomainAxis().setLabelFont(font);
 		
-		add(new ChartPanel(chart));
+		ChartPanel chartpnl = new ChartPanel(chart);
+		chartpnl.setPreferredSize(new Dimension(700,650));
+		add(chartpnl);
 		setPreferredSize(new Dimension(700,700));
-		setBackground(Color.CYAN);
 	}
 	
 	private void setData(String bDay, String eDay) {

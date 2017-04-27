@@ -53,7 +53,9 @@ public class TableController extends JFrame implements ActionListener{
 	FileOutputStream fos;
 	
 	String dd;
-	String sql;//테이블 업데이트를 하기 위한 변수
+	//유닛의 아이디 값
+	String value;
+	
 	
 	public TableController(){
 		con=manager.getConnection();
@@ -62,25 +64,34 @@ public class TableController extends JFrame implements ActionListener{
 		scroll=new JScrollPane(table);
 		p_north=new JPanel();
 		bt_excel=new JButton("excel로 저장");
-		bt_reset=new JButton("초기화");
-		bt_bring=new JButton("excel로 가져오기");
+		bt_reset=new JButton("삭제");
+		//bt_bring=new JButton("excel로 가져오기");
 		
-		
+	
 		table.setModel(db_table);
 		
-		/*테이블 변경 이벤트
-		 * table.addMouseListener(new MouseAdapter() {
+		//테이블 숨기기!!!!
+		table.getColumn("id").setWidth(0);
+		table.getColumn("id").setMinWidth(0);
+		table.getColumn("id").setMaxWidth(0);
+		table.setRowHeight(20);
+		
+		
+		
+		
+		//테이블 변경 이벤트
+		  table.addMouseListener(new MouseAdapter() {
 			@Override
 			public void mouseClicked(MouseEvent e) {
 				JTable t=(JTable)e.getSource();
 				int row=t.getSelectedRow();
-				int col=t.getSelectedColumn();
-				sql=(String) t.getValueAt(row, col);
-				System.out.println(sql);
+				int col=0;
+				value=(String) t.getValueAt(row, col);
+				
 				
 			}
 		});
-		*/
+		
 		
 		//패널 디자인
 		p_north.setLayout(null);
@@ -103,18 +114,19 @@ public class TableController extends JFrame implements ActionListener{
 		bt_reset.setBackground(Color.pink);
 		bt_reset.setFocusPainted(false);
 		
+		/*
 		bt_bring.setBounds(0, 20, 150, 30);
 		bt_bring.setPreferredSize(new Dimension(100, 50));
 		bt_bring.setBorder(new LineBorder(Color.black, 3));
 		//bt_excel.setFont(new Font("굴림", Font.PLAIN, 20));
 		bt_bring.setBackground(Color.pink);
 		bt_bring.setFocusPainted(false);
-		
+		*/
 	
 		//버튼에 이벤트 부여
 		bt_excel.addActionListener(this);
 		bt_reset.addActionListener(this);
-		bt_bring.addActionListener(this);
+		//bt_bring.addActionListener(this);
 		
 		
 		chooser.setFileFilter(new FileNameExtensionFilter("xls", "xls"));
@@ -122,7 +134,7 @@ public class TableController extends JFrame implements ActionListener{
 		
 		p_north.add(bt_excel);
 		p_north.add(bt_reset);
-		p_north.add(bt_bring);
+		//p_north.add(bt_bring);
 		
 		
 		
@@ -135,6 +147,8 @@ public class TableController extends JFrame implements ActionListener{
 		
 		
 	}
+	
+	/*
 	//엑셀을 불러와서 db에 저장시키는 메서드
 	public void loadExcell(){
 		
@@ -209,7 +223,7 @@ public class TableController extends JFrame implements ActionListener{
 
 		
 	}
-	
+	*/
 	
 	//엑셀을 저장하는 메서드
 	public void saveExcell(){
@@ -265,7 +279,37 @@ public class TableController extends JFrame implements ActionListener{
 		}
 	
 	}
+	public void delete(){
+		int ans=JOptionPane.showConfirmDialog(this, "정말 삭제하시겠습니까?");
+		if(ans==JOptionPane.OK_OPTION){
+		
+		PreparedStatement pstmt=null;
+		String sql="delete FROM unit WHERE UNIT_ID=?";
+			
+		try {
+			pstmt=con.prepareStatement(sql);
+			pstmt.setString(1, value);
+			int result=pstmt.executeUpdate();
+			if(result!=0){
+				JOptionPane.showMessageDialog(this, "삭제완료");
+				//table.updateUI();//테이블을 갱신 해주어야함
+				
+				upDate();
+				
+			}
+			
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		
+		
+		}
+		
+	}
 	
+	/*
 	//초기화 시키는 메서드
 	public void reset(){
 		PreparedStatement pstmt=null;
@@ -309,7 +353,7 @@ public class TableController extends JFrame implements ActionListener{
 		upDate();
 		}
 	}
-	
+	*/
 	
 	
 	
@@ -329,9 +373,9 @@ public class TableController extends JFrame implements ActionListener{
 		if(obj==bt_excel){
 			saveExcell();
 		}else if(obj==bt_reset){
-			//reset();
+			delete();
 		}else if(obj==bt_bring){
-			loadExcell();
+			//loadExcell();
 		}
 		
 	}
@@ -340,9 +384,5 @@ public class TableController extends JFrame implements ActionListener{
 		new TableController();
 
 	}
-	
-	
-
-
 
 }

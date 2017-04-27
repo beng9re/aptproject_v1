@@ -21,6 +21,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -54,6 +55,7 @@ public class RetunPan extends JPanel implements ActionListener{
 	String initba="스캐너로 바코드를 읽어주세요";
 	String date;
 	String user;
+	JScrollPane sp;
 	
 	ArrayList<Aptuser> userList;
 	Connection con;
@@ -69,6 +71,8 @@ public class RetunPan extends JPanel implements ActionListener{
 		setLayout(new BorderLayout());
 		
 		//---------------------------------------객체생성
+		sp=new JScrollPane(rple);
+		
 		p=new PopUpTable(this, con);
 		
 		gbl=new GridBagLayout();
@@ -141,8 +145,8 @@ public class RetunPan extends JPanel implements ActionListener{
 		
 		
 		//---------------------------------------------------------------------------- 추가
-		p_txt.add(rple);
-		
+		sp.add(rple);
+		rple.setLineWrap(true);
 		add(p_up,BorderLayout.NORTH);
 		p_up.add(title);
 		
@@ -187,7 +191,7 @@ public class RetunPan extends JPanel implements ActionListener{
 		GridCom g_t3=new GridCom(p_info, gbl, gdc, lb_taker,			0, 2, 1,1,0, 0);
 		GridCom g_l3=new GridCom(p_info, gbl, gdc, tf_takeTime, 	1, 2, 1,1,0, 0);
 		GridCom g_commentl=new GridCom(p_info, gbl, gdc,lb_txt, 0, 3, 1,1, 0, 0);
-		GridCom g_comment=new GridCom(p_info, gbl, gdc,rple, 1, 3, 1,1, 0, 0);
+		GridCom g_comment=new GridCom(p_info, gbl, gdc,sp, 1, 3, 1,1, 0, 0);
 		GridCom g_timeT=new GridCom(p_info, gbl, gdc, lb_outTime,    3, 7, 1, 1, 0, 0);
 		GridCom g_time=new GridCom(p_info, gbl, gdc, lb_Time,   		3, 8, 1, 1, 0, 0);
 		

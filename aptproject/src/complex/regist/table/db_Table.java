@@ -18,6 +18,7 @@ public class db_Table extends AbstractTableModel{
 	public db_Table(Connection con) {
 		this.con=con;
 		colmn=new Vector<String>();
+		colmn.add("id");
 		colmn.add("동");
 		colmn.add("호수");
 		
@@ -33,8 +34,7 @@ public class db_Table extends AbstractTableModel{
 		PreparedStatement pstmt=null;
 		ResultSet rs=null;
 		
-		String sql="select c.COMPLEX_NAME as 동,u.UNIT_NAME as 호수 FROM complex c,UNIT u ";
-				sql+=" WHERE c.COMPLEX_ID=u.COMPLEX_ID ORDER BY c.COMPLEX_ID,u.UNIT_id asc";
+		String sql="select * FROM VIEW_CONFIRMTABLE v ORDER BY v.동 ASC,v.호수 ASC";
 				
 		
 		try {
@@ -44,6 +44,7 @@ public class db_Table extends AbstractTableModel{
 			
 			while(rs.next()){
 				Vector vec=new Vector();
+				vec.add(rs.getString("id"));
 				vec.add(rs.getString("동"));
 				vec.add(rs.getString("호수"));
 				data.add(vec);
@@ -74,6 +75,19 @@ public class db_Table extends AbstractTableModel{
 		
 		
 	}
+
+	@Override
+public boolean isCellEditable(int row, int col) {
+		boolean flag=false;
+		if(col==0){
+			flag=false;
+		}else{
+			flag=true;
+		}
+		
+		return false;
+
+}
 
 	
 	@Override
