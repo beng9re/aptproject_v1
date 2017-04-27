@@ -77,7 +77,8 @@ public class MessageAutoInsertThread extends  Thread{
 		sql.append(" and    usr.unit_id = (select unit_id from aptuser fml where fml.aptuser_id = ?) \n");
 		sql.append(" and    not exists (select 0 \n");
 		sql.append("                           from   send_message smg \n");
-		sql.append(" 						      where smg.invoice_id = ivc.invoice_id) \n");
+		sql.append(" 						      where smg.invoice_id = ivc.invoice_id  \n");
+		sql.append(" 						      and     smg.returninv_id is null ) \n");
 		
 		
 		try {
@@ -211,6 +212,8 @@ public class MessageAutoInsertThread extends  Thread{
 		PreparedStatement pstmt=null;
 		ResultSet rs=null;
 		StringBuffer sql=new StringBuffer();
+		
+		
 		
 		
 	}
