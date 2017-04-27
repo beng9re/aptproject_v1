@@ -16,6 +16,8 @@ import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.Vector;
 
 import javax.swing.JButton;
@@ -37,7 +39,6 @@ public class NewAptPanel extends JPanel implements ActionListener {
 	JPanel p_north, p_center;
 	JButton bt_check;
 	Choice choice;
-	DrawApt drawApt;// 아파트 패널
 	SideApt sideApt;//옆의 조그만 아파트 패널
 	
 	int index;// 초이스 셀렉트 인덱스를 담는 변수
@@ -46,22 +47,27 @@ public class NewAptPanel extends JPanel implements ActionListener {
 	Vector<ComplexDto> complexData = new Vector<ComplexDto>();
 	// 동을 담는 벡터
 	
+	ArrayList<Integer> Apt=new ArrayList<Integer>();
+
 	
 	
-	HashMap<Integer, Integer> map1=new HashMap<Integer,Integer>();
-	
-	HashMap<Integer,HashMap<Integer, Integer>> kingMap=new HashMap<Integer,HashMap<Integer, Integer>>();
-	
-	
-	
-	
+	//////////////////////////////////////////////////////////
+	TreeMap<Integer, TreeSet<Integer>> unitTotal;
+	//////////////////////////////////////////////////////////
 	
 	//Vector<Unit> unitData = new Vector<Unit>();
 	//동 뿌릴떄 컨트롤 하기 위해 담은 벡터
 	Vector<DrawApt> list = new Vector<DrawApt>();
+	
+	
 	//택배 보관함 여부를 담은 벡터
 	Vector<AptStorageDto> boxData=new Vector<AptStorageDto>();
 	///////////////////////////////////////////////
+	
+	
+	HashMap<String, Integer> unitInvoice;
+	String selectedComplex;
+	
 	Connection con;
 	DBManager manager = DBManager.getInstance();
 
@@ -170,7 +176,7 @@ public class NewAptPanel extends JPanel implements ActionListener {
 
 	// 화면에 뿌릴 호수 구하기
 	public void getUnit() {
-		kingMap.remove(kingMap);
+		//kingMap.remove(kingMap);
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 
@@ -178,49 +184,28 @@ public class NewAptPanel extends JPanel implements ActionListener {
 		try {
 
 			pstmt = con.prepareStatement(sql);
-			String index = choice.getSelectedItem();
-
-			//if (index - 1 >= 0) {
-				//ComplexDto dto = complexData.get(index - 1);
-
-				pstmt.setString(1, index);
+			int index = choice.getSelectedIndex();
+			selectedComplex = choice.getSelectedItem();
+			
+			if (index - 1 >= 0) {
+				ComplexDto dto = complexData.get(index - 1);
+				
+				pstmt.setString(1, selectedComplex);
 				rs = pstmt.executeQuery();
 				
-			//}
+			}
 			//unitData.removeAll(unitData); 데이터 비우기
-			
-			int count=1;
-			int x=100*count;
-			int count1=0;
 			
 			
 			while (rs.next()) {
 				
-				
 				int unit=Integer.parseInt(rs.getString("unit_name").split("\\s")[0]);
-				//System.out.println("이거는 유닛"+unit);
-				int y=unit/(x);
-				
-				if(y==2){
-					kingMap.put(count, map1);
-					count=count+1;
-					count1=0;
-					map1.remove(map1);
-				}
-					
-				
-				map1.put(count1++, unit);
-						
-				/*
-				Unit vo = new Unit();
-
-				vo.setUnit_name(rs.getString("unit_name"));
-				
-				unitData.put(vo);
-				 */
+				Apt.add(unit);
+			
+		
 			}
 			
-			test();
+			sortunit();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -245,41 +230,57 @@ public class NewAptPanel extends JPanel implements ActionListener {
 		}
 
 	}
-
-	public void test(){
-		System.out.println(kingMap.size()+"이거는 킹맵 사이즈");
-		System.out.println(kingMap.get(1).size()+"이거는 겟 1 사이즈");
-		System.out.println(kingMap.get(2).get(1));
-		System.out.println(kingMap.get(2).get(2));
-		System.out.println(kingMap.get(2).get(3));
-		System.out.println(kingMap.get(2).get(4)+"///////");
+	public void sortunit(){
 		
-		
+		unitTotal = new TreeMap<Integer, TreeSet<Integer>>();
+		int res = 0;
+		TreeSet<Integer> unitList = null;
+		for (int i = 0; i < Apt.size(); i++) {
+			res = Apt.get(i);
+			int floor = res / 100;
+			if (unitTotal.get(floor) == null) {
+				unitTotal.put(floor, new TreeSet<Integer>());
+			}
+			unitList = unitTotal.get(Integer.valueOf(floor));
+			unitList.add(Integer.valueOf(res % 100));
+		}
+		System.out.println(unitTotal);
 	}
+	
 	
 	// 화면에 아파트 뿌리기
 	public void createApt() {
 		p_center.removeAll();
 		list.removeAll(list);
-		for (int i = 0; i < unitData.size(); i++) {
+		for (int i = 1; i <= unitTotal.size(); i++) {
 
-			drawApt = new DrawApt();
-			drawApt.la_name.setText(unitData.get(i).getUnit_name());
-			list.add(drawApt);
+			int fl = i*100;
+			ArrayList<Integer> unitList = new ArrayList<Integer>(unitTotal.get(Integer.valueOf(i)));
+			for (Integer unitNum : unitList) {
+				DrawApt drawApt = new DrawApt();
+				String yORn = null;
+				String unitN = Integer.toString(fl+unitNum);
+				if (unitInvoice.get(selectedComplex+"-"+unitN+" 호")!=null) {
+					unitN += "택배";
+				}
+				drawApt.la_name.setText(unitN);
+				list.add(drawApt);
+				
+			}
+			System.out.println(list);
 
 		}
 
-		SideApt.la_info.setText(complexData.get(index - 1).getComplex_name());
+//		SideApt.la_info.setText(complexData.get(index - 1).getComplex_name());
 		addApt();
-		System.out.println(unitData.size());
-		System.out.println(list.size());
+//		System.out.println(unitData.size());
+//		System.out.println(list.size());
 
 	}
 	//아파트 벡터에 담고 뿌리기
 	public void addApt() {
 		for (int i =list.size()-1; i >= 0; i--) {
 			if (list.size() != 0) {
-				System.out.println("asdasd");
 				p_center.add(list.get(i));
 				p_center.updateUI();
 			}
@@ -290,22 +291,18 @@ public class NewAptPanel extends JPanel implements ActionListener {
 		PreparedStatement pstmt=null;
 		ResultSet rs=null;
 		
-		String sql="select v.complex_name,v.unit_name,b.box_num,b.box_use";
-				sql+=" FROM VIEW_ACIS v,storagebox b WHERE b.INVOICE_ID=v.INVOICE_ID";
+		String sql="select complex_name,unit_name,invoice_id";
+				sql+=" FROM VIEW_ACIS";
 				System.out.println(sql);
 		try {
 			pstmt=con.prepareStatement(sql);
 			
 			rs=pstmt.executeQuery();
+			unitInvoice=new HashMap<String, Integer>();
 			
-			while(rs.next()){
-				AptStorageDto dto=new AptStorageDto();
-				dto.setComplex_name(rs.getString("complex_name"));
-				dto.setUnit_name(rs.getString("unit_name"));
-				dto.setBox_num(rs.getInt("box_num"));
-				dto.setBox_use(rs.getString("box_use"));
+			while(rs.next()){		
+				unitInvoice.put(rs.getString("complex_name")+"-"+rs.getString("unit_name"),rs.getInt("invoice_id"));
 				
-				boxData.add(dto);			
 			}
 			Boxset();
 			

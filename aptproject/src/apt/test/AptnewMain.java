@@ -7,6 +7,8 @@ import java.sql.Connection;
 import javax.swing.JFrame;
 import javax.swing.JPanel;
 
+import junit.framework.Test;
+
 public class AptnewMain extends JFrame{
 	
 	NewAptPanel aptPanel;
@@ -16,7 +18,7 @@ public class AptnewMain extends JFrame{
 	public AptnewMain(){
 	
 	aptPanel=new NewAptPanel();
-
+	
 	
 	add(aptPanel);
 	
