@@ -89,7 +89,7 @@ public class ComplexPanel extends JPanel implements ActionListener {
 		bt_regist.setPreferredSize(new Dimension(100, 50));
 		bt_regist.setBorder(new LineBorder(Color.black, 3));
 		bt_regist.setFont(new Font("±¼¸²", Font.PLAIN, 25));
-		bt_regist.setBackground(Color.orange);
+		bt_regist.setBackground(Color.PINK);
 		bt_regist.setFocusPainted(false);
 
 		bt_confirm.setPreferredSize(new Dimension(100, 50));
@@ -113,7 +113,7 @@ public class ComplexPanel extends JPanel implements ActionListener {
 
 		p_menu.setPreferredSize(new Dimension(700, 50));
 		p_menu.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 10));
-		p_menu.setBackground(Color.orange);
+		p_menu.setBackground(Color.PINK);
 
 		p_center.setPreferredSize(new Dimension(700, 300));
 		p_center.setBackground(Color.white);

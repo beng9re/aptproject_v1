@@ -117,6 +117,8 @@ public class Admin_UserView extends JPanel implements ActionListener {
 		bt_find.addActionListener(this);
 		bt_xls.addActionListener(this);
 		rb_user.addActionListener(this);
+		
+		table.setRowHeight(20);
 
 		table.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
@@ -349,7 +351,6 @@ public class Admin_UserView extends JPanel implements ActionListener {
 			PreparedStatement pstmt = null;
 			String option = "unit_name";
 			String name = JOptionPane.showInputDialog(colName + "를 수정해 주세요");
-
 			String sql = "update unit set " + option + "=" + "'" + name + "' ";
 			sql += "where " + option + "= '" + value + "'";
 

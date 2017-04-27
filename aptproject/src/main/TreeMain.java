@@ -33,6 +33,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import Edit.InvEditPan;
 import Edit.RetunPan;
+import apt.test.NewAptPanel;
 import aptuser.ModifyAdmin;
 import aptuser.ModifyUser;
 import aptuser.RegistUser;
@@ -47,6 +48,7 @@ import message.MessageAutoInsertThread;
 import message.RecieveMessage;
 import message.SendMessage;
 import message.SendMessageList;
+import statistics.ChartMain;
 import viewer.Admin_InvoiceView;
 import viewer.Admin_UserView;
 import viewer.User;
@@ -156,7 +158,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		tree.addTreeSelectionListener(this);
 		tree.addMouseListener(new MouseAdapter() {
 			public void mouseClicked(MouseEvent e) {
-				System.out.println("tree Click");
+				//System.out.println("tree Click");
 				openWindowOnTree();
 			}
 		});
@@ -184,7 +186,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		// aptuser테이블에서 데이터를 갖고오는 모델을 생성한다
 		aptuser = new AptuserModel(con, "admin");
 		userList = aptuser.getData();
-		System.out.println("userList.size()="+userList.size());
+		//System.out.println("userList.size()="+userList.size());
 		
 		// admin 유저 존재여부 체크
 		if (userList.size()==0){
@@ -194,7 +196,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 
 		// 관리자 IP를 가지고 온다 (채팅 클라이언트에서 서버에 접속할 때 사용)
 		serverIP = ((Aptuser) aptuser.getData().get(0)).getAptuser_ip();
-		System.out.println("serverIP = " + serverIP);
+		//System.out.println("serverIP = " + serverIP);
 
 		// adminUserID 받아 놓는다.
 		adminUserID = ((Aptuser) aptuser.getData().get(0)).getAptuser_id();
@@ -252,9 +254,9 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	// 최초 회원 이름을 출력하고 정보 수정시에 반영
 	public void updateUser() {
 		aptuser.selectDataByID(userID);
-		System.out.println("일반 userList.size()="+userList.size());
+		//System.out.println("일반 userList.size()="+userList.size());
 		if (userList.size()==0){
-			JOptionPane.showMessageDialog(this, "동,호수 정보가 올바르지 않습니다. \n 관리자에게 문의하세요.");
+			JOptionPane.showMessageDialog(this, "동,호수 정보가 존재하지 않습니다. \n 관리자에게 문의하세요.");
 			close();
 		}
 		userName = userList.get(0).getAptuser_name();
@@ -370,7 +372,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 				// 또는 admin 유저가 아니고, 유저 권한이 있는 화면 인 경우. 메뉴 추가
 				if ((adminMenuFlag == true && rs.getString("admin_role_flag").equalsIgnoreCase("Y"))
 						|| (adminMenuFlag == false && rs.getString("user_role_flag").equalsIgnoreCase("Y"))) {
-					System.out.println("menu=" + rs.getString("menu_name"));
+					//System.out.println("menu=" + rs.getString("menu_name"));
 					root.add(node);
 					menuDtoList.add(menuDto);
 				}
@@ -406,7 +408,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 						if ((adminMenuFlag == true && rsSub.getString("admin_role_flag").equalsIgnoreCase("Y"))
 								|| (adminMenuFlag == false
 										&& rsSub.getString("user_role_flag").equalsIgnoreCase("Y"))) {
-							System.out.println("submenu=" + rsSub.getString("menu_name"));
+							//System.out.println("submenu=" + rsSub.getString("menu_name"));
 							node.add(nodeSub);
 							menuDtoList.add(menuSubDto);
 						}
@@ -446,7 +448,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		}
 
 		// tree 모두 펼치기
-		System.out.println("tree.getRowCount()=" + tree.getRowCount());
+		//System.out.println("tree.getRowCount()=" + tree.getRowCount());
 		int r = 0;
 		while (r < tree.getRowCount()) {
 			tree.expandRow(r);
@@ -694,6 +696,16 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 				// 채팅(서버)
 				chatSrv = new ChatServer(this);
 				curPanel = chatSrv;
+			} else if (className.equalsIgnoreCase("ChartMain")) {
+				// Chart
+				ChartMain  chartMain = new ChartMain();
+				curPanel = chartMain;
+			} else if (className.equalsIgnoreCase("NewAptPanel")) {
+				// 아파트 현황
+				//NewAptPanel  newAptPanel = new NewAptPanel();
+				//curPanel = newAptPanel;
+				JOptionPane.showMessageDialog(this, "준비중 입니다....");
+				
 			} else {
 				// System.out.println("menu 없음.");
 				curPanel = null;
