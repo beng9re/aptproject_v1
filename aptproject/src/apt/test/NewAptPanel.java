@@ -73,7 +73,7 @@ public class NewAptPanel extends JPanel implements ActionListener {
 
 		// 패널 디자인
 
-		p_center.setBackground(Color.cyan);
+		p_center.setBackground(Color.CYAN);
 		p_center.setBounds(190, 160, 300, 500);
 		p_center.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 10));
 

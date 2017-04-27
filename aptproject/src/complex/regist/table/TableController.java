@@ -35,6 +35,7 @@ import org.apache.poi.hssf.usermodel.HSSFCell;
 import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
+import org.apache.poi.ss.usermodel.DataFormatter;
 
 import db.DBManager;
 import jxl.write.WritableSheet;
@@ -47,7 +48,7 @@ public class TableController extends JFrame implements ActionListener{
 	public JTable table;
 	JScrollPane scroll;
 	db_Table db_table;
-	JButton bt_excel,bt_reset;
+	JButton bt_excel,bt_reset,bt_bring;
 	JFileChooser chooser=new JFileChooser("C:/Users/jm/Desktop/새 폴더(2)");
 	FileOutputStream fos;
 	
@@ -62,6 +63,7 @@ public class TableController extends JFrame implements ActionListener{
 		p_north=new JPanel();
 		bt_excel=new JButton("excel로 저장");
 		bt_reset=new JButton("초기화");
+		bt_bring=new JButton("excel로 가져오기");
 		
 		
 		table.setModel(db_table);
@@ -101,10 +103,18 @@ public class TableController extends JFrame implements ActionListener{
 		bt_reset.setBackground(Color.pink);
 		bt_reset.setFocusPainted(false);
 		
+		bt_bring.setBounds(0, 20, 150, 30);
+		bt_bring.setPreferredSize(new Dimension(100, 50));
+		bt_bring.setBorder(new LineBorder(Color.black, 3));
+		//bt_excel.setFont(new Font("굴림", Font.PLAIN, 20));
+		bt_bring.setBackground(Color.pink);
+		bt_bring.setFocusPainted(false);
+		
 	
 		//버튼에 이벤트 부여
 		bt_excel.addActionListener(this);
 		bt_reset.addActionListener(this);
+		bt_bring.addActionListener(this);
 		
 		
 		chooser.setFileFilter(new FileNameExtensionFilter("xls", "xls"));
@@ -112,6 +122,8 @@ public class TableController extends JFrame implements ActionListener{
 		
 		p_north.add(bt_excel);
 		p_north.add(bt_reset);
+		p_north.add(bt_bring);
+		
 		
 		
 		
@@ -123,6 +135,82 @@ public class TableController extends JFrame implements ActionListener{
 		
 		
 	}
+	//엑셀을 불러와서 db에 저장시키는 메서드
+	public void loadExcell(){
+		
+			int result = chooser.showOpenDialog(this);
+			if (result == JFileChooser.APPROVE_OPTION) {
+				File file = chooser.getSelectedFile();
+				FileInputStream fis = null;// try문 닫을떄 안보일 수 있음
+				// 28_3
+				StringBuffer cols = new StringBuffer();
+				StringBuffer data = new StringBuffer();
+
+				try {
+					fis = new FileInputStream(file);
+
+					HSSFWorkbook book = null;
+					book = new HSSFWorkbook(fis);// stream을 잡아 먹어라
+
+					HSSFSheet sheet = null;
+					sheet = book.getSheet("동호수");
+
+					int total = sheet.getLastRowNum();// sheet에 잇는 열의 갯수 구하기
+					int first = sheet.getFirstRowNum();
+					
+					HSSFRow firstRow = sheet.getRow(first);// row 한줄을 얻어왔음
+
+					cols.delete(0, cols.length());
+					
+					firstRow.getLastCellNum();// 첫번째 행의 마지막 cell 번호 얻어오기
+					for (int i = 0; i < firstRow.getLastCellNum(); i++) {
+
+						HSSFCell cell = firstRow.getCell(i);
+						if (i < firstRow.getLastCellNum() - 1) {
+							
+							cols.append(cell.getStringCellValue());
+	
+						} else
+							
+							cols.append(cell.getStringCellValue());
+					
+					}
+
+					DataFormatter df = new DataFormatter();// 엑셀의 데이터를 읽는 메서드
+					
+					for (int a = 1; a <= total; a++) {
+						HSSFRow row = sheet.getRow(a);
+						
+						int columnCount = row.getLastCellNum();// 컬럼의 수를 가져온다
+						
+
+						data.delete(0, data.length());// data 스트링버퍼 지우기 28_4
+
+						for (int i = 0; i < columnCount; i++) {
+							HSSFCell cell = row.getCell(i);
+							String value = df.formatCellValue(cell);
+			
+							data.append(value);
+							
+						}
+			
+					}
+					JOptionPane.showMessageDialog(this, "파일이동중");
+				} catch (FileNotFoundException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+
+			}
+			
+
+		
+	}
+	
+	
 	//엑셀을 저장하는 메서드
 	public void saveExcell(){
 		HSSFWorkbook book=new HSSFWorkbook();
@@ -222,6 +310,9 @@ public class TableController extends JFrame implements ActionListener{
 		}
 	}
 	
+	
+	
+	
 	//테이블의 업데이트를 실현시키는 메서드
 	public void upDate(){
 		
@@ -238,7 +329,9 @@ public class TableController extends JFrame implements ActionListener{
 		if(obj==bt_excel){
 			saveExcell();
 		}else if(obj==bt_reset){
-			reset();
+			//reset();
+		}else if(obj==bt_bring){
+			loadExcell();
 		}
 		
 	}
@@ -247,6 +340,7 @@ public class TableController extends JFrame implements ActionListener{
 		new TableController();
 
 	}
+	
 	
 
 

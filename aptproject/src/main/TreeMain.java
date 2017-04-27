@@ -261,18 +261,23 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		for (Object obj : menuOpenList) {
 			if (obj == chatClient) {
 				chatClient.getThread().disconnect();
-			} else if (obj == recieveMessage) {
-				// 수신 메세지 Thread 종료
-				recieveMessage.setThreadFlag(false);
-			} else if (obj == sendMessageList) {
-				// 송신 메세지 List Thread 종료
-				sendMessageList.setThreadFlag(false);
-			} else if (obj == msgAutoInsertThread) {
-				// Message
-				msgAutoInsertThread.setThreadFlag(false);
 			}
 		}
-
+		
+		if (msgAutoInsertThread!=null){
+			msgAutoInsertThread.setThreadFlag(false);
+		}
+		
+		// 송신 메세지 List Thread 종료
+		if (sendMessageList!=null){
+			sendMessageList.setThreadFlag(false);
+		}
+		
+		// 수신 메세지 Thread 종료
+		if (recieveMessage!=null){
+			recieveMessage.setThreadFlag(false);
+		}
+		
 		// Connection 종료
 		instance.disConnect(con);
 
@@ -684,28 +689,30 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 			}
 
 			// menuOpenList 에 추가 되었으므로, 최종 index 로 체크
-			index = findOpenClassIndex(className);
-		}
-
-		// System.out.println("get index = "+index);
-		// System.out.println("panelList.size() = "+panelList.size());
-
-		// index 가 -1 이 아닌 경우, 즉 Panel 이 존재하는 경우 해당 Panel visible=true
-		if (index != -1) {
-			for (int i = 0; i < panelList.size(); i++) {
-				if (panelList.get(i) == menuOpenList.get(index)) {
-					// panel 사이즈 p_center 의 사이즈로 만들기
-					// panelList.get(i).setPreferredSize(new
-					// Dimension(centerWidth, centerHeight));
-					// panel 보이기
-					panelList.get(i).setVisible(true);
+	    	index = findOpenClassIndex(className);
+	    }
+	    
+	    //System.out.println("get index = "+index);
+	    //System.out.println("panelList.size() = "+panelList.size());
+	    
+	    // index 가 -1 이 아닌 경우, 즉 Panel 이 존재하는 경우 해당 Panel visible=true
+	    if (index!=-1){
+	    	for (int i=0; i<panelList.size(); i++){
+	    		if (panelList.get(i)==menuOpenList.get(index)){
 					// Title 변경
 					setTitle(menuName);
-				}
-			}
-		} else {
-			JOptionPane.showMessageDialog(this, "화면이 존재하지 않습니다.");
-		}
+
+					// panel 사이즈 p_center 의 사이즈로 만들기
+					//panelList.get(i).setPreferredSize(new Dimension(centerWidth, centerHeight));
+	    			panelList.get(i).setSize(centerWidth, centerHeight);
+
+	    			// panel 보이기
+					panelList.get(i).setVisible(true);
+	    		}
+	    	}
+	    } else {
+	    	JOptionPane.showMessageDialog(this, "화면이 존재하지 않습니다.");
+	    }
 
 	}
 

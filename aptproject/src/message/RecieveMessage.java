@@ -165,27 +165,32 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 		table.setModel(model);
 		table.setRowSorter(new TableRowSorter(model));
 		
+		//table.setDefaultRenderer(Object.class, new RecvMsgCellRender());
+		
 		// msg_send_content 컬럼 숨기기
 		table.getColumn("msg_send_content").setWidth(0);
 		table.getColumn("msg_send_content").setMinWidth(0);
 		table.getColumn("msg_send_content").setMaxWidth(0);
-/*		
+		
 		// msg_recieve_id 컬럼 숨기기
 		table.getColumn("msg_recieve_id").setWidth(0);
 		table.getColumn("msg_recieve_id").setMinWidth(0);
 		table.getColumn("msg_recieve_id").setMaxWidth(0);
-*/		
+		
 		// msg_send_user_id 컬럼 숨기기
 		table.getColumn("msg_send_user_id").setWidth(0);
 		table.getColumn("msg_send_user_id").setMinWidth(0);
 		table.getColumn("msg_send_user_id").setMaxWidth(0);
 		
+		// 송신자명 size 조정
+		table.getColumn("송신자명").setPreferredWidth(25);
 		// 확인여부 size 조정
-		table.getColumn("확인여부").setPreferredWidth(20);
+		table.getColumn("확인여부").setPreferredWidth(17);
 		// 확인여부 text 정렬 center
 		DefaultTableCellRenderer  cellRender = new DefaultTableCellRenderer();
 		cellRender.setHorizontalAlignment(JLabel.CENTER);
 		table.getColumn("확인여부").setCellRenderer(cellRender);
+		
 		
 		table.updateUI();
 		
