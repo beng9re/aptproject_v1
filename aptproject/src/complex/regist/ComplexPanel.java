@@ -213,7 +213,7 @@ public class ComplexPanel extends JPanel implements ActionListener {
 		setSize(700, 700);
 		
 		info();
-		Unique();
+		
 	}
 
 	// 등록 버튼 이벤트 메서드
@@ -382,6 +382,7 @@ public class ComplexPanel extends JPanel implements ActionListener {
 	
 	//테이블 고유값 구하는 메서드
 		public void Unique(){
+			unique.removeAll(unique);
 			PreparedStatement pstmt=null;
 			ResultSet rs=null;
 			
@@ -453,8 +454,10 @@ public class ComplexPanel extends JPanel implements ActionListener {
 
 	// 테이블 확인 메서드
 	public void confirm() {
+	
 		controller = new TableController();
 		controller.upDate();
+		
 	}
 
 	// 라디오와 버튼에 이벤트 부여
@@ -462,6 +465,7 @@ public class ComplexPanel extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		Object obj = e.getSource();
 		if (obj == bt_regist) {
+			Unique();
 			serch();
 			if(uniq==true){	
 				regist();}

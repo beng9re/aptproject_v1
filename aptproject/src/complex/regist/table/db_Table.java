@@ -34,7 +34,7 @@ public class db_Table extends AbstractTableModel{
 		PreparedStatement pstmt=null;
 		ResultSet rs=null;
 		
-		String sql="select * FROM VIEW_CONFIRMTABLE v ORDER BY v.µ¿ ASC,v.È£¼ö ASC";
+		String sql="select * FROM VIEW_CONFIRMTABLE v ORDER BY id ASC";
 				
 		
 		try {
