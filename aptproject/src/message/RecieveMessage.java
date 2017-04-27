@@ -56,7 +56,7 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 	Thread  thread;
 	boolean threadFlag=false;
 	
-	int frameWidth=600;
+	int frameWidth=650;
 	int frameHeight=500;
 	String userID;
 	
@@ -139,6 +139,8 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 		
 		// font
 		la_new_msg_chk.setFont(new Font("굴림", Font.ITALIC, 13));
+		t_title.setFont(new Font("Default", Font.BOLD, t_title.getFont().getSize()));
+		area.setFont(new Font("굴림체", Font.BOLD, area.getFont().getSize()));
 		
 		// Editable
 		t_title.setEditable(false);
@@ -165,8 +167,6 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 		table.setModel(model);
 		table.setRowSorter(new TableRowSorter(model));
 		
-		//table.setDefaultRenderer(Object.class, new RecvMsgCellRender());
-		
 		// msg_send_content 컬럼 숨기기
 		table.getColumn("msg_send_content").setWidth(0);
 		table.getColumn("msg_send_content").setMinWidth(0);
@@ -182,15 +182,12 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 		table.getColumn("msg_send_user_id").setMinWidth(0);
 		table.getColumn("msg_send_user_id").setMaxWidth(0);
 		
-		// 송신자명 size 조정
-		table.getColumn("송신자명").setPreferredWidth(25);
-		// 확인여부 size 조정
-		table.getColumn("확인여부").setPreferredWidth(17);
-		// 확인여부 text 정렬 center
-		//DefaultTableCellRenderer  cellRender = new DefaultTableCellRenderer();
-		//cellRender.setHorizontalAlignment(JLabel.CENTER);
-		//table.getColumn("확인여부").setCellRenderer(cellRender);
+		table.setDefaultRenderer(Object.class, new RecvMsgCellRender());
 		
+		// 송신자명 size 조정
+		table.getColumn("송신자명").setPreferredWidth(10);
+		// 확인여부 size 조정
+		table.getColumn("확인여부").setPreferredWidth(10);
 		
 		table.updateUI();
 		
