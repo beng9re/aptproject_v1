@@ -54,6 +54,7 @@ public class PopUpTable extends JFrame{
 		ad.getList(sql.toString());
 		
 		ta=new JTable(ad);
+		ta.setRowHeight(20);
 		sp=new JScrollPane(ta);
 		
 		add(sp);
@@ -100,7 +101,7 @@ public class PopUpTable extends JFrame{
 		setLocationRelativeTo(rp);
 		
 	
-		setBounds(505, 860, 900, 110);
+		setBounds(505, 860, 900, 120);
 	
 	}
 
