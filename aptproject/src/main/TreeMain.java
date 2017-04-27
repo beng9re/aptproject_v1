@@ -256,7 +256,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		aptuser.selectDataByID(userID);
 		//System.out.println("일반 userList.size()="+userList.size());
 		if (userList.size()==0){
-			JOptionPane.showMessageDialog(this, "동,호수 정보가 올바르지 않습니다. \n 관리자에게 문의하세요.");
+			JOptionPane.showMessageDialog(this, "동,호수 정보가 존재하지 않습니다. \n 관리자에게 문의하세요.");
 			close();
 		}
 		userName = userList.get(0).getAptuser_name();
