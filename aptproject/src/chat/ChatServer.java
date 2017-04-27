@@ -52,7 +52,7 @@ public class ChatServer extends JPanel {
 		
 		title.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 24));
 		title.setBorder(BorderFactory.createLineBorder(Color.GRAY, 4));
-		title.setPreferredSize(new Dimension(700,60));
+		title.setPreferredSize(new Dimension(690,60));
 		scroll.getVerticalScrollBar().setUnitIncrement(15);
 		pnl_content.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50));
 		pnl_content.setLayout(new BoxLayout(pnl_content, BoxLayout.Y_AXIS));

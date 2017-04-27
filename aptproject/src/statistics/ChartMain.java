@@ -1,6 +1,12 @@
 package statistics;
 
 import java.awt.Color;
+import java.awt.Dimension;
+import java.awt.Font;
+import java.sql.Connection;
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
 
 import javax.swing.JFrame;
 
@@ -21,9 +27,36 @@ import org.jfree.data.category.CategoryDataset;
 import org.jfree.data.category.DefaultCategoryDataset;
 import org.jfree.ui.RefineryUtilities;
 
-public class ChartMain extends JFrame {
+import db.DBManager;
+import db.InvoiceModel;
 
+public class ChartMain extends JFrame {
+	Connection conn = DBManager.getInstance().getConnection();
+	InvoiceModel model;
+	ArrayList<ArrayList> byDay;
+	ArrayList<ArrayList> byPer;
+	SimpleDateFormat dateFormat;
+	Font font;
+	
 	public ChartMain() {
+		font = new Font("맑은 고딕", Font.PLAIN, 14);
+		// 날짜정보를 입력한다
+		dateFormat = new SimpleDateFormat("yyyyMMdd");
+		Calendar cal = Calendar.getInstance();
+		cal.add(Calendar.DATE, 1);
+		String eDay = dateFormat.format(cal.getTime());
+		cal.add(Calendar.DATE, -8);
+		String bDay = dateFormat.format(cal.getTime());
+		
+		model = new InvoiceModel(conn);
+		byDay = new ArrayList<ArrayList>();
+		byPer = new ArrayList<ArrayList>();
+		
+		setData(bDay, eDay);
+		
+		System.out.println(byDay);
+		System.out.println(byPer);
+		
 		// 차트 생성
 		CategoryDataset dataset1 = createDataset1();
 		JFreeChart chart = ChartFactory.createBarChart("택배 처리 통계",
@@ -36,7 +69,9 @@ public class ChartMain extends JFrame {
 		);
 
 		chart.setBackgroundPaint(Color.white);
-
+		chart.getTitle().setFont(new Font("맑은 고딕", Font.BOLD, 20));
+		chart.getLegend().setItemFont(font);
+		
 		CategoryPlot plot = chart.getCategoryPlot();
 		plot.setBackgroundPaint(new Color(0xEE, 0xEE, 0xFF));
 		plot.setDomainAxisLocation(AxisLocation.BOTTOM_OR_RIGHT);
@@ -48,6 +83,7 @@ public class ChartMain extends JFrame {
 		CategoryAxis domainAxis = plot.getDomainAxis();
 		domainAxis.setCategoryLabelPositions(CategoryLabelPositions.DOWN_45);
 		ValueAxis axis2 = new NumberAxis("일일 처리율");
+		axis2.setLabelFont(font);
 		plot.setRangeAxis(1, axis2);
 
 		LineAndShapeRenderer renderer2 = new LineAndShapeRenderer();
@@ -56,78 +92,54 @@ public class ChartMain extends JFrame {
 		plot.setDatasetRenderingOrder(DatasetRenderingOrder.REVERSE);
 
 		ChartPanel chartPanel = new ChartPanel(chart);
-		chartPanel.setPreferredSize(new java.awt.Dimension(500, 270));
+//		chartPanel.setPreferredSize(new Dimension(500, 270));
 		setContentPane(chartPanel);
+		
+		setPreferredSize(new Dimension(700,700));
+		
 	}
 	
-	private void setData() {
-		// select * from invoice where invoice_arrtime < to_date('20170426','YYYYMMDD') and invoice_arrtime > to_date('20170425','YYYYMMDD')
-		// select group by to_date??
+	private void setData(String bDay, String eDay) {
+		model.selectByDAY(bDay, eDay);
+		byDay = model.getData();
+		model.selectProportion(bDay, eDay);
+		byPer = model.getData();
+		
 	}
 
 	private CategoryDataset createDataset1() {
 		// row keys...
-		final String series1 = "First";
-
-		// column keys...
-		final String category1 = "Category 1";
-		final String category2 = "Category 2";
-		final String category3 = "Category 3";
-		final String category4 = "Category 4";
-		final String category5 = "Category 5";
-		final String category6 = "Category 6";
-		final String category7 = "Category 7";
-		final String category8 = "Category 8";
+		String series1 = "일 처리량";
 
 		// create the dataset...
-		final DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
-		dataset.addValue(1.0, series1, category1);
-		dataset.addValue(4.0, series1, category2);
-		dataset.addValue(3.0, series1, category3);
-		dataset.addValue(5.0, series1, category4);
-		dataset.addValue(5.0, series1, category5);
-		dataset.addValue(7.0, series1, category6);
-		dataset.addValue(7.0, series1, category7);
-		dataset.addValue(8.0, series1, category8);
+		// column keys...
+		for (ArrayList list : byDay) {
+			dataset.addValue(Integer.parseInt(list.get(0).toString()), series1, list.get(0).toString());
+		}
 
 		return dataset;
-
 	}
 
 	private CategoryDataset createDataset2() {
-
 		// row keys...
-		final String series1 = "Fourth";
-
-		// column keys...
-		final String category1 = "Category 1";
-		final String category2 = "Category 2";
-		final String category3 = "Category 3";
-		final String category4 = "Category 4";
-		final String category5 = "Category 5";
-		final String category6 = "Category 6";
-		final String category7 = "Category 7";
-		final String category8 = "Category 8";
+		String series1 = "당일 처리비율";
 
 		// create the dataset...
-		final DefaultCategoryDataset dataset = new DefaultCategoryDataset();
+		DefaultCategoryDataset dataset = new DefaultCategoryDataset();
 
-		dataset.addValue(15.0, series1, category1);
-		dataset.addValue(24.0, series1, category2);
-		dataset.addValue(31.0, series1, category3);
-		dataset.addValue(25.0, series1, category4);
-		dataset.addValue(56.0, series1, category5);
-		dataset.addValue(37.0, series1, category6);
-		dataset.addValue(77.0, series1, category7);
-		dataset.addValue(18.0, series1, category8);
-
+		// column keys...
+		
+		for (ArrayList list : byPer) {
+			dataset.addValue(Integer.parseInt(list.get(0).toString()), series1, list.get(0).toString());
+		}
+		
 		return dataset;
 
 	}
 
 	public static void main(String[] args) {
-
 		ChartMain demo = new ChartMain();
 		demo.pack();
 		RefineryUtilities.centerFrameOnScreen(demo);

@@ -9,7 +9,7 @@ public class ComplexModel extends DBModel {
 	private String[] colName = { "complex_id", "complex_name" };
 	private String sql = "select * from complex order by complex_name desc";
 	private int cpid;
-	private TreeMap<Integer, Integer> arrList = new TreeMap<Integer, Integer>();
+	private TreeMap<Integer, Integer> treeMap = new TreeMap<Integer, Integer>();
 
 	public ComplexModel(Connection conn) {
 		this.conn = conn;
@@ -22,13 +22,13 @@ public class ComplexModel extends DBModel {
 	}
 
 	protected void setTable(ResultSet rs) throws SQLException {
-		arrList.clear();
+		treeMap.clear();
 		while (rs.next()) {
-			arrList.put(Integer.parseInt(rs.getString(colName[1]).replaceAll("\\D", "")), rs.getInt(colName[0]));
+			treeMap.put(Integer.parseInt(rs.getString(colName[1]).replaceAll("\\D", "")), rs.getInt(colName[0]));
 		}
 	}
 
 	public TreeMap<Integer, Integer> getMap() {
-		return arrList;
+		return treeMap;
 	}
 }
