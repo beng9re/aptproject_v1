@@ -6,6 +6,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.Connection;
@@ -142,6 +144,12 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		
 		// 리스너 연결.
 		tree.addTreeSelectionListener(this);
+		tree.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				System.out.println("tree Click");
+				openWindowOnTree();
+			}
+		});
 		bt_exit.addActionListener(this);
 		// 프로그램 종료를 위한 윈도우 리스너
 		this.addWindowListener(new WindowAdapter() {
