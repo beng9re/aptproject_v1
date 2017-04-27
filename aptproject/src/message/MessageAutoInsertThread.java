@@ -211,8 +211,6 @@ public class MessageAutoInsertThread extends  Thread{
 		
 		if (con==null) return;
 		
-		if (runCount > 1) return;
-		
 		PreparedStatement pstmt=null;
 		ResultSet rs=null;
 		ResultSet rsSub=null;
