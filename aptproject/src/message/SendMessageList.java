@@ -54,7 +54,7 @@ public class SendMessageList extends JFrame implements ActionListener , Runnable
 	int colIndexOfSendId;
 	
 	int frameWidth=600;
-	int frameHeight=500;
+	int frameHeight=600;
 	
 	boolean threadFlag=false;
 	Thread  thread;
@@ -154,10 +154,12 @@ public class SendMessageList extends JFrame implements ActionListener , Runnable
 		// size
 		t_input.setPreferredSize(new Dimension(frameWidth-200, 20));
 		p_north.setPreferredSize(new Dimension(frameWidth, 45));
-		p_center_south.setPreferredSize(new Dimension(frameWidth, 90));
+		p_center_south.setPreferredSize(new Dimension(frameWidth, 150));
 		p_south.setPreferredSize(new Dimension(frameWidth, 180));
 		t_title.setPreferredSize(new Dimension(frameWidth-160, 20));
-		areaScroll.setPreferredSize(new Dimension(frameWidth-110, 50));
+		areaScroll.setPreferredSize(new Dimension(frameWidth-110, 110));
+		table.setRowHeight(20);
+		tableList.setRowHeight(20);
 		
 		// Editable
 		t_title.setEditable(false);
