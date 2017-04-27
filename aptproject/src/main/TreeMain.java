@@ -8,6 +8,8 @@ import java.awt.Dimension;
 import java.awt.Font;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.awt.event.WindowAdapter;
 import java.awt.event.WindowEvent;
 import java.sql.Connection;
@@ -146,12 +148,18 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 
 		// Style
 		tree.setBorder(BorderFactory.createEmptyBorder(15, 15, 5, 5));
-		bt_exit.setFont(new Font("맑은 고딕", Font.BOLD, 16));
-		bt_exit.setBackground(Color.WHITE);
-		bt_exit.setBorder(BorderFactory.createLineBorder(Color.PINK, 2));
+		bt_exit.setFont(new Font("Default", Font.BOLD, 13));
+		bt_exit.setBackground(Color.PINK);
+		//bt_exit.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
 
 		// 리스너 연결.
 		tree.addTreeSelectionListener(this);
+		tree.addMouseListener(new MouseAdapter() {
+			public void mouseClicked(MouseEvent e) {
+				System.out.println("tree Click");
+				openWindowOnTree();
+			}
+		});
 		bt_exit.addActionListener(this);
 		// 프로그램 종료를 위한 윈도우 리스너
 		this.addWindowListener(new WindowAdapter() {
@@ -160,15 +168,15 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 			}
 		});
 
+		// 초기 작업
+		init();
+	
 		setTitle("***** 환영합니다 *****");
 		setVisible(true);
 		setSize(winWidth, winHeight);
 		setResizable(false);
 		setLocationRelativeTo(null);
 
-		// 초기 작업
-		init();
-	
 	}
 
 	public void init() {
@@ -176,6 +184,13 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		// aptuser테이블에서 데이터를 갖고오는 모델을 생성한다
 		aptuser = new AptuserModel(con, "admin");
 		userList = aptuser.getData();
+		System.out.println("userList.size()="+userList.size());
+		
+		// admin 유저 존재여부 체크
+		if (userList.size()==0){
+			JOptionPane.showMessageDialog(this, "admin 유저가 조회되지 않습니다.\n관리자에게 문의하세요.");
+			close();
+		}
 
 		// 관리자 IP를 가지고 온다 (채팅 클라이언트에서 서버에 접속할 때 사용)
 		serverIP = ((Aptuser) aptuser.getData().get(0)).getAptuser_ip();
@@ -237,6 +252,11 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	// 최초 회원 이름을 출력하고 정보 수정시에 반영
 	public void updateUser() {
 		aptuser.selectDataByID(userID);
+		System.out.println("일반 userList.size()="+userList.size());
+		if (userList.size()==0){
+			JOptionPane.showMessageDialog(this, "동,호수 정보가 올바르지 않습니다. \n 관리자에게 문의하세요.");
+			close();
+		}
 		userName = userList.get(0).getAptuser_name();
 		la_welcom.setText(userName + " 님 환영합니다");
 		refreshUI();
@@ -522,7 +542,8 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 
 		// className 이 없는 경우, 최종 메뉴가 아니므로 (상위 메뉴 이므로) skip
 		if (className == null) {
-			JOptionPane.showMessageDialog(this, menuName + " 화면의 Class 가 등록되지 않았습니다.");
+			//JOptionPane.showMessageDialog(this, menuName + " 화면의 Class 가 등록되지 않았습니다.");
+			System.out.println(menuName+" Class 미존재");
 			return;
 		}
 
@@ -700,20 +721,24 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	    	for (int i=0; i<panelList.size(); i++){
 	    		if (panelList.get(i)==menuOpenList.get(index)){
 					// Title 변경
+	    			
 					setTitle(menuName);
 
 					// panel 사이즈 p_center 의 사이즈로 만들기
 					//panelList.get(i).setPreferredSize(new Dimension(centerWidth, centerHeight));
-	    			panelList.get(i).setSize(centerWidth, centerHeight);
+	    			//panelList.get(i).setSize(centerWidth, centerHeight);
 
 	    			// panel 보이기
 					panelList.get(i).setVisible(true);
+
 	    		}
 	    	}
 	    } else {
-	    	JOptionPane.showMessageDialog(this, "화면이 존재하지 않습니다.");
+	    	//JOptionPane.showMessageDialog(this, "화면이 존재하지 않습니다.");
+	    	System.out.println(menuName+" Class 미존재");
 	    }
 
+		p_center.updateUI();
 	}
 
 	public void actionPerformed(ActionEvent e) {

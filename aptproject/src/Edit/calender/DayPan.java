@@ -65,15 +65,7 @@ public DayPan(ReturnCal returnCal,JTextField taker) {
 			return;
 		}
 		
-		
-		
-		
-		
-		
-	
-		
-		
-		
+
 		//System.out.println(returnCal.dataData);
 		int s=returnCal.startday+returnCal.date-1;
 		for(int i=0;i<returnCal.dplist.size();i++){
@@ -111,7 +103,7 @@ public DayPan(ReturnCal returnCal,JTextField taker) {
 				return;
 			}
 			
-			
+			taker.setForeground(Color.black);
 			taker.setText(selectedDay());
 			returnCal.setVisible(false);
 			}

@@ -22,6 +22,7 @@ public class PopUpTable extends JFrame{
 	AdminModel ad;
 	Connection con;
 	RetunPan rp;
+	
 	int clickCount=-1;
 	int selectrow;
 	
@@ -44,6 +45,7 @@ public class PopUpTable extends JFrame{
 
 		ad=new AdminModel(con);
 		ad.getList(sql);
+		
 		ta=new JTable(ad);
 		sp=new JScrollPane(ta);
 		
