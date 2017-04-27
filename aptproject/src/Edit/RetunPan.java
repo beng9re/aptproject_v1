@@ -71,7 +71,6 @@ public class RetunPan extends JPanel implements ActionListener{
 		setLayout(new BorderLayout());
 		
 		//---------------------------------------객체생성
-		sp=new JScrollPane(rple);
 		
 		p=new PopUpTable(this, con);
 		
@@ -99,7 +98,9 @@ public class RetunPan extends JPanel implements ActionListener{
 		
 		bt_regist=new JButton("입력");
 		bt_reset=new JButton("초기화");
+		
 		rple=new JTextArea();//남김글
+		sp=new JScrollPane(rple);
 	
 		
 		//-----------------------------------------사이즈조정
@@ -111,10 +112,11 @@ public class RetunPan extends JPanel implements ActionListener{
 		tf_id.setPreferredSize(new Dimension(20,30));
 		tf_code.setPreferredSize(new Dimension(20,30));
 		
-		rple.setPreferredSize(new Dimension(220, 100));
+		//rple.setPreferredSize();
 		
 		bt_reset.setPreferredSize(new Dimension(180, 50));
 		bt_regist.setPreferredSize(new Dimension(180, 50));
+		sp.setPreferredSize(new Dimension(220, 180));
 		
 		//------------------------------------------------------------------라벨속성설정
 		tf_takeTime.setEditable(false);
@@ -145,7 +147,8 @@ public class RetunPan extends JPanel implements ActionListener{
 		
 		
 		//---------------------------------------------------------------------------- 추가
-		sp.add(rple);
+		
+		
 		rple.setLineWrap(true);
 		add(p_up,BorderLayout.NORTH);
 		p_up.add(title);

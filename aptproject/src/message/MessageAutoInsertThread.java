@@ -199,6 +199,8 @@ public class MessageAutoInsertThread extends  Thread{
 				e.printStackTrace();
 			}
 		}
+		
+		ReturnCheck();
 				
 	}
 	
@@ -225,6 +227,7 @@ public class MessageAutoInsertThread extends  Thread{
 		String returninv_msg_type;
 		StringBuffer title = new StringBuffer();
 		StringBuffer  msgContent=new StringBuffer();
+		int msg_send_id=-1;
 		
 		// 유저가 등록한 반품정보
 		sql.append(" select usr.aptuser_name \n");
@@ -255,6 +258,8 @@ public class MessageAutoInsertThread extends  Thread{
         sql.append(" 				              and    sm.returninv_id = rtn.returninv_id \n");
         sql.append(" 				              and    sm.returninv_msg_type = 'R') \n");
         
+        //System.out.println("return : \n"+sql.toString());
+        
 		try {
 	        // Connection Auto Commit 잠시 false
 			con.setAutoCommit(false);
@@ -264,39 +269,114 @@ public class MessageAutoInsertThread extends  Thread{
 			rs=pstmt.executeQuery();
 			
 			while (rs.next()){
-				user_name 				= rs.getString("user_name");
-				complex_name 		= rs.getString("user_name");
-				unit_name 				= rs.getString("user_name");
-				returninv_time 			= rs.getString("user_name");
-				returninv_barcode 	= rs.getString("user_name");
-				returninv_date 			= rs.getString("user_name");
-				returninv_comment 	= rs.getString("user_name");
+				user_name 				= rs.getString("aptuser_name");
+				complex_name 		= rs.getString("complex_name");
+				unit_name 				= rs.getString("unit_name");
+				returninv_time 			= rs.getString("returninv_time");
+				returninv_barcode 	= rs.getString("returninv_barcode");
+				returninv_date 			= rs.getString("returninv_date");
+				returninv_comment 	= rs.getString("returninv_comment");
 				returninv_id 				= rs.getInt("returninv_id");
-				returninv_msg_type 	= rs.getString("user_name");
+				returninv_msg_type 	= rs.getString("returninv_msg_type");
 				
 				title.delete(0, title.length());
 				title.append("반품요청등록 ("+user_name+", "+returninv_barcode+")");
 				
 				msgContent.delete(0, msgContent.length());
-				msgContent.append("이     름 : "+user_name + "\n");
-				msgContent.append("동, 호수 : "+complex_name + " - " + unit_name + "\n");
-				msgContent.append("바 코 드 : "+returninv_barcode + "\n");
+				msgContent.append("이    름   : "+user_name + "\n");
+				msgContent.append("동, 호수   : "+complex_name + " - " + unit_name + "\n");
+				msgContent.append("바 코 드   : "+returninv_barcode + "\n");
 				msgContent.append("수거예정일 : "+returninv_date + "\n");
-				msgContent.append("Comment : "+returninv_comment );
+				msgContent.append("Comment    : "+returninv_comment );
 				
 				// next seq_send_message check
 				sql.delete(0, sql.length());
 				sql.append(" select  seq_send_message.nextval msg_send_id from dual");
+				//System.out.println("return : \n"+sql.toString());
 				pstmt = con.prepareStatement(sql.toString());
 				rsSub=pstmt.executeQuery();
+				
+				if (rsSub.next()){
+					msg_send_id=rsSub.getInt("msg_send_id");
+
+					// 송신 메세지 Insert  /////////////////////////
+					sql.delete(0, sql.length());
+					sql.append(" insert into send_message (msg_send_id, msg_send_user_id, msg_send_title, msg_send_content, msg_sendtime, returninv_id, returninv_msg_type) ");
+					sql.append(" values (?, ?, ?, ?, sysdate, ?, ?) ");
+					
+					//System.out.println("return : \n"+sql.toString());
+					
+					pstmt = con.prepareStatement(sql.toString());
+					pstmt.setInt(1, msg_send_id);
+					pstmt.setString(2, adminUserID);
+					pstmt.setString(3, title.toString());
+					pstmt.setString(4, msgContent.toString());
+					pstmt.setInt(5, returninv_id);
+					pstmt.setString(6, returninv_msg_type);
+					int result1 = pstmt.executeUpdate();
+					
+					if (result1!=0){
+						//System.out.println("insert send_message count : "+result1);
+						sql.delete(0, sql.length());
+						sql.append("insert into recieve_message (msg_recieve_id, msg_send_id, msg_recv_user_id, msg_recieve_time) ");
+						sql.append(" values (seq_recieve_message.nextval, ?, ?, sysdate)");
+						
+						//System.out.println(sql.toString());
+						
+						pstmt = con.prepareStatement(sql.toString());
+						pstmt.setInt(1, msg_send_id);
+						pstmt.setString(2, userID);
+						int result2 = pstmt.executeUpdate();
+						//System.out.println("(return) insert recieve_message count : "+result2);
+						
+					}
+					
+				}
 				
 			}
 			
 		} catch (SQLException e) {
-			// TODO Auto-generated catch block
+			try {
+				con.rollback();
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			}
 			e.printStackTrace();
-		}
-		
+		} finally {
+			// Commit;
+			try {
+				con.commit();
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}
+			// rs close
+			if (rs!=null)
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			// rsSub close
+			if (rsSub!=null)
+				try {
+					rs.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			// pstmt close
+			if (pstmt!=null)
+				try {
+					pstmt.close();
+				} catch (SQLException e) {
+					e.printStackTrace();
+				}
+			// Connection AutoCommit true 로 다시 지정
+			try {
+				con.setAutoCommit(true);
+			} catch (SQLException e) {
+				e.printStackTrace();
+			}			
+		}	
 		
 	}
 	
