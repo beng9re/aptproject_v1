@@ -187,9 +187,9 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 		// 확인여부 size 조정
 		table.getColumn("확인여부").setPreferredWidth(17);
 		// 확인여부 text 정렬 center
-		DefaultTableCellRenderer  cellRender = new DefaultTableCellRenderer();
-		cellRender.setHorizontalAlignment(JLabel.CENTER);
-		table.getColumn("확인여부").setCellRenderer(cellRender);
+		//DefaultTableCellRenderer  cellRender = new DefaultTableCellRenderer();
+		//cellRender.setHorizontalAlignment(JLabel.CENTER);
+		//table.getColumn("확인여부").setCellRenderer(cellRender);
 		
 		
 		table.updateUI();
