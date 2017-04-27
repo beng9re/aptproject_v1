@@ -59,11 +59,11 @@ public class MiddlePanel extends JPanel{
 		la_info.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 15));
 		la_info.setForeground(Color.red);
 
-		t_complex.setBorder(new LineBorder(Color.orange, 5));
-		t_unit1.setBorder(new LineBorder(Color.orange, 5));
-		t_unit2.setBorder(new LineBorder(Color.orange, 5));
-		t_floor1.setBorder(new LineBorder(Color.orange, 5));
-		t_floor2.setBorder(new LineBorder(Color.orange, 5));
+		t_complex.setBorder(new LineBorder(Color.PINK, 5));
+		t_unit1.setBorder(new LineBorder(Color.PINK, 5));
+		t_unit2.setBorder(new LineBorder(Color.PINK, 5));
+		t_floor1.setBorder(new LineBorder(Color.PINK, 5));
+		t_floor2.setBorder(new LineBorder(Color.PINK, 5));
 
 		add(la_complex);
 		add(t_complex);

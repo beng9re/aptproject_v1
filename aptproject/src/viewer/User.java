@@ -99,6 +99,8 @@ public class User extends JPanel implements ActionListener, ItemListener {
 		p_north.setPreferredSize(new Dimension(700, 80));
 		p_south.setPreferredSize(new Dimension(700, 80));
 
+		area.setVisible(false);
+
 		bt_find.addActionListener(this);
 		bt_xls.addActionListener(this);
 		rb_a.addActionListener(this);
@@ -109,8 +111,8 @@ public class User extends JPanel implements ActionListener, ItemListener {
 			public void mouseClicked(MouseEvent e) {
 				int row = table.getSelectedRow();
 				int col = table.getSelectedColumn();
-				if(rb_b.isSelected()){
-					String memo=(String)table.getValueAt(row, 5);
+				if (rb_b.isSelected()) {
+					String memo = (String) table.getValueAt(row, 5);
 					area.setText(memo);
 				}
 			}
@@ -127,15 +129,17 @@ public class User extends JPanel implements ActionListener, ItemListener {
 		add(p_north, BorderLayout.NORTH);
 		add(p_center, BorderLayout.CENTER);
 		add(p_south, BorderLayout.SOUTH);
+		table.setRowHeight(20);
 		setVisible(true);
 		setSize(700, 700);
 
 		setVisible(true);
 		setSize(700, 700);
-		
+
 		init();
 	}
-	public void init(){
+
+	public void init() {
 		rb_a.setSelected(true);
 		int unit = userList.get(0).getUnit_id();
 		StringBuffer sb = new StringBuffer();
@@ -234,7 +238,7 @@ public class User extends JPanel implements ActionListener, ItemListener {
 				sb.append(
 						" from invoice i inner join aptuser a on a.aptuser_id = i.aptuser_id) i on i.invoice_id = r.invoice_id and i.unit_id="
 								+ unit);
-				
+
 				getList(sb);
 			} else if (choice.getSelectedIndex() == 2) {
 				sb.append(
@@ -244,7 +248,7 @@ public class User extends JPanel implements ActionListener, ItemListener {
 				sb.append(
 						" from invoice i inner join aptuser a on a.aptuser_id = i.aptuser_id) i on i.invoice_id = r.invoice_id and i.aptuser_id='"
 								+ id + "'");
-				
+
 				getList(sb);
 			} else if (choice.getSelectedIndex() == 3) {
 				sb.append(
@@ -276,21 +280,41 @@ public class User extends JPanel implements ActionListener, ItemListener {
 		} else if (obj == bt_xls) {
 			createExcel();
 		} else if (obj == rb_a) {
+			area.setVisible(false);
 			area.setText("안녕하세요");
 			choice.removeAll();
-			//choice.addItem("▼목록을 선택하세요");
+			int unit = userList.get(0).getUnit_id();
+			StringBuffer sb = new StringBuffer();
+			sb.append(
+					"select i.INVOICE_ID as 상품ID, a.COMPLEX_NAME 동, a.UNIT_NAME 호,a.aptuser_name as 택배주인, i.INVOICE_ARRTIME 입고시간, i.INVOICE_TAKETIME as 수령시간, INVOICE_TAKER as 수령인,i.INVOICE_TAKEFLAG 수령여부");
+			sb.append(" from view_is i inner join view_ac a on i.aptuser_id =a.aptuser_id and a.unit_id=" + unit);
+
+			getList(sb);
+			// choice.addItem("▼목록을 선택하세요");
 			choice.addItem("전체 목록보기");
 			choice.addItem("내 목록보기");
 			choice.addItem("수령 전 목록보기");
 			choice.addItem("수령 완료 목록보기");
 		} else if (obj == rb_b) {
+			area.setVisible(true);
 			choice.removeAll();
-			choice.addItem("▼목록을 선택하세요");
+			int unit = userList.get(0).getUnit_id();
+			StringBuffer sb = new StringBuffer();
+			sb.append(
+					"select returninv_id as 상품, i.aptuser_name as 택배주인 ,returninv_barcode as 바코드,returninv_arr as 입고시간 ,returninv_dep as 출고시간,returninv_comment as 메모");
+			sb.append(
+					" from returninv r inner join (select INVOICE_ID, aptuser_name, aptuser_perm , INVOICE_TAKETIME, INVOICE_TAKER, a.UNIT_ID");
+			sb.append(
+					" from invoice i inner join aptuser a on a.aptuser_id = i.aptuser_id) i on i.invoice_id = r.invoice_id and i.unit_id="
+							+ unit);
+
+			getList(sb);
+			// choice.addItem("▼목록을 선택하세요");
 			choice.addItem("전체 목록보기");
 			choice.addItem("내 목록보기");
 			choice.addItem("반송 전 목록보기");
 			choice.addItem("반송 완료  목록보기");
 		}
-		
+
 	}
 }

@@ -66,7 +66,7 @@ public class Admin_UserView extends JPanel implements ActionListener {
 	Vector<Invoice> invoice = new Vector<Invoice>();
 
 	public Admin_UserView(Connection con) {
-		this.con=con;
+		this.con = con;
 		chooser = new JFileChooser();
 		p_north = new JPanel();
 		p_south = new JPanel();
@@ -117,16 +117,21 @@ public class Admin_UserView extends JPanel implements ActionListener {
 		bt_find.addActionListener(this);
 		bt_xls.addActionListener(this);
 		rb_user.addActionListener(this);
+		
+		table.setRowHeight(20);
 
 		table.addMouseListener(new MouseAdapter() {
-
 			public void mouseClicked(MouseEvent e) {
-				int row = table.getSelectedRow();
-				int col = table.getSelectedColumn();
-				String name = JOptionPane.showInputDialog("수정해 주세요");
-				if (name != null) {
-					adminModel.setValueAt(name, row, col);
-					tableChanged(row, col);
+				choiceValue();
+
+			}
+		});
+
+		table.addKeyListener(new KeyAdapter() {
+			public void keyReleased(KeyEvent e) {
+				int key = e.getKeyCode();
+				if (key == KeyEvent.VK_UP || key == KeyEvent.VK_DOWN) {
+					choiceValue();
 				}
 			}
 		});
@@ -157,14 +162,15 @@ public class Admin_UserView extends JPanel implements ActionListener {
 		setSize(700, 700);
 		init();
 	}
-	public void init(){
+
+	public void init() {
 		rb_user.setSelected(true);
 		tableName = "aptuser";
 		getUser();
 		getList();
-		
+
 	}
-	
+
 	public void getUser() {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -187,9 +193,9 @@ public class Admin_UserView extends JPanel implements ActionListener {
 				dto.setAptuser_ip(rs.getString("이름"));
 				dto.setAptuser_live(rs.getString("전화번호"));
 				dto.setAptuser_name(rs.getString("등록날짜"));
-				//dto.setAptuser_perm(rs.getInt("먼대"));
+				// dto.setAptuser_perm(rs.getInt("먼대"));
 				dto.setAptuser_phone(rs.getString("거주여부"));
-				//dto.setAptuser_regdate(rs.getString(""));
+				// dto.setAptuser_regdate(rs.getString(""));
 				user.add(dto);
 			}
 		} catch (SQLException e) {
@@ -226,8 +232,9 @@ public class Admin_UserView extends JPanel implements ActionListener {
 			option = "unit_name";
 		}
 
-		String sql = "select aptuser_id 주민ID,aptuser_name 이름 ,aptuser_phone 전화번호, aptuser_regdate 등록날짜, aptuser_live 거주여부, complex_name 동 ,unit_name 호  from view_ac where " + option + "= '" + msg + "' order by aptuser_id asc";
-		
+		String sql = "select aptuser_id 주민ID,aptuser_name 이름 ,aptuser_phone 전화번호, aptuser_regdate 등록날짜, aptuser_live 거주여부, complex_name 동 ,unit_name 호  from view_ac where "
+				+ option + "= '" + msg + "' order by aptuser_id asc";
+
 		adminModel.getList(sql);
 
 		table.updateUI();
@@ -278,12 +285,9 @@ public class Admin_UserView extends JPanel implements ActionListener {
 			pstmt = con.prepareStatement(sql);
 			int result = pstmt.executeUpdate();
 			if (result != 0) {
-				JOptionPane.showConfirmDialog(this, "업데이트 완료");
 				table.updateUI();
 			}
-			System.out.println(sql);
 		} catch (SQLException e1) {
-			// TODO Auto-generated catch block
 			e1.printStackTrace();
 		} finally {
 			if (pstmt != null) {
@@ -330,5 +334,78 @@ public class Admin_UserView extends JPanel implements ActionListener {
 
 		}
 
+	}
+
+	public void choiceValue() {
+		int row = table.getSelectedRow();
+		int col = table.getSelectedColumn();
+		String colName = table.getColumnName(col);
+		String value = (String) table.getValueAt(row, col);
+		if (colName.equals("이름") || colName.equals("전화번호") || colName.equals("거주여부")) {
+			String name = JOptionPane.showInputDialog(colName + "를 수정해 주세요");
+			if (name != null) {
+				adminModel.setValueAt(name, row, col);
+				tableChanged(row, col);
+			}
+		} else if (colName.equals("호")) {
+			PreparedStatement pstmt = null;
+			String option = "unit_name";
+			String name = JOptionPane.showInputDialog(colName + "를 수정해 주세요");
+			String sql = "update unit set " + option + "=" + "'" + name + "' ";
+			sql += "where " + option + "= '" + value + "'";
+
+			try {
+				pstmt = con.prepareStatement(sql);
+				pstmt.executeUpdate();
+
+				if (name != null) {
+					adminModel.setValueAt(name, row, col);
+					for (int i = 0; i < table.getRowCount(); i++) {
+						table.setValueAt(name, i, col);
+					}
+					table.updateUI();
+				}
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			} finally {
+				if (pstmt != null) {
+					try {
+						pstmt.close();
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
+				}
+			}
+		} else if (colName.equals("동")) {
+			PreparedStatement pstmt = null;
+			String option = "complex_name";
+			String name = JOptionPane.showInputDialog(colName + "를 수정해 주세요");
+
+			String sql = "update complex set " + option + "=" + "'" + name + "' ";
+			sql += "where " + option + "= '" + value + "'";
+
+			try {
+				pstmt = con.prepareStatement(sql);
+				pstmt.executeUpdate();
+
+				if (name != null) {
+					adminModel.setValueAt(name, row, col);
+					for (int i = 0; i < table.getRowCount(); i++) {
+						table.setValueAt(name, i, col);
+					}
+					table.updateUI();
+				}
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			} finally {
+				if (pstmt != null) {
+					try {
+						pstmt.close();
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
+				}
+			}
+		}
 	}
 }

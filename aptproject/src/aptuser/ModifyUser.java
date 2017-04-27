@@ -7,19 +7,24 @@ import javax.swing.JPanel;
 import javax.swing.JPasswordField;
 import javax.swing.JTextField;
 
+import main.TreeMain;
+
 public class ModifyUser extends UserInfo {
 	String[][] isEdit = { { "회원ID", "N" }, { "바코드", "N" }, { "비밀번호", "Y" }, { "비밀번호 확인", "Y" }, { "이름", "Y" },
 			{ "연락처", "Y" }, { "등록일", "N" }, { "주소", "N" } };
 	String titleStr = "회원정보 수정";
 	String btnTxt = "수 정";
+	TreeMain main;
 	
 	// 상속을 위한 기본 생성자
 	public ModifyUser() {
 	}
 	
-	public ModifyUser(Connection conn, String id) {
+	public ModifyUser(Connection conn, TreeMain main) {
 		this.conn = conn;
-		this.id = id;
+		this.main = main;
+		this.id = main.getUserID();
+		
 		init(isEdit, titleStr, btnTxt, true);
 		loadInfo();
 	}
@@ -45,7 +50,8 @@ public class ModifyUser extends UserInfo {
 		}
 		aptuser.get(0).setAptuser_phone(((JTextField) fieldData.get("연락처")).getText());
 		model.updateData();
-
+		
+		main.updateUser();
 		JOptionPane.showMessageDialog(this, "정보가 수정되었습니다");
 	}
 

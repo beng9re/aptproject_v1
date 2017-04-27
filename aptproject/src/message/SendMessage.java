@@ -129,6 +129,7 @@ public class SendMessage extends JFrame implements ActionListener{
 		p_south.setPreferredSize(new Dimension(frameWidth, 90));
 		t_title.setPreferredSize(new Dimension(frameWidth-216, 20));
 		areaScroll.setPreferredSize(new Dimension(frameWidth-110, 50));
+		table.setRowHeight(20);
 		
 		// color
 		p_north.setBackground(Color.PINK);

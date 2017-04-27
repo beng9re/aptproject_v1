@@ -30,7 +30,7 @@ import dto.View_inbox;
 
 public class PostBoxMain  extends JFrame{
 	
-	JPanel p_south,p_north,p_boxgrid,p_emp;
+	public JPanel p_south,p_north,p_boxgrid,p_emp;
 	JLabel lb_title;
 	
 	Postbox ps;
@@ -89,12 +89,25 @@ public class PostBoxMain  extends JFrame{
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			try {
+				if(pstmt!=null)pstmt.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+			try {
+				if(rs!=null)rs.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 		
 	}
 	
 	public void setBox(){
-	
+		box.removeAll(box);
 		PreparedStatement pstmt=null;
 		ResultSet rs=null;
 		
@@ -155,7 +168,6 @@ public class PostBoxMain  extends JFrame{
 	
 	public void addList(){
 		p_south.setLayout(new GridLayout(8,6));
-		
 		Postbox ps=null;
 		int flag=0;
 		for(int i=0;i<box.size();i++){

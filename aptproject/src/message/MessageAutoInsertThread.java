@@ -49,6 +49,7 @@ public class MessageAutoInsertThread extends  Thread{
 		PreparedStatement pstmt=null;
 		ResultSet rs=null;
 		StringBuffer sql=new StringBuffer();
+		
 		int msg_send_id;
 		int invoice_id;
 		String invoice_barcode;
@@ -76,7 +77,8 @@ public class MessageAutoInsertThread extends  Thread{
 		sql.append(" and    usr.unit_id = (select unit_id from aptuser fml where fml.aptuser_id = ?) \n");
 		sql.append(" and    not exists (select 0 \n");
 		sql.append("                           from   send_message smg \n");
-		sql.append(" 						      where smg.invoice_id = ivc.invoice_id) \n");
+		sql.append(" 						      where smg.invoice_id = ivc.invoice_id  \n");
+		sql.append(" 						      and     smg.returninv_id is null ) \n");
 		
 		
 		try {
@@ -100,10 +102,10 @@ public class MessageAutoInsertThread extends  Thread{
 				title.append("택배도착 (수신자 : "+recv_user_name+")");
 				
 				msgContent.delete(0, msgContent.length());
-				msgContent.append("수신자 : "+recv_user_name + "\n");
+				msgContent.append("수 신 자 : "+recv_user_name + "\n");
 				msgContent.append("동, 호수 : "+complex_name + " - " + unit_name + "\n");
 				msgContent.append("송장번호 : "+invoice_barcode + "\n");
-				msgContent.append("운송사 : "+company_name + "\n");
+				msgContent.append("운 송 사 : "+company_name + "\n");
 				msgContent.append("도착시간 : "+invoice_arrtime );
 				
 				// next seq_send_message check
@@ -204,6 +206,15 @@ public class MessageAutoInsertThread extends  Thread{
 	public void ReturnCheck(){
 		
 		if (threadFlag==false ) return;
+		
+		if (con==null) return;
+		
+		PreparedStatement pstmt=null;
+		ResultSet rs=null;
+		StringBuffer sql=new StringBuffer();
+		
+		
+		
 		
 	}
 	

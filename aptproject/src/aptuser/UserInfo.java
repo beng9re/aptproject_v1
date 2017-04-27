@@ -28,7 +28,7 @@ import javax.swing.JTextField;
 import javax.swing.filechooser.FileNameExtensionFilter;
 import javax.swing.text.JTextComponent;
 
-import db.AptuserModelByID;
+import db.AptuserModel;
 import dto.Aptuser;
 
 public abstract class UserInfo extends JPanel implements ActionListener {
@@ -50,7 +50,7 @@ public abstract class UserInfo extends JPanel implements ActionListener {
 	String btnTxt;
 	Font font;
 
-	AptuserModelByID model;
+	AptuserModel model;
 	ArrayList<Aptuser> aptuser;
 
 	// 프로그램 전체에서 id와 conn은 항상보유중이어야함 (main으로 부터 가져온다)
@@ -165,7 +165,7 @@ public abstract class UserInfo extends JPanel implements ActionListener {
 	// 회원 정보 불러오기(가입할 때는 불러오지 않아도 된다)
 	public void loadInfo() {
 		// ID로 유저정보를 찾아서 가져온다
-		model = new AptuserModelByID(conn, id);
+		model = new AptuserModel(conn, id);
 		aptuser = model.getData();
 
 		// 필드에 회원정보를 입력한다
@@ -209,6 +209,14 @@ public abstract class UserInfo extends JPanel implements ActionListener {
 				return true;
 			}
 		}
+		// 연락처 형식체크
+		String phoneNum = ((JTextField) fieldData.get("연락처")).getText();
+		if(!phoneNum.matches("^\\d{2,3}-\\d{3,4}-\\d{4}$") || 
+				!phoneNum.matches("^01(?:0|1[6-9])-(?:\\d{3}|\\d{4})-\\d{4}$")) {
+			JOptionPane.showMessageDialog(this, "전화번호는 032-225-1212나 \n 010-2255-1212 같은 형식으로 입력해주세요");
+			return true;
+		}
+		  
 		// 회원 가입 관련 필드 확인
 		if (!((JTextField) fieldData.get("회원ID")).getText().equals("") && !forUpdate) {
 			return regFieldChk();

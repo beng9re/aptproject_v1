@@ -56,7 +56,7 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 	Thread  thread;
 	boolean threadFlag=false;
 	
-	int frameWidth=600;
+	int frameWidth=650;
 	int frameHeight=500;
 	String userID;
 	
@@ -136,9 +136,12 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 		p_south.setPreferredSize(new Dimension(frameWidth, 150));
 		t_title.setPreferredSize(new Dimension(frameWidth-160, 20));
 		areaScroll.setPreferredSize(new Dimension(frameWidth-110, 110));
+		table.setRowHeight(20);
 		
 		// font
 		la_new_msg_chk.setFont(new Font("굴림", Font.ITALIC, 13));
+		t_title.setFont(new Font("Default", Font.BOLD, t_title.getFont().getSize()));
+		area.setFont(new Font("굴림체", Font.BOLD, area.getFont().getSize()));
 		
 		// Editable
 		t_title.setEditable(false);
@@ -169,23 +172,23 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 		table.getColumn("msg_send_content").setWidth(0);
 		table.getColumn("msg_send_content").setMinWidth(0);
 		table.getColumn("msg_send_content").setMaxWidth(0);
-/*		
+		
 		// msg_recieve_id 컬럼 숨기기
 		table.getColumn("msg_recieve_id").setWidth(0);
 		table.getColumn("msg_recieve_id").setMinWidth(0);
 		table.getColumn("msg_recieve_id").setMaxWidth(0);
-*/		
+		
 		// msg_send_user_id 컬럼 숨기기
 		table.getColumn("msg_send_user_id").setWidth(0);
 		table.getColumn("msg_send_user_id").setMinWidth(0);
 		table.getColumn("msg_send_user_id").setMaxWidth(0);
 		
+		table.setDefaultRenderer(Object.class, new RecvMsgCellRender());
+		
+		// 송신자명 size 조정
+		table.getColumn("송신자명").setPreferredWidth(10);
 		// 확인여부 size 조정
-		table.getColumn("확인여부").setPreferredWidth(20);
-		// 확인여부 text 정렬 center
-		DefaultTableCellRenderer  cellRender = new DefaultTableCellRenderer();
-		cellRender.setHorizontalAlignment(JLabel.CENTER);
-		table.getColumn("확인여부").setCellRenderer(cellRender);
+		table.getColumn("확인여부").setPreferredWidth(10);
 		
 		table.updateUI();
 		

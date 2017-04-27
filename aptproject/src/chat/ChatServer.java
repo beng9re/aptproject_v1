@@ -8,7 +8,9 @@ package chat;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
+import java.awt.Component;
 import java.awt.Dimension;
+import java.awt.Font;
 import java.io.IOException;
 import java.net.ServerSocket;
 import java.net.Socket;
@@ -17,6 +19,7 @@ import java.util.concurrent.ConcurrentHashMap;
 import javax.swing.BorderFactory;
 import javax.swing.Box;
 import javax.swing.BoxLayout;
+import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.JScrollPane;
 
@@ -33,6 +36,7 @@ public class ChatServer extends JPanel {
 	ConcurrentHashMap<String, ServerSideChatClient> userList;
 	ConcurrentHashMap<String, JPanel> pnlList;
 	
+	JLabel title;
 	JPanel pnl_content;
 	JScrollPane scroll;
 
@@ -41,16 +45,22 @@ public class ChatServer extends JPanel {
 		userList = new ConcurrentHashMap<String, ServerSideChatClient>();
 		pnlList = new ConcurrentHashMap<String, JPanel>();
 		
+		title = new JLabel("[대화 목록]", JLabel.CENTER);
 		setLayout(new BorderLayout());
 		pnl_content = new JPanel();
 		scroll = new JScrollPane(pnl_content, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
-		pnl_content.setLayout(new BoxLayout(pnl_content, BoxLayout.PAGE_AXIS));
 		
-		add(scroll, BorderLayout.CENTER);
-		
+		title.setFont(new Font("맑은 고딕", Font.BOLD, 24));
+		title.setBorder(BorderFactory.createLineBorder(Color.PINK, 4));
+		title.setPreferredSize(new Dimension(690,60));
 		scroll.getVerticalScrollBar().setUnitIncrement(15);
 		pnl_content.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50));
-		setSize(680, 655);
+		pnl_content.setLayout(new BoxLayout(pnl_content, BoxLayout.Y_AXIS));
+		
+		add(title, BorderLayout.NORTH);
+		add(scroll, BorderLayout.CENTER);
+		
+		setSize(690, 670);
 		
 		// 서버기능을 시작한다
 		mkServer();
@@ -94,10 +104,15 @@ public class ChatServer extends JPanel {
 		JPanel listpan = new JPanel();
 		listpan.add(list);
 		listpan.add(Box.createVerticalStrut(5));
-		listpan.add(Box.createVerticalGlue());
 		pnl_content.add(listpan);
 		
-		//대화리스트 목록를 관리한다
+		//대화리스트 목록를 중복없이 관리한다
+		for (String id : userList.keySet()) {
+			if (id.equals(user_id)) {
+				removeList(id);
+			}
+		}
+		
 		userList.put(user_id, serverChat);
 		pnlList.put(user_id, listpan);
 		updateUI();

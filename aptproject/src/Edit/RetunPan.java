@@ -21,6 +21,7 @@ import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JOptionPane;
 import javax.swing.JPanel;
+import javax.swing.JScrollPane;
 import javax.swing.JTextArea;
 import javax.swing.JTextField;
 
@@ -34,33 +35,28 @@ import dto.Aptuser;
 public class RetunPan extends JPanel implements ActionListener{
 	
 		
-	JLabel title;
 	
-	JLabel lb_id,lb_code,lb_day,lb_taker,lb_outTime,lb_Time,lb_txt;
+	JLabel title,lb_id,lb_code,lb_day,lb_taker,lb_outTime,lb_Time,lb_txt;
 	
 	
 	JTextField tf_id,tf_code;
-
 	public JTextField tf_takeTime;
 	
 	JTextArea rple;
-	
 	ReturnCal calender;
 	
 	
-	JPanel p_info;
-	JPanel p_up;
-	JPanel p_down;
-	JPanel p_emp; //여백용 패널
-	JPanel p_txt;
-	JButton bt_reset;
-	JButton bt_regist;
+	JPanel p_info,p_up,p_down,p_emp,p_txt;
+	JButton bt_reset,bt_regist;
 	GridBagLayout gbl;
 	GridBagConstraints gdc;
 	PopUpTable p;
-	
+	String initday=" 클릭하세요";
+	String initba="스캐너로 바코드를 읽어주세요";
 	String date;
 	String user;
+	JScrollPane sp;
+	
 	ArrayList<Aptuser> userList;
 	Connection con;
 	public RetunPan(){
@@ -70,99 +66,107 @@ public class RetunPan extends JPanel implements ActionListener{
 	public RetunPan(Connection con,ArrayList<Aptuser> userList) {
 		this.userList=userList;
 		this.con=con;
-		System.out.println();
 		
-		
-		p=new PopUpTable(this, con);
-		gbl=new GridBagLayout();
-		gdc=new GridBagConstraints();
 		
 		setLayout(new BorderLayout());
 		
+		//---------------------------------------객체생성
+		sp=new JScrollPane(rple);
 		
+		p=new PopUpTable(this, con);
+		
+		gbl=new GridBagLayout();
+		gdc=new GridBagConstraints();
 		
 		p_up=new JPanel();
 		p_info=new JPanel(gbl);
 		p_down=new JPanel();
 		p_emp=new JPanel();
 		p_txt=new JPanel();
-		//p_info.setPreferredSize(new Dimension(700, 500));
-		
-		p_up.setPreferredSize(new Dimension(700, 100));
 		
 		title=new JLabel("RETRUN");
-		title.setFont(new  Font("고딕",Font.BOLD , 60));
-		title.setForeground(Color.white);
-		
 		lb_id=new JLabel("송장ID"); //회원 id
 		lb_code=new JLabel("바코드"); //바코드
 		lb_taker=new JLabel("수거예정일");//입고시간
-		
-	
 		lb_outTime=new JLabel("");
 		lb_Time =new JLabel("");
-		lb_txt=new JLabel("보네는 말");
+		lb_txt=new JLabel("보내는 말");
+		
 		tf_id=new JTextField(20);
-		
-		tf_code=new JTextField(20);//바코드
-		tf_takeTime=new JTextField("    클릭하세요",20);//수거예정일
-		
-		tf_id.setPreferredSize(new Dimension(20,30));
-		tf_code.setPreferredSize(new Dimension(20,30));
-
-		tf_takeTime.setPreferredSize(new Dimension(20,30));
-		tf_takeTime.setEditable(false);
-	
+		tf_code=new JTextField(initba,20);//바코드
+		tf_takeTime=new JTextField(initday,20);//수거예정일
 		
 		
 		bt_regist=new JButton("입력");
 		bt_reset=new JButton("초기화");
 		rple=new JTextArea();//남김글
+	
+		
+		//-----------------------------------------사이즈조정
+		p_down.setPreferredSize(new Dimension(700, 180));
+		p_emp.setPreferredSize(new Dimension(700, 20));
+		p_up.setPreferredSize(new Dimension(700, 100));
+	
+		tf_takeTime.setPreferredSize(new Dimension(20,30));
+		tf_id.setPreferredSize(new Dimension(20,30));
+		tf_code.setPreferredSize(new Dimension(20,30));
+		
 		rple.setPreferredSize(new Dimension(220, 100));
+		
+		bt_reset.setPreferredSize(new Dimension(180, 50));
+		bt_regist.setPreferredSize(new Dimension(180, 50));
+		
+		//------------------------------------------------------------------라벨속성설정
+		tf_takeTime.setEditable(false);
+		tf_id.setEditable(false);
+		title.setFont(new  Font("고딕",Font.BOLD , 60));
+		
+		//-------------------------------------------------------------- 색상
+		title.setForeground(Color.white);
+		tf_code.setForeground(Color.GRAY);
+		tf_takeTime.setForeground(Color.gray);
+		
+		
 		rple.setBorder(BorderFactory.createLineBorder(Color.pink,2));
-		p_txt.add(rple);
-		
-		
-		add(p_up,BorderLayout.NORTH);
-		p_up.setBackground(Color.pink);
-		p_up.add(title);
-		
-		add(p_info);
-		p_info.setBackground(Color.white);
-		
-		print();
-		
-		
 		tf_id.setBorder(BorderFactory.createLineBorder(Color.PINK, 2));
 		tf_code.setBorder(BorderFactory.createLineBorder(Color.PINK, 2));
 		tf_takeTime.setBorder(BorderFactory.createLineBorder(Color.PINK, 2));
 		
+		bt_reset.setBorder(BorderFactory.createLineBorder(Color.white,2));
+		bt_regist.setBorder(BorderFactory.createLineBorder(Color.white,2));
+		
+		p_info.setBackground(Color.white);
+		p_up.setBackground(Color.pink);
+		p_down.setBackground(Color.pink);
+		p_emp.setBackground(Color.pink);
+		
+		bt_reset.setBackground(new Color(137, 210, 245));
+		bt_regist.setBackground(new Color(137, 210, 245));
+		
+		
+		//---------------------------------------------------------------------------- 추가
+		sp.add(rple);
+		rple.setLineWrap(true);
+		add(p_up,BorderLayout.NORTH);
+		p_up.add(title);
+		
+		add(p_info);
+		
+		print();
 		
 		add(p_down,BorderLayout.SOUTH);
-		p_down.setPreferredSize(new Dimension(700, 180));
-		p_down.setBackground(Color.pink);
 		p_down.add(p_emp);
-		p_emp.setPreferredSize(new Dimension(700, 20));
-		//p_emp.add(rple);
-		p_emp.setBackground(Color.pink);
 		p_down.add(bt_reset);
-		bt_reset.setPreferredSize(new Dimension(180, 50));
-		bt_reset.setBackground(new Color(137, 210, 245));
-		bt_reset.setBorder(BorderFactory.createLineBorder(Color.white,2));
-		
 		p_down.add(bt_regist);
-		bt_regist.setPreferredSize(new Dimension(180, 50));
-		bt_regist.setBackground(new Color(137, 210, 245));
-		bt_regist.setBorder(BorderFactory.createLineBorder(Color.white,2));
 		
 	
 		/////////////////////////////////////////////////////////////////////////////
 		//이벤트 구현부분///////////////////////////////////////////////////////////
 		
-		tf_id.setEditable(false);
 		
 		tf_id.addMouseListener(invoiceClick);
 		tf_takeTime.addMouseListener(TakerClick);
+		tf_code.addMouseListener(codeClick);
 		bt_regist.addActionListener(this);
 		bt_reset.addActionListener(this);
 		
@@ -187,12 +191,24 @@ public class RetunPan extends JPanel implements ActionListener{
 		GridCom g_t3=new GridCom(p_info, gbl, gdc, lb_taker,			0, 2, 1,1,0, 0);
 		GridCom g_l3=new GridCom(p_info, gbl, gdc, tf_takeTime, 	1, 2, 1,1,0, 0);
 		GridCom g_commentl=new GridCom(p_info, gbl, gdc,lb_txt, 0, 3, 1,1, 0, 0);
-		GridCom g_comment=new GridCom(p_info, gbl, gdc,rple, 1, 3, 1,1, 0, 0);
+		GridCom g_comment=new GridCom(p_info, gbl, gdc,sp, 1, 3, 1,1, 0, 0);
 		GridCom g_timeT=new GridCom(p_info, gbl, gdc, lb_outTime,    3, 7, 1, 1, 0, 0);
 		GridCom g_time=new GridCom(p_info, gbl, gdc, lb_Time,   		3, 8, 1, 1, 0, 0);
 		
 		
 	}
+	
+	
+	//각각의 이벤트객체 생성
+	MouseListener codeClick=new MouseAdapter() {
+		public void mouseClicked(java.awt.event.MouseEvent e) {
+			tf_code.setText("");
+			tf_code.setForeground(Color.black);
+			
+			
+		};
+	};
+	
 	MouseListener invoiceClick=new MouseAdapter() {
 		public void mouseClicked(java.awt.event.MouseEvent e) {
 			p.setVisible(true);
@@ -203,6 +219,7 @@ public class RetunPan extends JPanel implements ActionListener{
 		public void mouseClicked(java.awt.event.MouseEvent e) {
 			if(calender==null){
 				calender=new ReturnCal(RetunPan.this);
+				
 				
 			}
 			else{
@@ -257,12 +274,15 @@ public class RetunPan extends JPanel implements ActionListener{
 	}
 	
 	public void reset(){
-	
-		System.out.println("초기화");
 		tf_id.setText(null);
-		tf_code.setText(null);
-	
-		tf_takeTime.setText("  클릭해주세요");
+		tf_code.setText(initba);
+		tf_takeTime.setText(initday);
+		
+		tf_code.setForeground(Color.gray);
+		tf_takeTime.setForeground(Color.gray);
+		
+		rple.setText(null);
+		System.out.println("초기화");
 		
 		
 		
@@ -275,7 +295,20 @@ public class RetunPan extends JPanel implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		Object obj=e.getSource();
 		if(obj==bt_regist){
+			
+			if(tf_code.getText().equals(initba)){
+				JOptionPane.showMessageDialog(this, "바코드를 입력해주세요");
+				return;
+				
+			}else if(tf_takeTime.getText().equals(initday)){
+				JOptionPane.showMessageDialog(this, "날짜를 선택해주세요");
+				return;
+				
+			}
+			
 			regist();
+			reset();
+			
 		}else if(obj==bt_reset){
 			reset();
 		}
