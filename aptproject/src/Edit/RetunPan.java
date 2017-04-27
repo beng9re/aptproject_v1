@@ -58,6 +58,8 @@ public class RetunPan extends JPanel implements ActionListener{
 	GridBagLayout gbl;
 	GridBagConstraints gdc;
 	PopUpTable p;
+	String initday=" 클릭하세요";
+	String initba="스캐너로 바코드를 읽어주세요";
 	
 	String date;
 	String user;
@@ -104,8 +106,9 @@ public class RetunPan extends JPanel implements ActionListener{
 		lb_txt=new JLabel("보네는 말");
 		tf_id=new JTextField(20);
 		
-		tf_code=new JTextField(20);//바코드
-		tf_takeTime=new JTextField("클릭하세요",20);//수거예정일
+		tf_code=new JTextField(initba,20);//바코드
+		tf_code.setForeground(Color.GRAY);
+		tf_takeTime=new JTextField(initday,20);//수거예정일
 		tf_takeTime.setForeground(Color.gray);
 		
 		tf_id.setPreferredSize(new Dimension(20,30));
@@ -164,6 +167,7 @@ public class RetunPan extends JPanel implements ActionListener{
 		
 		tf_id.addMouseListener(invoiceClick);
 		tf_takeTime.addMouseListener(TakerClick);
+		tf_code.addMouseListener(codeClick);
 		bt_regist.addActionListener(this);
 		bt_reset.addActionListener(this);
 		
@@ -194,6 +198,15 @@ public class RetunPan extends JPanel implements ActionListener{
 		
 		
 	}
+	MouseListener codeClick=new MouseAdapter() {
+		public void mouseClicked(java.awt.event.MouseEvent e) {
+			tf_code.setText("");
+			tf_code.setForeground(Color.black);
+			
+			
+		};
+	};
+	
 	MouseListener invoiceClick=new MouseAdapter() {
 		public void mouseClicked(java.awt.event.MouseEvent e) {
 			p.setVisible(true);
@@ -204,6 +217,7 @@ public class RetunPan extends JPanel implements ActionListener{
 		public void mouseClicked(java.awt.event.MouseEvent e) {
 			if(calender==null){
 				calender=new ReturnCal(RetunPan.this);
+				
 				
 			}
 			else{
@@ -261,9 +275,11 @@ public class RetunPan extends JPanel implements ActionListener{
 	
 		System.out.println("초기화");
 		tf_id.setText(null);
-		tf_code.setText(null);
+		tf_code.setText(initba);
+		tf_code.setForeground(Color.gray);
 	
-		tf_takeTime.setText("  클릭해주세요");
+		tf_takeTime.setText(initday);
+		tf_takeTime.setForeground(Color.gray);
 		
 		
 		
@@ -276,7 +292,20 @@ public class RetunPan extends JPanel implements ActionListener{
 	public void actionPerformed(ActionEvent e) {
 		Object obj=e.getSource();
 		if(obj==bt_regist){
+			
+			if(tf_code.getText().equals(initba)){
+				JOptionPane.showMessageDialog(this, "바코드를 입력해주세요");
+				return;
+				
+			}else if(tf_takeTime.getText().equals(initday)){
+				JOptionPane.showMessageDialog(this, "날짜를 선택해주세요");
+				return;
+				
+			}
+			
 			regist();
+			reset();
+			
 		}else if(obj==bt_reset){
 			reset();
 		}

@@ -119,46 +119,17 @@ public class Admin_UserView extends JPanel implements ActionListener {
 		rb_user.addActionListener(this);
 
 		table.addMouseListener(new MouseAdapter() {
-
 			public void mouseClicked(MouseEvent e) {
-				int row = table.getSelectedRow();
-				int col = table.getSelectedColumn();
-				String colName = table.getColumnName(col);
-				String value = (String) table.getValueAt(row, col);
-				if (colName.equals("이름") || colName.equals("전화번호") || colName.equals("거주여부")) {
-					String name = JOptionPane.showInputDialog(colName + "를 수정해 주세요");
-					if (name != null) {
-						adminModel.setValueAt(name, row, col);
-						tableChanged(row, col);
-					}
-				} else if (colName.equals("호")) {
-					PreparedStatement pstmt = null;
-					String option = "unit_name";
-					String name = JOptionPane.showInputDialog(colName + "를 수정해 주세요");
+				choiceValue();
 
-					String sql = "update unit set " + option + "=" + "'" + name + "' ";
-					sql += "where " + option + "= '" + value + "'";
+			}
+		});
 
-					try {
-						pstmt = con.prepareStatement(sql);
-						pstmt.executeUpdate();
-			
-						if (name != null) {
-							adminModel.setValueAt(name, row, col);
-							table.setValueAt(name, row, col);
-							table.updateUI();
-						}
-					} catch (SQLException e1) {
-						e1.printStackTrace();
-					} finally {
-						if (pstmt != null) {
-							try {
-								pstmt.close();
-							} catch (SQLException e1) {
-								e1.printStackTrace();
-							}
-						}
-					}
+		table.addKeyListener(new KeyAdapter() {
+			public void keyReleased(KeyEvent e) {
+				int key = e.getKeyCode();
+				if (key == KeyEvent.VK_UP || key == KeyEvent.VK_DOWN) {
+					choiceValue();
 				}
 			}
 		});
@@ -361,5 +332,79 @@ public class Admin_UserView extends JPanel implements ActionListener {
 
 		}
 
+	}
+
+	public void choiceValue() {
+		int row = table.getSelectedRow();
+		int col = table.getSelectedColumn();
+		String colName = table.getColumnName(col);
+		String value = (String) table.getValueAt(row, col);
+		if (colName.equals("이름") || colName.equals("전화번호") || colName.equals("거주여부")) {
+			String name = JOptionPane.showInputDialog(colName + "를 수정해 주세요");
+			if (name != null) {
+				adminModel.setValueAt(name, row, col);
+				tableChanged(row, col);
+			}
+		} else if (colName.equals("호")) {
+			PreparedStatement pstmt = null;
+			String option = "unit_name";
+			String name = JOptionPane.showInputDialog(colName + "를 수정해 주세요");
+
+			String sql = "update unit set " + option + "=" + "'" + name + "' ";
+			sql += "where " + option + "= '" + value + "'";
+
+			try {
+				pstmt = con.prepareStatement(sql);
+				pstmt.executeUpdate();
+
+				if (name != null) {
+					adminModel.setValueAt(name, row, col);
+					for (int i = 0; i < table.getRowCount(); i++) {
+						table.setValueAt(name, i, col);
+					}
+					table.updateUI();
+				}
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			} finally {
+				if (pstmt != null) {
+					try {
+						pstmt.close();
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
+				}
+			}
+		} else if (colName.equals("동")) {
+			PreparedStatement pstmt = null;
+			String option = "complex_name";
+			String name = JOptionPane.showInputDialog(colName + "를 수정해 주세요");
+
+			String sql = "update complex set " + option + "=" + "'" + name + "' ";
+			sql += "where " + option + "= '" + value + "'";
+
+			try {
+				pstmt = con.prepareStatement(sql);
+				pstmt.executeUpdate();
+
+				if (name != null) {
+					adminModel.setValueAt(name, row, col);
+					for (int i = 0; i < table.getRowCount(); i++) {
+						table.setValueAt(name, i, col);
+					}
+					table.updateUI();
+				}
+			} catch (SQLException e1) {
+				e1.printStackTrace();
+			} finally {
+				if (pstmt != null) {
+					try {
+						pstmt.close();
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
+				}
+			}
+		}
 	}
 }
