@@ -56,9 +56,7 @@ public class Postbox extends JPanel implements MouseListener{
 	 * 
 	 * */
 	
-	
-	
-	//없는것 				있는것
+
 	PostBoxMain pm;
 	public Postbox(Vector vec,Container c,String path,Connection con,PostBoxMain pm) {
 		this.vec=vec;
@@ -102,6 +100,13 @@ public class Postbox extends JPanel implements MouseListener{
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
+		}finally{
+			try {
+				if(pstmt!=null)pstmt.close();
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
 		}
 	}
 	
@@ -163,18 +168,12 @@ public class Postbox extends JPanel implements MouseListener{
 		}
 		
 	}
-	@Override
-	public void mousePressed(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
-	@Override
-	public void mouseReleased(MouseEvent e) {
-		// TODO Auto-generated method stub
-		
-	}
 
-	@Override
+	public void mousePressed(MouseEvent e) {}
+
+	public void mouseReleased(MouseEvent e) {}
+
+
 	public void mouseEntered(MouseEvent e) {
 		url=this.getClass().getResource("/box3.png");
 		try {
@@ -183,12 +182,12 @@ public class Postbox extends JPanel implements MouseListener{
 			pm.repaint();
 			
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
+		
 			e1.printStackTrace();
 		}
 		
 	}
-	@Override
+
 	public void mouseExited(MouseEvent e) {
 		url=this.getClass().getResource(abpath);
 		try {
@@ -196,7 +195,7 @@ public class Postbox extends JPanel implements MouseListener{
 			this.repaint();
 			pm.repaint();
 		} catch (IOException e1) {
-			// TODO Auto-generated catch block
+		
 			e1.printStackTrace();
 		}
 		
