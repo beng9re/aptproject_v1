@@ -218,8 +218,6 @@ public class ComplexPanel extends JPanel implements ActionListener {
 
 	// 등록 버튼 이벤트 메서드
 	public void regist() {
-
-		
 		System.out.println("등록");
 
 		PreparedStatement pstmt = null;
@@ -227,7 +225,7 @@ public class ComplexPanel extends JPanel implements ActionListener {
 		String sql;
 		String complex = mp.t_complex.getText();
 		// 등록했을때 동 데이터에 입력하기
-
+		
 		sql = "INSERT INTO COMPLEX(complex_id,COMPLEX_NAME)VALUES (seq_complex.nextval,?)";
 
 		try {
@@ -254,7 +252,7 @@ public class ComplexPanel extends JPanel implements ActionListener {
 			if (rs.next()) {
 				complex_list.add(rs.getInt("currval"));
 			}
-			System.out.println(complex_list.size());
+			System.out.println("이거는 컴플렉스 아이디"+complex_list.get(0));
 
 			// 호수 구하기
 
@@ -262,10 +260,10 @@ public class ComplexPanel extends JPanel implements ActionListener {
 			String floor = mp.t_floor2.getText();
 			String unit = mp.t_unit2.getText();
 
-			c_id = (int) complex_list.get(a);
+			int c_id = (int) complex_list.get(a);
 			// System.out.println(c_id);
 
-			//sql = "INSERT INTO unit(unit_id,unit_NAME,complex_id ) VALUES(seq_unit.nextval,?,?)";
+			sql = "INSERT INTO unit(unit_id,unit_NAME,complex_id)VALUES (seq_unit.nextval,?,?)";
 
 			vec.removeAll(vec);
 
@@ -283,25 +281,32 @@ public class ComplexPanel extends JPanel implements ActionListener {
 				}
 			}
 
-			
-			//호수 등록 
-			insertThread = new Thread(){
-				public void run(){
-					for(int i = 0; i < vec.size(); i++){
-						registHo(i);
-						/*						
-						try {
-							Thread.sleep(10);
-						} catch (InterruptedException e) {
-							e.printStackTrace();
-						}
-						*/						
-					}
+			for (int i = 0; i < vec.size(); i++) {
+				ss = vec.get(i);
+
+				pstmt = con.prepareStatement(sql);
+				pstmt.setString(1, ss+" 호");
+				pstmt.setInt(2, c_id);
+				int sq1 = pstmt.executeUpdate();
+				complex_list.removeAll(complex_list);
+				
+
+				if (sq1 != 0) {
+					System.out.println("동입력성공");				
 					
-					JOptionPane.showMessageDialog(ComplexPanel.this, "등록에 성공하였습니다");
+					try {
+						
+					} catch (Exception e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+					con.commit();
+					System.out.println("커밋 ㄱㄱ");
+					
 				}
-			};
-			insertThread.start();
+				
+			}
+			JOptionPane.showMessageDialog(this, "등록에 성공하였습니다");
 			
 		} catch (SQLException e) {
 			e.printStackTrace();
@@ -338,40 +343,6 @@ public class ComplexPanel extends JPanel implements ActionListener {
 
 	}
 	
-	//호수 입력 메서드 
-	public void registHo(int i){
-		PreparedStatement pstmt=null;
-		String ss=null;
-		String sql=null;
-		
-	
-		ss = vec.get(i);
-		sql = "INSERT INTO unit(unit_id,unit_NAME,complex_id ) VALUES(seq_unit.nextval,?,?)";
-		
-		try {
-			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, ss+" 호");
-			pstmt.setInt(2, c_id);
-			int sq1 = pstmt.executeUpdate();
-			System.out.println(sql);
-			if (sq1 != 0) {
-				System.out.println("동입력성공");				
-			}				
-			con.commit();
-		} catch (SQLException e1) {
-			e1.printStackTrace();
-		}finally{
-			if(pstmt !=null){
-				try {
-					pstmt.close();
-				} catch (SQLException e) {
-					e.printStackTrace();
-				}
-			}
-		}
-		System.out.println("커밋 ㄱㄱ");
-		
-	}
 	
 
 	public boolean checkInputOnlyNumberAndAlphabet(){
