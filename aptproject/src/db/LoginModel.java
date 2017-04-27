@@ -3,19 +3,18 @@ package db;
 import java.net.InetAddress;
 import java.net.UnknownHostException;
 import java.sql.Connection;
-import java.sql.ResultSet;
 import java.sql.SQLException;
 
+import dto.Aptuser;
+
 public class LoginModel extends AptuserModel {
-	private String dfSQL = "select * from aptuser where aptuser_id = ? and aptuser_pw = ?";
-	private String sql = dfSQL;
+	private String sql;
 	private String id, pw, barcode, ip;
-	private String mode = "login";
+	private String mode;
 	private String condition;
 
 	public LoginModel(Connection conn) {
 		this.conn = conn;
-		aptuserModel(sql, false);
 	}
 
 	protected void setSQL() throws SQLException {
@@ -52,8 +51,9 @@ public class LoginModel extends AptuserModel {
 		this.id = id;
 		this.pw = String.valueOf(pw);
 		mode = "login";
-		sql = dfSQL;
-		aptuserModel(sql, false);
+		sql = "select * from aptuser where aptuser_id = ? and aptuser_pw = ?";
+		super.appendix = false;
+		init(super.colName, sql);
 		return doChk();
 	}
 
@@ -62,18 +62,25 @@ public class LoginModel extends AptuserModel {
 		this.barcode = barcode;
 		mode = "barcode";
 		sql = "select * from aptuser where aptuser_code = ?";
-		aptuserModel(sql, false);
+		super.appendix = false;
+		init(super.colName, sql);
 		return doChk();
+	}
+	
+	public String getVerifiedID() {
+		if (arrList.size() == 1) {
+			return ((Aptuser)arrList.get(0)).getAptuser_id(); 
+		}
+		return null;
 	}
 	
 	// 회원 존재여부를 판단하는 메서드
 	private boolean doChk() {
-		boolean result = false;
 		if (arrList.size() == 1) {
 			setIPAddress();
-			result = true;
+			return true;
 		}
-		return result;
+		return false;
 	}
 
 	// 회원 ip정보를 db에 입력한다
@@ -93,7 +100,8 @@ public class LoginModel extends AptuserModel {
 		
 		condition = mode;
 		mode = "ip";
-		aptuserModel(sql, false);
+		super.appendix = false;
+		init(super.colName, sql);
 	}
 
 }

@@ -127,7 +127,7 @@ public class ChatClient extends JFrame {
 		// 접속유형 (관리자 답변용, 회원 문의용)에 따라 소켓생성여부를 다르게하고
 		// 관리자를 위한 별도의 ChatClient를 생성한다(받아온 socket으로 생성함)
 		try {
-			// aptuser테이블에 있는 관리자 ip를 얻어와서 접속한다
+			// 관리자 ip를 얻어와서 접속한다
 			socket = new Socket(main.getSeverIP(), 7777);
 			thread = new ChatClientThread(socket, this);
 		} catch (IOException e) {
