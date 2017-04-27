@@ -211,9 +211,91 @@ public class MessageAutoInsertThread extends  Thread{
 		
 		PreparedStatement pstmt=null;
 		ResultSet rs=null;
+		ResultSet rsSub=null;
+		
 		StringBuffer sql=new StringBuffer();
+		String user_name;
+		String complex_name;
+		String unit_name;
+		String returninv_time;
+		String returninv_barcode;
+		String returninv_date;
+		String returninv_comment;
+		int returninv_id;
+		String returninv_msg_type;
+		StringBuffer title = new StringBuffer();
+		StringBuffer  msgContent=new StringBuffer();
 		
-		
+		// 유저가 등록한 반품정보
+		sql.append(" select usr.aptuser_name \n");
+        sql.append("          ,cpl.complex_name \n");
+        sql.append(" 	        ,unt.unit_name \n");
+        sql.append(" 	        ,rtn.returninv_time \n"); 
+        sql.append(" 	        ,rtn.returninv_barcode \n");
+        sql.append(" 	        ,rtn.returninv_date \n");
+        sql.append(" 	        ,rtn.returninv_comment \n");
+        sql.append(" 	        ,rtn.returninv_id \n");
+        sql.append(" 	        ,'R' returninv_msg_type \n");
+        sql.append(" from   returninv  rtn \n");
+        sql.append("           ,invoice    ivc \n");
+        sql.append("           ,aptuser    usr \n");
+        sql.append(" 	         ,unit       unt \n");
+        sql.append(" 	         ,complex    cpl \n");
+        sql.append(" where  ivc.invoice_id = rtn.invoice_id \n");
+        sql.append(" and     usr.aptuser_id = ivc.aptuser_id \n");
+        sql.append(" and     unt.unit_id = usr.unit_id \n");
+        sql.append(" and     cpl.complex_id = unt.complex_id \n");
+        sql.append(" and     ivc.aptuser_id = ? \n");
+        sql.append(" and     rtn.returninv_arr is null \n");
+        sql.append(" and     rtn.returninv_dep is null \n");
+        sql.append(" and     not exists (select 0 \n");
+        sql.append("                            from   recieve_message rm \n");
+        sql.append(" 				                        ,send_message    sm \n");
+        sql.append(" 				              where  sm.msg_send_id = rm.msg_send_id \n");
+        sql.append(" 				              and    sm.returninv_id = rtn.returninv_id \n");
+        sql.append(" 				              and    sm.returninv_msg_type = 'R') \n");
+        
+		try {
+	        // Connection Auto Commit 잠시 false
+			con.setAutoCommit(false);
+			
+			pstmt = con.prepareStatement(sql.toString());
+			pstmt.setString(1, userID);
+			rs=pstmt.executeQuery();
+			
+			while (rs.next()){
+				user_name 				= rs.getString("user_name");
+				complex_name 		= rs.getString("user_name");
+				unit_name 				= rs.getString("user_name");
+				returninv_time 			= rs.getString("user_name");
+				returninv_barcode 	= rs.getString("user_name");
+				returninv_date 			= rs.getString("user_name");
+				returninv_comment 	= rs.getString("user_name");
+				returninv_id 				= rs.getInt("returninv_id");
+				returninv_msg_type 	= rs.getString("user_name");
+				
+				title.delete(0, title.length());
+				title.append("반품요청등록 ("+user_name+", "+returninv_barcode+")");
+				
+				msgContent.delete(0, msgContent.length());
+				msgContent.append("이     름 : "+user_name + "\n");
+				msgContent.append("동, 호수 : "+complex_name + " - " + unit_name + "\n");
+				msgContent.append("바 코 드 : "+returninv_barcode + "\n");
+				msgContent.append("수거예정일 : "+returninv_date + "\n");
+				msgContent.append("Comment : "+returninv_comment );
+				
+				// next seq_send_message check
+				sql.delete(0, sql.length());
+				sql.append(" select  seq_send_message.nextval msg_send_id from dual");
+				pstmt = con.prepareStatement(sql.toString());
+				rsSub=pstmt.executeQuery();
+				
+			}
+			
+		} catch (SQLException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
 		
 		
 	}
