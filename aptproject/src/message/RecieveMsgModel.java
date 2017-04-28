@@ -49,6 +49,7 @@ public class RecieveMsgModel extends AbstractTableModel{
 		sql.append(" and    u.aptuser_id     = s.msg_send_user_id \n");
 		sql.append(" and    r.msg_recv_user_id = ? \n");
 		sql.append(" and   (u.aptuser_name like ? or  \n");
+		sql.append("           nvl(r.msg_confirm_flag,'N') like ? or");
 		sql.append("            s.msg_send_title like ? )  \n");
 		sql.append(" order by r.msg_recieve_time desc ");
 		
@@ -60,6 +61,7 @@ public class RecieveMsgModel extends AbstractTableModel{
 			pstmt.setString(1, userId);
 			pstmt.setString(2, "%"+search+"%");
 			pstmt.setString(3, "%"+search+"%");
+			pstmt.setString(4, "%"+search+"%");
 			rs = pstmt.executeQuery();
 
 			data.removeAll(data);
