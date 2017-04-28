@@ -205,13 +205,13 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 	public void close(){
 		this.treeMain.removeMenuOpenList(this);
 		threadFlag=false;
-		System.out.println("recieve_message : threadFlag="+threadFlag);
+		//System.out.println("recieve_message : threadFlag="+threadFlag);
 	}
 	
 	public void search(){
 		
 		table.clearSelection();
-		System.out.println("search");
+		//System.out.println("search");
 		String srch = t_input.getText();
 		model.getList(srch);
 		table.updateUI();

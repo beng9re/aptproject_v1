@@ -420,11 +420,11 @@ public class ComplexPanel extends JPanel implements ActionListener {
 
 	// 취소 버튼 이벤트 메서드
 	public void cancle() {
-		serch();
-		/*	mp.t_complex.setText(null);
+		
+		mp.t_complex.setText(null);
 		mp.t_floor2.setText(null);
 		mp.t_unit2.setText(null);
-*/
+
 	}
 
 	// 테이블 확인 메서드

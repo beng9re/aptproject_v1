@@ -348,13 +348,13 @@ public class User extends JPanel implements ActionListener, ItemListener {
 				pstmt = con.prepareStatement(sql);
 				int result = pstmt.executeUpdate();
 				
-				//무인함 번호 지우기
-//				String ssql = "update storagebox  set invoice_id = null, box_use='N'";
+//				//무인함 번호 지우기
+//			String ssql = "update storagebox  set box_num = 0, box_use='N'";
 //				ssql += " where box_num=" + table.getValueAt(row, 8);
-//				
-//				System.out.println(ssql);
-//				pstmt = con.prepareStatement(ssql);
-//				int bresult = pstmt.executeUpdate();
+//			
+//			System.out.println(ssql);
+//			pstmt = con.prepareStatement(ssql);
+//			int bresult = pstmt.executeUpdate();
 				
 				StringBuffer sb = new StringBuffer();
 				sb.append(
@@ -362,7 +362,6 @@ public class User extends JPanel implements ActionListener, ItemListener {
 				sb.append(
 						" from view_inbox i inner join view_ac a on i.aptuser_id =a.aptuser_id and i.invoice_takeflag ='N' and a.unit_id="
 								+ unit);
-				System.out.println(sb.toString());
 				getList(sb);
 				String a = (String) userModel.getValueAt(row, 5);
 				String b= (String) userModel.getValueAt(row, 6);
