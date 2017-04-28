@@ -40,6 +40,7 @@ import javax.swing.tree.DefaultMutableTreeNode;
 
 import Edit.InvEditPan;
 import Edit.RetunPan;
+import apt.test.NewAptPanel;
 import aptuser.ModifyAdmin;
 import aptuser.ModifyUser;
 import aptuser.RegistUser;
@@ -738,9 +739,8 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 				curPanel = chartMain;
 			} else if (className.equalsIgnoreCase("NewAptPanel")) {
 				// 아파트 현황
-				//NewAptPanel  newAptPanel = new NewAptPanel();
-				//curPanel = newAptPanel;
-				JOptionPane.showMessageDialog(this, "준비중 입니다....");
+				NewAptPanel  newAptPanel = new NewAptPanel();
+				curPanel = newAptPanel;
 				
 			} else {
 				// System.out.println("menu 없음.");
