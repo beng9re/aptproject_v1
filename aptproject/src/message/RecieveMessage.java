@@ -136,6 +136,7 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 		p_south.setPreferredSize(new Dimension(frameWidth, 150));
 		t_title.setPreferredSize(new Dimension(frameWidth-160, 20));
 		areaScroll.setPreferredSize(new Dimension(frameWidth-110, 110));
+		table.setRowHeight(20);
 		
 		// font
 		la_new_msg_chk.setFont(new Font("±¼¸²", Font.ITALIC, 13));

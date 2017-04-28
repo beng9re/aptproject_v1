@@ -14,12 +14,19 @@ import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
+import java.util.ArrayList;
+import java.util.HashMap;
+import java.util.TreeMap;
+import java.util.TreeSet;
 import java.util.Vector;
 
 import javax.swing.JButton;
 import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
+
+import com.sun.javafx.collections.MappingChange.Map;
+import com.sun.javafx.scene.paint.GradientUtils.Parser;
 
 import complex.regist.table.TableController;
 import db.DBManager;
@@ -32,7 +39,6 @@ public class NewAptPanel extends JPanel implements ActionListener {
 	JPanel p_north, p_center;
 	JButton bt_check;
 	Choice choice;
-	DrawApt drawApt;// 아파트 패널
 	SideApt sideApt;//옆의 조그만 아파트 패널
 	
 	int index;// 초이스 셀렉트 인덱스를 담는 변수
@@ -40,12 +46,28 @@ public class NewAptPanel extends JPanel implements ActionListener {
 	// 호수를 담는 벡터
 	Vector<ComplexDto> complexData = new Vector<ComplexDto>();
 	// 동을 담는 벡터
-	Vector<Unit> unitData = new Vector<Unit>();
+	
+	ArrayList<Integer> Apt=new ArrayList<Integer>();
+
+	
+	
+	//////////////////////////////////////////////////////////
+	TreeMap<Integer, TreeSet<Integer>> unitTotal;
+	//////////////////////////////////////////////////////////
+	
+	//Vector<Unit> unitData = new Vector<Unit>();
 	//동 뿌릴떄 컨트롤 하기 위해 담은 벡터
 	Vector<DrawApt> list = new Vector<DrawApt>();
+	
+	
 	//택배 보관함 여부를 담은 벡터
 	Vector<AptStorageDto> boxData=new Vector<AptStorageDto>();
 	///////////////////////////////////////////////
+	
+	
+	HashMap<String, Integer> unitInvoice;
+	String selectedComplex;
+	
 	Connection con;
 	DBManager manager = DBManager.getInstance();
 
@@ -104,7 +126,7 @@ public class NewAptPanel extends JPanel implements ActionListener {
 
 		getApt();// dto 구해서 벡터에 담기
 		Boxget();//box 정보 구해서 벡터 담기
-
+		
 	}
 
 	// dto 구해서 벡터에 담기
@@ -112,7 +134,7 @@ public class NewAptPanel extends JPanel implements ActionListener {
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 
-		String sql = "select * from complex ORDER BY complex.COMPLEX_ID ASC";
+		String sql = "select * from complex ORDER BY complex.complex_name ASC";
 		try {
 			pstmt = con.prepareStatement(sql);
 			rs = pstmt.executeQuery();
@@ -154,35 +176,36 @@ public class NewAptPanel extends JPanel implements ActionListener {
 
 	// 화면에 뿌릴 호수 구하기
 	public void getUnit() {
-
+		//kingMap.remove(kingMap);
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
 
-		String sql = "select * FROM UNIT u WHERE u.COMPLEX_ID=? ORDER BY unit_name asc";
+		String sql = "select unit_name FROM view_cput WHERE complex_name=? ORDER BY unit_name asc";
 		try {
 
 			pstmt = con.prepareStatement(sql);
-			index = choice.getSelectedIndex();
-
+			int index = choice.getSelectedIndex();
+			selectedComplex = choice.getSelectedItem();
+			
 			if (index - 1 >= 0) {
 				ComplexDto dto = complexData.get(index - 1);
-
-				pstmt.setInt(1, dto.getComplex_id());
+				
+				pstmt.setString(1, selectedComplex);
 				rs = pstmt.executeQuery();
+				
 			}
-			unitData.removeAll(unitData);
-
+			//unitData.removeAll(unitData); 데이터 비우기
+			
+			
 			while (rs.next()) {
-				Unit vo = new Unit();
-
-				vo.setUnit_id(rs.getInt("unit_id"));
-				vo.setUnit_name(rs.getString("unit_name"));
-				vo.setComplex_id(rs.getInt("complex_id"));
-
-				unitData.add(vo);
-
+				
+				int unit=Integer.parseInt(rs.getString("unit_name").split("\\s")[0]);
+				Apt.add(unit);
+			
+		
 			}
-
+			
+			sortunit();
 		} catch (SQLException e) {
 			// TODO Auto-generated catch block
 			e.printStackTrace();
@@ -207,30 +230,57 @@ public class NewAptPanel extends JPanel implements ActionListener {
 		}
 
 	}
-
+	public void sortunit(){
+		
+		unitTotal = new TreeMap<Integer, TreeSet<Integer>>();
+		int res = 0;
+		TreeSet<Integer> unitList = null;
+		for (int i = 0; i < Apt.size(); i++) {
+			res = Apt.get(i);
+			int floor = res / 100;
+			if (unitTotal.get(floor) == null) {
+				unitTotal.put(floor, new TreeSet<Integer>());
+			}
+			unitList = unitTotal.get(Integer.valueOf(floor));
+			unitList.add(Integer.valueOf(res % 100));
+		}
+		System.out.println(unitTotal);
+	}
+	
+	
 	// 화면에 아파트 뿌리기
 	public void createApt() {
 		p_center.removeAll();
 		list.removeAll(list);
-		for (int i = 0; i < unitData.size(); i++) {
+		for (int i = 1; i <= unitTotal.size(); i++) {
 
-			drawApt = new DrawApt();
-			drawApt.la_name.setText(unitData.get(i).getUnit_name());
-			list.add(drawApt);
+			int fl = i*100;
+			ArrayList<Integer> unitList = new ArrayList<Integer>(unitTotal.get(Integer.valueOf(i)));
+			for (Integer unitNum : unitList) {
+				DrawApt drawApt = new DrawApt();
+				String yORn = null;
+				String unitN = Integer.toString(fl+unitNum);
+				if (unitInvoice.get(selectedComplex+"-"+unitN+" 호")!=null) {
+					unitN += "택배";
+				}
+				drawApt.la_name.setText(unitN);
+				list.add(drawApt);
+				
+			}
+			System.out.println(list);
 
 		}
 
-		SideApt.la_info.setText(complexData.get(index - 1).getComplex_name());
+//		SideApt.la_info.setText(complexData.get(index - 1).getComplex_name());
 		addApt();
-		System.out.println(unitData.size());
-		System.out.println(list.size());
+//		System.out.println(unitData.size());
+//		System.out.println(list.size());
 
 	}
 	//아파트 벡터에 담고 뿌리기
 	public void addApt() {
-		for (int i = list.size()- 1; i >= 0; i--) {
+		for (int i =list.size()-1; i >= 0; i--) {
 			if (list.size() != 0) {
-				System.out.println("asdasd");
 				p_center.add(list.get(i));
 				p_center.updateUI();
 			}
@@ -241,22 +291,18 @@ public class NewAptPanel extends JPanel implements ActionListener {
 		PreparedStatement pstmt=null;
 		ResultSet rs=null;
 		
-		String sql="select v.complex_name,v.unit_name,b.box_num,b.box_use";
-				sql+=" FROM VIEW_ACIS v,storagebox b WHERE b.INVOICE_ID=v.INVOICE_ID";
+		String sql="select complex_name,unit_name,invoice_id";
+				sql+=" FROM VIEW_ACIS";
 				System.out.println(sql);
 		try {
 			pstmt=con.prepareStatement(sql);
 			
 			rs=pstmt.executeQuery();
+			unitInvoice=new HashMap<String, Integer>();
 			
-			while(rs.next()){
-				AptStorageDto dto=new AptStorageDto();
-				dto.setComplex_name(rs.getString("complex_name"));
-				dto.setUnit_name(rs.getString("unit_name"));
-				dto.setBox_num(rs.getInt("box_num"));
-				dto.setBox_use(rs.getString("box_use"));
+			while(rs.next()){		
+				unitInvoice.put(rs.getString("complex_name")+"-"+rs.getString("unit_name"),rs.getInt("invoice_id"));
 				
-				boxData.add(dto);			
 			}
 			Boxset();
 			

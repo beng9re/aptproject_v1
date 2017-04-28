@@ -37,14 +37,19 @@ public class ComplexPanel extends JPanel implements ActionListener {
 
 	Vector<String> vec = new Vector<String>();// 호수를 담기 위한 벡터
 	Vector complex_list = new Vector();//
-
+	Vector<Vector> unique=new Vector<Vector>();//중복값 담기 위한 벡터
 	// 동호수를 담기위한 변수
 	int a = 0;
 	//안내선 색깔 변경 변수
 	boolean flag=false;
-
+	boolean uniq=false;
 	TableController controller;
-
+	
+	//insert 속도 루즈... 
+	Thread insertThread;
+	int c_id;
+	
+	
 	public ComplexPanel(Connection con) {
 		
 		this.con=con;
@@ -61,7 +66,7 @@ public class ComplexPanel extends JPanel implements ActionListener {
 		ra_regist = new JRadioButton("건물등록");
 		t_path = new JTextField(20);
 		group = new ButtonGroup();
-
+		
 		// 라디오 그룹지정
 		group.add(ra_add);
 		group.add(ra_regist);
@@ -89,7 +94,7 @@ public class ComplexPanel extends JPanel implements ActionListener {
 		bt_regist.setPreferredSize(new Dimension(100, 50));
 		bt_regist.setBorder(new LineBorder(Color.black, 3));
 		bt_regist.setFont(new Font("굴림", Font.PLAIN, 25));
-		bt_regist.setBackground(Color.orange);
+		bt_regist.setBackground(Color.PINK);
 		bt_regist.setFocusPainted(false);
 
 		bt_confirm.setPreferredSize(new Dimension(100, 50));
@@ -113,7 +118,7 @@ public class ComplexPanel extends JPanel implements ActionListener {
 
 		p_menu.setPreferredSize(new Dimension(700, 50));
 		p_menu.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 10));
-		p_menu.setBackground(Color.orange);
+		p_menu.setBackground(Color.PINK);
 
 		p_center.setPreferredSize(new Dimension(700, 300));
 		p_center.setBackground(Color.white);
@@ -208,6 +213,7 @@ public class ComplexPanel extends JPanel implements ActionListener {
 		setSize(700, 700);
 		
 		info();
+		
 	}
 
 	// 등록 버튼 이벤트 메서드
@@ -219,14 +225,14 @@ public class ComplexPanel extends JPanel implements ActionListener {
 		String sql;
 		String complex = mp.t_complex.getText();
 		// 등록했을때 동 데이터에 입력하기
-
+		
 		sql = "INSERT INTO COMPLEX(complex_id,COMPLEX_NAME)VALUES (seq_complex.nextval,?)";
 
 		try {
 			
 			if(complex.toString().length()!=0){
 			pstmt = con.prepareStatement(sql);
-			pstmt.setString(1, complex+"동");
+			pstmt.setString(1, complex+" 동");
 			int sq = pstmt.executeUpdate();
 			con.setAutoCommit(false);
 
@@ -246,7 +252,7 @@ public class ComplexPanel extends JPanel implements ActionListener {
 			if (rs.next()) {
 				complex_list.add(rs.getInt("currval"));
 			}
-			System.out.println(complex_list.size());
+			System.out.println("이거는 컴플렉스 아이디"+complex_list.get(0));
 
 			// 호수 구하기
 
@@ -279,7 +285,7 @@ public class ComplexPanel extends JPanel implements ActionListener {
 				ss = vec.get(i);
 
 				pstmt = con.prepareStatement(sql);
-				pstmt.setString(1, ss+"호");
+				pstmt.setString(1, ss+" 호");
 				pstmt.setInt(2, c_id);
 				int sq1 = pstmt.executeUpdate();
 				complex_list.removeAll(complex_list);
@@ -289,7 +295,7 @@ public class ComplexPanel extends JPanel implements ActionListener {
 					System.out.println("동입력성공");				
 					
 					try {
-						controller.upDate();
+						
 					} catch (Exception e) {
 						// TODO Auto-generated catch block
 						e.printStackTrace();
@@ -336,17 +342,68 @@ public class ComplexPanel extends JPanel implements ActionListener {
 		}
 
 	}
+	
+	
+
 	public boolean checkInputOnlyNumberAndAlphabet(){
 		return flag;
 		
 	}
 	
 	
-	
-	
-
-
-	
+	//테이블 고유값 구하는 메서드
+		public void Unique(){
+			unique.removeAll(unique);
+			PreparedStatement pstmt=null;
+			ResultSet rs=null;
+			
+			String sql="select complex_name from complex order by complex.COMPLEX_ID asc";
+			
+			try {
+				pstmt=con.prepareStatement(sql);
+				rs=pstmt.executeQuery();
+				
+				while(rs.next()){
+					Vector vec1=new Vector<>();
+					String[] split=rs.getString("complex_name").split("\\s");
+					vec1.add(split[0]);
+			
+					unique.add(vec1);
+					
+				}
+				
+			} catch (SQLException e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}finally {
+				if(rs!=null){
+					try {
+						rs.close();
+					} catch (SQLException e) {
+						// TODO Auto-generated catch block
+						e.printStackTrace();
+					}
+				}
+			}
+		}
+		//고유값 중복 찾기
+		public void serch(){
+			for (int i = 0; i < unique.size(); i++) {
+				String data=unique.get(i).get(0).toString();
+				System.out.println(unique.size());
+				System.out.println(data+"=="+mp.t_complex.getText());
+				if(data.equals(mp.t_complex.getText().toString())){
+					uniq=false;
+					System.out.println("이미 입력");
+					JOptionPane.showMessageDialog(this, "이미 입력된 동입니다.");
+					return;
+				}
+				else{
+					uniq=true;
+					
+				}
+			}	
+		}	
 	//안내선 변경 이벤트 
 	public void info(){
 		if(flag==true){
@@ -359,16 +416,19 @@ public class ComplexPanel extends JPanel implements ActionListener {
 
 	// 취소 버튼 이벤트 메서드
 	public void cancle() {
-		mp.t_complex.setText(null);
+		serch();
+		/*	mp.t_complex.setText(null);
 		mp.t_floor2.setText(null);
 		mp.t_unit2.setText(null);
-
+*/
 	}
 
 	// 테이블 확인 메서드
 	public void confirm() {
+	
 		controller = new TableController();
-
+		controller.upDate();
+		
 	}
 
 	// 라디오와 버튼에 이벤트 부여
@@ -376,7 +436,10 @@ public class ComplexPanel extends JPanel implements ActionListener {
 	public void actionPerformed(ActionEvent e) {
 		Object obj = e.getSource();
 		if (obj == bt_regist) {
-			regist();
+			Unique();
+			serch();
+			if(uniq==true){	
+				regist();}
 		} else if (obj == bt_cancle) {
 			cancle();
 		} else if (obj == bt_confirm) {

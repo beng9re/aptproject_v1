@@ -5,7 +5,6 @@ import java.awt.Choice;
 import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
-import java.awt.GridLayout;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.KeyAdapter;
@@ -40,7 +39,6 @@ import org.apache.poi.hssf.usermodel.HSSFRow;
 import org.apache.poi.hssf.usermodel.HSSFSheet;
 import org.apache.poi.hssf.usermodel.HSSFWorkbook;
 
-import db.DBManager;
 import dto.Aptuser;
 import dto.Invoice;
 
@@ -226,10 +224,10 @@ public class Admin_UserView extends JPanel implements ActionListener {
 			option = "aptuser_regdate";
 		} else if (data.equals("거주여부")) {
 			option = "aptuser_live";
-		} else if (data.equals("동")) {
-			option = "complex_name";
-		} else if (data.equals("호")) {
-			option = "unit_name";
+//		} else if (data.equals("동")) {
+//			option = "complex_name";
+//		} else if (data.equals("호")) {
+//			option = "unit_name";
 		}
 
 		String sql = "select aptuser_id 주민ID,aptuser_name 이름 ,aptuser_phone 전화번호, aptuser_regdate 등록날짜, aptuser_live 거주여부, complex_name 동 ,unit_name 호  from view_ac where "
@@ -272,10 +270,10 @@ public class Admin_UserView extends JPanel implements ActionListener {
 			option = "aptuser_regdate";
 		} else if (data.equals("거주여부")) {
 			option = "aptuser_live";
-		} else if (data.equals("동")) {
-			option = "complex_name";
-		} else if (data.equals("호")) {
-			option = "unit_name";
+//		} else if (data.equals("동")) {
+//			option = "complex_name";
+//		} else if (data.equals("호")) {
+//			option = "unit_name";
 		}
 
 		String sql = "update " + tableName + " set " + option + "=" + "'" + value + "' ";

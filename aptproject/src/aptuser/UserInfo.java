@@ -242,7 +242,8 @@ public abstract class UserInfo extends JPanel implements ActionListener {
 	// 회원 식별 바코드 생성 메서드
 	private void barcodeOption() {
 		String barcodeData = null;
-		if (((JTextField) fieldData.get("바코드")).getText().equals("")) {
+		barcodeData = ((JTextField) fieldData.get("바코드")).getText();
+		if (barcodeData.equals("")) {
 			// 바코드 생성
 			barcodeData = mkBarcode();
 			JOptionPane.showMessageDialog(this, "바코드가 생성되었습니다");
