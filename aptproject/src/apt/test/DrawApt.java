@@ -15,7 +15,6 @@ public class DrawApt extends JPanel{
 	
 	public DrawApt(){
 		la_name=new JLabel("");
-		aptPanel=new NewAptPanel();
 		
 		addMouseListener(new MouseAdapter() {
 			@Override
