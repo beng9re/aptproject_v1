@@ -9,12 +9,15 @@ import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
 import java.awt.event.ItemListener;
+import java.awt.event.MouseAdapter;
+import java.awt.event.MouseEvent;
 import java.sql.Connection;
 import java.sql.PreparedStatement;
 import java.sql.ResultSet;
 import java.sql.SQLException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Set;
 import java.util.TreeMap;
 import java.util.TreeSet;
 import java.util.Vector;
@@ -27,7 +30,7 @@ import db.DBManager;
 import dto.AptStorageDto;
 import dto.ComplexDto;
 
-public class NewAptPanel extends JPanel implements ActionListener {
+public class NewAptPanel extends JPanel implements ActionListener{
 	JPanel p_north, p_center;
 	JButton bt_check;
 	Choice choice;
@@ -38,7 +41,6 @@ public class NewAptPanel extends JPanel implements ActionListener {
 	// 호수를 담는 벡터
 	Vector<ComplexDto> complexData = new Vector<ComplexDto>();
 	// 동을 담는 벡터
-	
 	ArrayList<Integer> Apt=new ArrayList<Integer>();
 
 	
@@ -61,10 +63,11 @@ public class NewAptPanel extends JPanel implements ActionListener {
 	String selectedComplex;
 	
 	Connection con;
-	DBManager manager = DBManager.getInstance();
+	
+	protected String unitN;
 
-	public NewAptPanel() {
-		con = manager.getConnection();
+	public NewAptPanel(Connection con) {
+		this.con = con;
 		setLayout(null);
 		bt_check = new JButton("조회");
 		p_north = new JPanel();
@@ -92,7 +95,7 @@ public class NewAptPanel extends JPanel implements ActionListener {
 		p_center.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 10));
 
 		p_north.setBounds(0, 30, 700, 80);
-		p_north.setBackground(Color.pink);
+		p_north.setBackground(Color.orange);
 		p_north.add(choice);
 		p_north.add(bt_check);
 		p_north.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 30));
@@ -111,6 +114,8 @@ public class NewAptPanel extends JPanel implements ActionListener {
 			}
 		});
 		bt_check.addActionListener(this);
+		
+		
 
 		setPreferredSize(new Dimension(700, 700));
 		setBackground(Color.WHITE);
@@ -139,6 +144,7 @@ public class NewAptPanel extends JPanel implements ActionListener {
 
 				complexData.add(dto);
 				choice.add(dto.getComplex_name());
+			
 
 			}
 
@@ -168,6 +174,7 @@ public class NewAptPanel extends JPanel implements ActionListener {
 
 	// 화면에 뿌릴 호수 구하기
 	public void getUnit() {
+		Apt.removeAll(Apt);
 		//kingMap.remove(kingMap);
 		PreparedStatement pstmt = null;
 		ResultSet rs = null;
@@ -184,7 +191,7 @@ public class NewAptPanel extends JPanel implements ActionListener {
 				
 				pstmt.setString(1, selectedComplex);
 				rs = pstmt.executeQuery();
-				
+				SideApt.la_info.setText(selectedComplex);
 			}
 			//unitData.removeAll(unitData); 데이터 비우기
 			
@@ -223,7 +230,6 @@ public class NewAptPanel extends JPanel implements ActionListener {
 
 	}
 	public void sortunit(){
-		
 		unitTotal = new TreeMap<Integer, TreeSet<Integer>>();
 		int res = 0;
 		TreeSet<Integer> unitList = null;
@@ -244,22 +250,23 @@ public class NewAptPanel extends JPanel implements ActionListener {
 	public void createApt() {
 		p_center.removeAll();
 		list.removeAll(list);
-		for (int i = 1; i <= unitTotal.size(); i++) {
+		for (Integer ut : unitTotal.keySet()) {
 
-			int fl = i*100;
-			ArrayList<Integer> unitList = new ArrayList<Integer>(unitTotal.get(Integer.valueOf(i)));
+			int fl = ut*100;
+			ArrayList<Integer> unitList = new ArrayList<Integer>(unitTotal.get(ut));
 			for (Integer unitNum : unitList) {
 				DrawApt drawApt = new DrawApt();
 				String yORn = null;
-				String unitN = Integer.toString(fl+unitNum);
+				
+				unitN = Integer.toString(fl+unitNum);
 				
 				//물건이 왔는데 안가져 갔다.
 				 if (unitInvoice.get(selectedComplex+"-"+unitN+" 호N")!=null){	
-					drawApt.setBackground(Color.red);
-					
-				
-					
+					drawApt.setBackground(Color.orange);
+							
 				}
+				 
+				
 				drawApt.la_name.setText(unitN);
 				list.add(drawApt);
 				
@@ -301,12 +308,7 @@ public class NewAptPanel extends JPanel implements ActionListener {
 				unitInvoice.put(rs.getString("complex_name")+"-"+rs.getString("unit_name")+rs.getString("invoice_takeflag"),rs.getInt("invoice_id"));
 				
 			}
-			
-			
-			
-			
-			
-			
+
 			Boxset();
 			
 		} catch (SQLException e) {

@@ -26,6 +26,7 @@ public class AptnewMain extends JFrame{
 	setVisible(true);
 	setDefaultCloseOperation(EXIT_ON_CLOSE);
 		
+	
 	}
 
 	public static void main(String[] args) {
