@@ -88,20 +88,23 @@ public class ComplexPanel extends JPanel implements ActionListener {
 		bt_cancle.setPreferredSize(new Dimension(100, 50));
 		bt_cancle.setBorder(new LineBorder(Color.black, 3));
 		bt_cancle.setFont(new Font("±¼¸²", Font.PLAIN, 25));
-		bt_cancle.setBackground(Color.LIGHT_GRAY);
+		bt_cancle.setForeground(Color.white);
+		bt_cancle.setBackground(Color.black);
 		bt_cancle.setFocusPainted(false);
 
 		bt_regist.setPreferredSize(new Dimension(100, 50));
 		bt_regist.setBorder(new LineBorder(Color.black, 3));
 		bt_regist.setFont(new Font("±¼¸²", Font.PLAIN, 25));
-		bt_regist.setBackground(Color.PINK);
+		bt_regist.setBackground(Color.black);
 		bt_regist.setFocusPainted(false);
-
+		bt_regist.setForeground(Color.white);
+		
 		bt_confirm.setPreferredSize(new Dimension(100, 50));
 		bt_confirm.setBorder(new LineBorder(Color.black, 3));
 		bt_confirm.setFont(new Font("±¼¸²", Font.PLAIN, 20));
-		bt_confirm.setBackground(Color.LIGHT_GRAY);
+		bt_confirm.setBackground(Color.black);
 		bt_confirm.setFocusPainted(false);
+		bt_confirm.setForeground(Color.white);
 
 		/*
 		 * bt_excel.setPreferredSize(new Dimension(100, 30));
@@ -118,14 +121,15 @@ public class ComplexPanel extends JPanel implements ActionListener {
 
 		p_menu.setPreferredSize(new Dimension(700, 50));
 		p_menu.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 10));
-		p_menu.setBackground(Color.PINK);
+		p_menu.setBackground(Color.black);
 
 		p_center.setPreferredSize(new Dimension(700, 300));
 		p_center.setBackground(Color.white);
 
 		p_south.setPreferredSize(new Dimension(700, 200));
 		p_south.setLayout(new FlowLayout(FlowLayout.CENTER, 30, 40));
-
+		p_south.setBackground(new Color(247,146,30));
+		
 		// ¹öÆ°¿¡ ÀÌº¥Æ® ºÎ¿©
 
 		bt_regist.addActionListener(this);

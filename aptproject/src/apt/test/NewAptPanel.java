@@ -5,7 +5,6 @@ import java.awt.Color;
 import java.awt.Dimension;
 import java.awt.FlowLayout;
 import java.awt.Font;
-import java.awt.Window;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.awt.event.ItemEvent;
@@ -21,19 +20,12 @@ import java.util.TreeSet;
 import java.util.Vector;
 
 import javax.swing.JButton;
-import javax.swing.JLabel;
 import javax.swing.JPanel;
 import javax.swing.border.LineBorder;
 
-import com.sun.javafx.collections.MappingChange.Map;
-import com.sun.javafx.scene.paint.GradientUtils.Parser;
-
-import complex.regist.table.TableController;
 import db.DBManager;
-import dto.AptDto;
 import dto.AptStorageDto;
 import dto.ComplexDto;
-import dto.Unit;
 
 public class NewAptPanel extends JPanel implements ActionListener {
 	JPanel p_north, p_center;
@@ -95,11 +87,11 @@ public class NewAptPanel extends JPanel implements ActionListener {
 
 		// 패널 디자인
 
-		p_center.setBackground(Color.CYAN);
-		p_center.setBounds(190, 160, 300, 500);
+		p_center.setBackground(Color.cyan);
+		p_center.setBounds(90, 125, 400, 530);
 		p_center.setLayout(new FlowLayout(FlowLayout.CENTER, 20, 10));
 
-		p_north.setBounds(0, 50, 700, 100);
+		p_north.setBounds(0, 30, 700, 80);
 		p_north.setBackground(Color.pink);
 		p_north.add(choice);
 		p_north.add(bt_check);
@@ -260,8 +252,13 @@ public class NewAptPanel extends JPanel implements ActionListener {
 				DrawApt drawApt = new DrawApt();
 				String yORn = null;
 				String unitN = Integer.toString(fl+unitNum);
-				if (unitInvoice.get(selectedComplex+"-"+unitN+" 호")!=null) {
-					unitN += "택배";
+				
+				//물건이 왔는데 안가져 갔다.
+				 if (unitInvoice.get(selectedComplex+"-"+unitN+" 호N")!=null){	
+					drawApt.setBackground(Color.red);
+					
+				
+					
 				}
 				drawApt.la_name.setText(unitN);
 				list.add(drawApt);
@@ -291,7 +288,7 @@ public class NewAptPanel extends JPanel implements ActionListener {
 		PreparedStatement pstmt=null;
 		ResultSet rs=null;
 		
-		String sql="select complex_name,unit_name,invoice_id";
+		String sql="select complex_name,unit_name,invoice_id,INVOICE_TAKEFLAG";
 				sql+=" FROM VIEW_ACIS";
 				System.out.println(sql);
 		try {
@@ -301,9 +298,15 @@ public class NewAptPanel extends JPanel implements ActionListener {
 			unitInvoice=new HashMap<String, Integer>();
 			
 			while(rs.next()){		
-				unitInvoice.put(rs.getString("complex_name")+"-"+rs.getString("unit_name"),rs.getInt("invoice_id"));
+				unitInvoice.put(rs.getString("complex_name")+"-"+rs.getString("unit_name")+rs.getString("invoice_takeflag"),rs.getInt("invoice_id"));
 				
 			}
+			
+			
+			
+			
+			
+			
 			Boxset();
 			
 		} catch (SQLException e) {
