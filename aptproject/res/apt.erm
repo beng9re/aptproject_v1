@@ -11,8 +11,8 @@
 	</page_setting>
 	<category_index>0</category_index>
 	<zoom>1.0</zoom>
-	<x>43</x>
-	<y>170</y>
+	<x>0</x>
+	<y>0</y>
 	<default_color>
 		<r>128</r>
 		<g>128</g>
@@ -27,8 +27,8 @@
 	<font_size>9</font_size>
 	<settings>
 		<database>Oracle</database>
-		<capital>false</capital>
-		<table_style></table_style>
+		<capital>true</capital>
+		<table_style>funny</table_style>
 		<notation></notation>
 		<notation_level>0</notation_level>
 		<notation_expand_group>true</notation_expand_group>
@@ -135,7 +135,7 @@
 			</connections>
 			<display>false</display>
 			<creation_date>2017-04-13 14:16:06</creation_date>
-			<updated_date>2017-04-25 16:24:35</updated_date>
+			<updated_date>2017-04-27 22:11:43</updated_date>
 			<model_property>
 				<name>프로젝트명</name>
 				<value></value>
@@ -959,11 +959,11 @@
 		<table>
 			<id>0</id>
 			<height>86</height>
-			<width>214</width>
+			<width>242</width>
 				<font_name>맑은 고딕</font_name>
 				<font_size>9</font_size>
-			<x>81</x>
-			<y>12</y>
+			<x>75</x>
+			<y>35</y>
 			<color>
 				<r>128</r>
 				<g>128</g>
@@ -1056,11 +1056,11 @@
 		<table>
 			<id>1</id>
 			<height>107</height>
-			<width>198</width>
+			<width>214</width>
 				<font_name>맑은 고딕</font_name>
 				<font_size>9</font_size>
 			<x>89</x>
-			<y>144</y>
+			<y>158</y>
 			<color>
 				<r>128</r>
 				<g>128</g>
