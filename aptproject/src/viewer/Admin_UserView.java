@@ -347,65 +347,66 @@ public class Admin_UserView extends JPanel implements ActionListener {
 				adminModel.setValueAt(name, row, col);
 				tableChanged(row, col);
 			}
-		} else if (colName.equals("호")) {
-			PreparedStatement pstmt = null;
-			String option = "unit_name";
-			String name = JOptionPane.showInputDialog(colName + "를 수정해 주세요");
-			String sql = "update unit set " + option + "=" + "'" + name + "' ";
-			sql += "where " + option + "= '" + value + "'";
-
-			try {
-				pstmt = con.prepareStatement(sql);
-				pstmt.executeUpdate();
-
-				if (name != null) {
-					adminModel.setValueAt(name, row, col);
-					for (int i = 0; i < table.getRowCount(); i++) {
-						table.setValueAt(name, i, col);
-					}
-					table.updateUI();
-				}
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			} finally {
-				if (pstmt != null) {
-					try {
-						pstmt.close();
-					} catch (SQLException e1) {
-						e1.printStackTrace();
-					}
-				}
-			}
-		} else if (colName.equals("동")) {
-			PreparedStatement pstmt = null;
-			String option = "complex_name";
-			String name = JOptionPane.showInputDialog(colName + "를 수정해 주세요");
-
-			String sql = "update complex set " + option + "=" + "'" + name + "' ";
-			sql += "where " + option + "= '" + value + "'";
-
-			try {
-				pstmt = con.prepareStatement(sql);
-				pstmt.executeUpdate();
-
-				if (name != null) {
-					adminModel.setValueAt(name, row, col);
-					for (int i = 0; i < table.getRowCount(); i++) {
-						table.setValueAt(name, i, col);
-					}
-					table.updateUI();
-				}
-			} catch (SQLException e1) {
-				e1.printStackTrace();
-			} finally {
-				if (pstmt != null) {
-					try {
-						pstmt.close();
-					} catch (SQLException e1) {
-						e1.printStackTrace();
-					}
-				}
-			}
-		}
+		} 
+//		else if (colName.equals("호")) {
+//			PreparedStatement pstmt = null;
+//			String option = "unit_name";
+//			String name = JOptionPane.showInputDialog(colName + "를 수정해 주세요");
+//			String sql = "update unit set " + option + "=" + "'" + name + "' ";
+//			sql += "where " + option + "= '" + value + "'";
+//
+//			try {
+//				pstmt = con.prepareStatement(sql);
+//				pstmt.executeUpdate();
+//
+//				if (name != null) {
+//					adminModel.setValueAt(name, row, col);
+//					for (int i = 0; i < table.getRowCount(); i++) {
+//						table.setValueAt(name, i, col);
+//					}
+//					table.updateUI();
+//				}
+//			} catch (SQLException e1) {
+//				e1.printStackTrace();
+//			} finally {
+//				if (pstmt != null) {
+//					try {
+//						pstmt.close();
+//					} catch (SQLException e1) {
+//						e1.printStackTrace();
+//					}
+//				}
+//			}
+//		} else if (colName.equals("동")) {
+//			PreparedStatement pstmt = null;
+//			String option = "complex_name";
+//			String name = JOptionPane.showInputDialog(colName + "를 수정해 주세요");
+//
+//			String sql = "update complex set " + option + "=" + "'" + name + "' ";
+//			sql += "where " + option + "= '" + value + "'";
+//
+//			try {
+//				pstmt = con.prepareStatement(sql);
+//				pstmt.executeUpdate();
+//
+//				if (name != null) {
+//					adminModel.setValueAt(name, row, col);
+//					for (int i = 0; i < table.getRowCount(); i++) {
+//						table.setValueAt(name, i, col);
+//					}
+//					table.updateUI();
+//				}
+//			} catch (SQLException e1) {
+//				e1.printStackTrace();
+//			} finally {
+//				if (pstmt != null) {
+//					try {
+//						pstmt.close();
+//					} catch (SQLException e1) {
+//						e1.printStackTrace();
+//					}
+//				}
+//			}
+//		}
 	}
 }
