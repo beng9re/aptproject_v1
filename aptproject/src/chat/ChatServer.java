@@ -8,7 +8,6 @@ package chat;
 
 import java.awt.BorderLayout;
 import java.awt.Color;
-import java.awt.Component;
 import java.awt.Dimension;
 import java.awt.Font;
 import java.io.IOException;
@@ -51,7 +50,7 @@ public class ChatServer extends JPanel {
 		scroll = new JScrollPane(pnl_content, JScrollPane.VERTICAL_SCROLLBAR_ALWAYS, JScrollPane.HORIZONTAL_SCROLLBAR_NEVER);
 		
 		title.setFont(new Font("¸¼Àº °íµñ", Font.BOLD, 24));
-		title.setBorder(BorderFactory.createLineBorder(Color.PINK, 4));
+		title.setBorder(BorderFactory.createLineBorder(new Color(247, 146, 30), 4));
 		title.setPreferredSize(new Dimension(690,60));
 		scroll.getVerticalScrollBar().setUnitIncrement(15);
 		pnl_content.setBorder(BorderFactory.createEmptyBorder(20, 50, 20, 50));
