@@ -132,8 +132,8 @@ public class SendMessage extends JFrame implements ActionListener{
 		table.setRowHeight(20);
 		
 		// color
-		p_north.setBackground(Color.PINK);
-		p_south.setBackground(Color.PINK);
+		p_north.setBackground(new Color(247, 146, 30));
+		p_south.setBackground(new Color(247, 146, 30));
 		
 		init();
 		

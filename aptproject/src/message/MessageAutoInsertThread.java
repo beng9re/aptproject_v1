@@ -31,7 +31,7 @@ public class MessageAutoInsertThread extends  Thread{
 		threadFlag=true;
 		thread = new Thread(this);
 		thread.start();
-		System.out.println("MessageInsertThread 생성");
+		//System.out.println("MessageInsertThread 생성");
 	}
 	
 	public void setThreadFlag(boolean threadFlag){
@@ -133,7 +133,7 @@ public class MessageAutoInsertThread extends  Thread{
 					// 송신 메세지가 생성된 경우.
 					if (result1!=0){
 						// 수신 메세지 Insert : 해당 유저의 가족들 모두에게 보낸다.
-						System.out.println("insert send_message count : "+result1);
+						//System.out.println("insert send_message count : "+result1);
 						sql.delete(0, sql.length());
 						sql.append("insert into recieve_message (msg_recieve_id, msg_send_id, msg_recv_user_id, msg_recieve_time) ");
 						sql.append(" select seq_recieve_message.nextval msg_recieve_id, ? msg_send_id \n");
@@ -149,7 +149,7 @@ public class MessageAutoInsertThread extends  Thread{
 						sql.append("                      and    r.msg_send_id = s.msg_send_id \n");
 						sql.append("                      and    r.msg_recv_user_id = fml.aptuser_id) \n");
 						
-						System.out.println(sql.toString());
+						//System.out.println(sql.toString());
 						
 						pstmt = con.prepareStatement(sql.toString());
 						pstmt.setInt(1, msg_send_id);
@@ -157,7 +157,7 @@ public class MessageAutoInsertThread extends  Thread{
 						pstmt.setInt(3, msg_send_id);
 						pstmt.setInt(4, invoice_id);
 						int result2 = pstmt.executeUpdate();
-						System.out.println("insert recieve_message count : "+result2);
+						//System.out.println("insert recieve_message count : "+result2);
 					}
 				}				
 			}
@@ -169,7 +169,7 @@ public class MessageAutoInsertThread extends  Thread{
 				e1.printStackTrace();
 			}
 			e.printStackTrace();
-			System.out.println("MessageAutoInsertThread SQLException Error : "+e.getErrorCode() + "-"+ e.getMessage());
+			//System.out.println("MessageAutoInsertThread SQLException Error : "+e.getErrorCode() + "-"+ e.getMessage());
 		} finally {
 			
 			// Commit;
@@ -385,7 +385,7 @@ public class MessageAutoInsertThread extends  Thread{
 			try {
 				runCount++;
 				if (runCount==1){
-					System.out.println("MessageAutoInsertThread  start");
+					//System.out.println("MessageAutoInsertThread  start");
 				}
 				thread.sleep(1000);
 				//System.out.println("MessageThread start");
