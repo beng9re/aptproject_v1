@@ -62,6 +62,8 @@ public class Admin_UserView extends JPanel implements ActionListener {
 
 	Vector<Aptuser> user = new Vector<Aptuser>();
 	Vector<Invoice> invoice = new Vector<Invoice>();
+	
+	Color color = new Color(247,146,30);
 
 	public Admin_UserView(Connection con) {
 		this.con = con;
@@ -143,11 +145,11 @@ public class Admin_UserView extends JPanel implements ActionListener {
 			}
 		});
 
-		p_north.setBackground(Color.PINK);
-		rb_user.setBackground(Color.PINK);
-		p_north_left.setBackground(Color.PINK);
-		p_south.setBackground(Color.PINK);
-		p_north_right.setBackground(Color.PINK);
+		p_north.setBackground(color);
+		rb_user.setBackground(color);
+		p_north_left.setBackground(color);
+		p_south.setBackground(color);
+		p_north_right.setBackground(color);
 		bt_copy.setBackground(Color.WHITE);
 		bt_find.setBackground(Color.WHITE);
 		bt_xls.setBackground(Color.WHITE);
@@ -205,7 +207,7 @@ public class Admin_UserView extends JPanel implements ActionListener {
 		table.setModel(adminModel = new AdminModel(con));
 		table.setRowSorter(new TableRowSorter(adminModel));
 		JTableHeader header = table.getTableHeader();
-		header.setBackground(Color.PINK);
+		header.setBackground(color);
 		table.updateUI();
 	}
 

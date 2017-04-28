@@ -73,7 +73,7 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 	Vector<Returninv> returninv = new Vector<Returninv>();
 
 	Boolean boxflag;
-
+	Color color = new Color(247,146,30);
 	public Admin_InvoiceView(Connection con) {
 	
 		this.con = con;
@@ -172,14 +172,14 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 			}
 		});
 
-		p_north.setBackground(Color.PINK);
-		rb_allInvoice.setBackground(Color.PINK);
-		rb_invoice.setBackground(Color.PINK);
-		rb_breturn.setBackground(Color.PINK);
-		rb_areturn.setBackground(Color.PINK);
-		p_north_left.setBackground(Color.PINK);
-		p_north_right.setBackground(Color.PINK);
-		p_south.setBackground(Color.PINK);
+		p_north.setBackground(color);
+		rb_allInvoice.setBackground(color);
+		rb_invoice.setBackground(color);
+		rb_breturn.setBackground(color);
+		rb_areturn.setBackground(color);
+		p_north_left.setBackground(color);
+		p_north_right.setBackground(color);
+		p_south.setBackground(color);
 
 		bt_find.setBackground(Color.WHITE);
 		bt_xls.setBackground(Color.WHITE);
@@ -288,7 +288,7 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 		}
 		table.setRowSorter(new TableRowSorter(invoiceModel));
 		JTableHeader header = table.getTableHeader();
-		header.setBackground(Color.PINK);
+		header.setBackground(color);
 	}
 
 	public void selectTable() {
@@ -478,6 +478,8 @@ public class Admin_InvoiceView extends JPanel implements ActionListener {
 			try {
 				pstmt = con.prepareStatement(sql);
 				int result = pstmt.executeUpdate();
+				
+	
 				StringBuffer sb = new StringBuffer();
 				sb.append(
 						"select r.returninv_id 반송ID, r.returninv_barcode 반송바코드 ,i.aptuser_id 회원ID, i.aptuser_name 이름, i.COMPLEX_NAME 동,i.UNIT_NAME 호,r.returninv_time 등록시간, r.returninv_arr 입고시간, r.returninv_dep 출고시간,r.returninv_comment 메모");

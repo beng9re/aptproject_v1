@@ -49,11 +49,12 @@ public class PostBoxMain  extends JFrame{
 		con=DBManager.getInstance().getConnection();
 		p_north=new JPanel();
 		p_north.setPreferredSize(new Dimension(600,80));
-		p_north.setBackground(Color.PINK);
+		p_north.setBackground(new Color(247,146,30));
 		p_north.setLayout(null);
 		
 		p_north.add(lb_title=new JLabel("STORAGE BOX"));
 		lb_title.setFont(new Font("∞ÌµÒ√º", Font.BOLD, 30));
+		lb_title.setForeground(Color.white);
 		lb_title.setBounds(170, 20, 250, 40);
 		
 		p_south=new JPanel();

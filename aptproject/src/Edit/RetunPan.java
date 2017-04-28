@@ -129,21 +129,24 @@ public class RetunPan extends JPanel implements ActionListener{
 		tf_takeTime.setForeground(Color.gray);
 		
 		
-		rple.setBorder(BorderFactory.createLineBorder(Color.pink,2));
-		tf_id.setBorder(BorderFactory.createLineBorder(Color.PINK, 2));
-		tf_code.setBorder(BorderFactory.createLineBorder(Color.PINK, 2));
-		tf_takeTime.setBorder(BorderFactory.createLineBorder(Color.PINK, 2));
+		rple.setBorder(BorderFactory.createLineBorder(new Color(247,146,30),2));
+		tf_id.setBorder(BorderFactory.createLineBorder(new Color(247,146,30),2));
+		tf_code.setBorder(BorderFactory.createLineBorder(new Color(247,146,30), 2));
+		tf_takeTime.setBorder(BorderFactory.createLineBorder(new Color(247,146,30), 2));
 		
 		bt_reset.setBorder(BorderFactory.createLineBorder(Color.white,2));
 		bt_regist.setBorder(BorderFactory.createLineBorder(Color.white,2));
 		
 		p_info.setBackground(Color.white);
-		p_up.setBackground(Color.pink);
-		p_down.setBackground(Color.pink);
-		p_emp.setBackground(Color.pink);
+		p_up.setBackground(new Color(247,146,30));
+		p_down.setBackground(new Color(247,146,30));
+		p_emp.setBackground(new Color(247,146,30));
 		
-		bt_reset.setBackground(new Color(137, 210, 245));
-		bt_regist.setBackground(new Color(137, 210, 245));
+		tf_id.setBackground(Color.WHITE);
+		tf_takeTime.setBackground(Color.WHITE);
+		
+		bt_reset.setBackground(Color.WHITE);
+		bt_regist.setBackground(Color.WHITE);
 		
 		
 		//---------------------------------------------------------------------------- Ãß°¡

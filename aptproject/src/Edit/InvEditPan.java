@@ -128,30 +128,30 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 		
 		
 		//--------------------------------------바탕색
-		ch_block.setBackground(Color.PINK);
-		ch_class.setBackground(Color.pink);
-		ch_id.setBackground(Color.pink);
-		ch_com.setBackground(Color.pink);
 		
-		p_up.setBackground(Color.pink);
+		
+		p_up.setBackground(new Color(247,146,30));
 		p_info.setBackground(Color.white);
-		p_emp.setBackground(new Color(255,255,128));
-		p_down.setBackground(Color.pink);
-	
-		bt_reset.setBackground(new Color(137, 210, 245));
-		bt_regist.setBackground(new Color(137, 210, 245));
+		p_emp.setBackground(new Color(247,146,30));
+		p_down.setBackground(new Color(247,146,30));
+		tf_box.setBackground(Color.white);
+		bt_reset.setBackground(Color.white);
+		bt_regist.setBackground(Color.white);
 		
 		//---------------------------------선색
-		tf_box.setBorder(BorderFactory.createLineBorder(Color.PINK, 2));
-		tf_code.setBorder(BorderFactory.createLineBorder(Color.PINK, 2));
-		bt_reset.setBorder(BorderFactory.createLineBorder(Color.white,2));
-		bt_regist.setBorder(BorderFactory.createLineBorder(Color.white,2));
+		tf_box.setBorder(BorderFactory.createLineBorder(new Color(247,146,30), 2));
+		tf_code.setBorder(BorderFactory.createLineBorder(new Color(247,146,30), 2));
+		bt_reset.setBorder(BorderFactory.createLineBorder(new Color(247,146,30),2));
+		bt_regist.setBorder(BorderFactory.createLineBorder(new Color(247,146,30),2));
+		
+		
 		
 		
 		//----------------라벨 글자관련
 		title.setFont(new  Font("고딕",Font.BOLD , 60));
 		title.setForeground(Color.white);
 		tf_code.setForeground(Color.gray);
+		
 		
 		
 		//---------------------------------------객체추가
