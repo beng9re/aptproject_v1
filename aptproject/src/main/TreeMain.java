@@ -187,7 +187,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		// Style
 		tree.setBorder(BorderFactory.createEmptyBorder(15, 15, 5, 5));
 		bt_exit.setFont(new Font("Default", Font.BOLD, 13));
-		bt_exit.setBackground(Color.PINK);
+		bt_exit.setBackground(new Color(247, 146, 30));
 		//bt_exit.setBorder(BorderFactory.createLineBorder(Color.BLACK, 2));
 
 		// 리스너 연결.
