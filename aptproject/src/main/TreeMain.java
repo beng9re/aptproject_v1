@@ -739,7 +739,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 				curPanel = chartMain;
 			} else if (className.equalsIgnoreCase("NewAptPanel")) {
 				// 아파트 현황
-				NewAptPanel  newAptPanel = new NewAptPanel();
+				NewAptPanel  newAptPanel = new NewAptPanel(con);
 				curPanel = newAptPanel;
 				
 			} else {
