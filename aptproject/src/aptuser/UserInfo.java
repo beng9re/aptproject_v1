@@ -87,6 +87,7 @@ public abstract class UserInfo extends JPanel implements ActionListener {
 		this.btnTxt = btnTxt;
 		this.forUpdate = forUpdate;
 		
+		Color clr = new Color(247, 146, 30);
 		pnl_center = new JPanel();
 		pnl_south = new JPanel();
 		title = new JLabel(titleStr, JLabel.CENTER);
@@ -113,10 +114,10 @@ public abstract class UserInfo extends JPanel implements ActionListener {
 		// 스타일 관련 설정
 		title.setFont(new Font("맑은 고딕", Font.BOLD, 24));
 		title.setPreferredSize(new Dimension(360, 55));
-		title.setBorder(BorderFactory.createLineBorder(Color.LIGHT_GRAY, 2));
-		btn_barcode.setBackground(Color.LIGHT_GRAY);
+		title.setBorder(BorderFactory.createLineBorder(clr, 2));
+		btn_barcode.setBackground(clr);
 		btn_barcode.setPreferredSize(new Dimension(140, 40));
-		btn_confirm.setBackground(Color.LIGHT_GRAY);
+		btn_confirm.setBackground(clr);
 		btn_confirm.setPreferredSize(new Dimension(140, 40));
 		pnl_center.setBorder(BorderFactory.createEmptyBorder(20, 40, 20, 40));
 		pnl_center.setPreferredSize(new Dimension(600, 500));
@@ -242,7 +243,8 @@ public abstract class UserInfo extends JPanel implements ActionListener {
 	// 회원 식별 바코드 생성 메서드
 	private void barcodeOption() {
 		String barcodeData = null;
-		if (((JTextField) fieldData.get("바코드")).getText().equals("")) {
+		barcodeData = ((JTextField) fieldData.get("바코드")).getText();
+		if (barcodeData.equals("")) {
 			// 바코드 생성
 			barcodeData = mkBarcode();
 			JOptionPane.showMessageDialog(this, "바코드가 생성되었습니다");

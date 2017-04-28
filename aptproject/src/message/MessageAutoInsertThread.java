@@ -36,7 +36,7 @@ public class MessageAutoInsertThread extends  Thread{
 	
 	public void setThreadFlag(boolean threadFlag){
 		this.threadFlag = threadFlag;
-		System.out.println("MessageAutoInsertThread -setThreadFlag : threadFlag="+threadFlag);
+		//System.out.println("MessageAutoInsertThread -setThreadFlag : threadFlag="+threadFlag);
 	}
 	
 	// º€¿Â check

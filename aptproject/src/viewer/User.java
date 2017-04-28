@@ -16,6 +16,8 @@ import java.io.FileNotFoundException;
 import java.io.FileOutputStream;
 import java.io.IOException;
 import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.SQLException;
 import java.util.ArrayList;
 
 import javax.swing.ButtonGroup;
@@ -51,6 +53,7 @@ public class User extends JPanel implements ActionListener, ItemListener {
 	Aptuser aptUser;
 	ArrayList<Aptuser> userList;
 	JTextArea area;
+	UserModel userModel;
 
 	public User(ArrayList userList, Connection con) {
 		this.con = con;
@@ -69,8 +72,6 @@ public class User extends JPanel implements ActionListener, ItemListener {
 		rb_b = new JRadioButton("반송 물품");
 		choice = new Choice();
 		area = new JTextArea(4, 60);
-
-		choice.addItem("▼목록을 선택하세요");
 
 		ButtonGroup group = new ButtonGroup();
 		group.add(rb_a);
@@ -98,6 +99,11 @@ public class User extends JPanel implements ActionListener, ItemListener {
 
 		p_north.setPreferredSize(new Dimension(700, 80));
 		p_south.setPreferredSize(new Dimension(700, 80));
+		
+		choice.addItem("전체 목록보기");
+		choice.addItem("내 목록보기");
+		choice.addItem("수령 전 목록보기");
+		choice.addItem("수령 완료 목록보기");
 
 		area.setVisible(false);
 
@@ -107,17 +113,20 @@ public class User extends JPanel implements ActionListener, ItemListener {
 		rb_b.addActionListener(this);
 		choice.addItemListener(this);
 		table.addMouseListener(new MouseAdapter() {
-			@Override
 			public void mouseClicked(MouseEvent e) {
 				int row = table.getSelectedRow();
 				int col = table.getSelectedColumn();
-				if (rb_b.isSelected()) {
+				if (rb_a.isSelected()) {
+					choiceValue();
+				}
+				else if (rb_b.isSelected()) {
 					String memo = (String) table.getValueAt(row, 5);
 					area.setText(memo);
 				}
 			}
 		});
-
+		
+		
 		rb_a.setBackground(Color.pink);
 		rb_b.setBackground(Color.pink);
 		p_north.setBackground(Color.PINK);
@@ -151,7 +160,7 @@ public class User extends JPanel implements ActionListener, ItemListener {
 	}
 
 	public void getList(StringBuffer sb) {
-		UserModel userModel = new UserModel(con, sb);
+		userModel = new UserModel(con, sb);
 		table.setModel(userModel);
 		table.setRowSorter(new TableRowSorter(userModel));
 		JTableHeader header = table.getTableHeader();
@@ -201,27 +210,27 @@ public class User extends JPanel implements ActionListener, ItemListener {
 
 		StringBuffer sb = new StringBuffer();
 		if (rb_a.isSelected()) {
-			if (choice.getSelectedIndex() == 1) {
+			if (choice.getSelectedIndex() == 0) {
 				sb.append(
 						"select i.INVOICE_ID as 상품ID, a.COMPLEX_NAME 동, a.UNIT_NAME 호,a.aptuser_name as 택배주인, i.INVOICE_ARRTIME 입고시간, i.INVOICE_TAKETIME as 수령시간, INVOICE_TAKER as 수령인,i.INVOICE_TAKEFLAG 수령여부");
 				sb.append(" from view_is i inner join view_ac a on i.aptuser_id =a.aptuser_id and a.unit_id=" + unit);
 
 				getList(sb);
-			} else if (choice.getSelectedIndex() == 2) {
+			} else if (choice.getSelectedIndex() == 1) {
 				sb.append(
 						"select i.INVOICE_ID as 상품ID, a.COMPLEX_NAME 동, a.UNIT_NAME 호,a.aptuser_name as 택배주인, i.INVOICE_ARRTIME 입고시간, i.INVOICE_TAKETIME as 수령시간, INVOICE_TAKER as 수령인,i.INVOICE_TAKEFLAG 수령여부");
 				sb.append(" from view_is i inner join view_ac a on i.aptuser_id =a.aptuser_id and a.aptuser_id='" + id
 						+ "'");
 
 				getList(sb);
-			} else if (choice.getSelectedIndex() == 3) {
+			} else if (choice.getSelectedIndex() == 2) {
 				sb.append(
 						"select i.INVOICE_ID as 상품ID, a.COMPLEX_NAME 동, a.UNIT_NAME 호,a.aptuser_name as 택배주인, i.INVOICE_ARRTIME 입고시간, i.INVOICE_TAKETIME as 수령시간, INVOICE_TAKER as 수령인,i.INVOICE_TAKEFLAG 수령여부");
 				sb.append(
 						" from view_is i inner join view_ac a on i.aptuser_id =a.aptuser_id and i.invoice_takeflag ='N' and a.unit_id="
 								+ unit);
 				getList(sb);
-			} else if (choice.getSelectedIndex() == 4) {
+			} else if (choice.getSelectedIndex() == 3) {
 				sb.append(
 						"select i.INVOICE_ID as 상품ID, a.COMPLEX_NAME 동, a.UNIT_NAME 호,a.aptuser_name as 택배주인, i.INVOICE_ARRTIME 입고시간, i.INVOICE_TAKETIME as 수령시간, INVOICE_TAKER as 수령인,i.INVOICE_TAKEFLAG 수령여부");
 				sb.append(
@@ -230,7 +239,7 @@ public class User extends JPanel implements ActionListener, ItemListener {
 				getList(sb);
 			}
 		} else if (rb_b.isSelected()) {
-			if (choice.getSelectedIndex() == 1) {
+			if (choice.getSelectedIndex() == 0) {
 				sb.append(
 						"select returninv_id as 상품, i.aptuser_name as 택배주인 ,returninv_barcode as 바코드,returninv_arr as 입고시간 ,returninv_dep as 출고시간,returninv_comment as 메모");
 				sb.append(
@@ -240,7 +249,7 @@ public class User extends JPanel implements ActionListener, ItemListener {
 								+ unit);
 
 				getList(sb);
-			} else if (choice.getSelectedIndex() == 2) {
+			} else if (choice.getSelectedIndex() == 1) {
 				sb.append(
 						"select returninv_id as 상품, i.aptuser_name as 택배주인 ,returninv_barcode as 바코드,returninv_arr as 입고시간 ,returninv_dep as 출고시간,returninv_comment as 메모 ");
 				sb.append(
@@ -250,7 +259,7 @@ public class User extends JPanel implements ActionListener, ItemListener {
 								+ id + "'");
 
 				getList(sb);
-			} else if (choice.getSelectedIndex() == 3) {
+			} else if (choice.getSelectedIndex() == 2) {
 				sb.append(
 						"select returninv_id as 상품, i.aptuser_name as 택배주인 ,returninv_barcode as 바코드,returninv_arr as 입고시간 ,returninv_dep as 출고시간,returninv_comment as 메모");
 				sb.append(
@@ -258,9 +267,9 @@ public class User extends JPanel implements ActionListener, ItemListener {
 				sb.append(
 						" from invoice i inner join aptuser a on a.aptuser_id = i.aptuser_id) i on i.invoice_id = r.invoice_id and r.returninv_dep is null and i.unit_id="
 								+ unit);
-
+				
 				getList(sb);
-			} else if (choice.getSelectedIndex() == 4) {
+			} else if (choice.getSelectedIndex() == 3) {
 				sb.append(
 						"select returninv_id as 상품, i.aptuser_name as 택배주인 ,returninv_barcode as 바코드,returninv_arr as 입고시간 ,returninv_dep as 출고시간,returninv_comment as 메모 ");
 				sb.append(
@@ -315,6 +324,64 @@ public class User extends JPanel implements ActionListener, ItemListener {
 			choice.addItem("반송 전 목록보기");
 			choice.addItem("반송 완료  목록보기");
 		}
+	}
+	
+	public void choiceValue(){
+		int row = table.getSelectedRow();
+		int col = table.getSelectedColumn();
 
+		if (rb_a.isSelected()&&choice.getSelectedIndex()==2) {
+			String name = JOptionPane.showInputDialog("수령인의 성함을 기입해 주세요");
+		
+			if (name != null) {
+				userModel.setValueAt(name, row, 6);
+				tableChanged(row, name);
+			}
+		} 
+	}
+	
+	public void tableChanged(int row,String name) {
+		int unit = userList.get(0).getUnit_id();
+		if (rb_a.isSelected()) {
+			PreparedStatement pstmt = null;
+
+			String sql = "update invoice  set invoice_taker =" + "'" + name
+					+ "', invoice_taketime= sysdate, invoice_takeflag='Y'";
+			sql += " where invoice_id=" + table.getValueAt(row, 0);
+
+			try {
+				pstmt = con.prepareStatement(sql);
+				int result = pstmt.executeUpdate();
+				StringBuffer sb = new StringBuffer();
+				sb.append(
+						"select i.INVOICE_ID as 상품ID, a.COMPLEX_NAME 동, a.UNIT_NAME 호,a.aptuser_name as 택배주인, i.INVOICE_ARRTIME 입고시간, i.INVOICE_TAKETIME as 수령시간, INVOICE_TAKER as 수령인,i.INVOICE_TAKEFLAG 수령여부");
+				sb.append(
+						" from view_is i inner join view_ac a on i.aptuser_id =a.aptuser_id and i.invoice_takeflag ='N' and a.unit_id="
+								+ unit);
+				getList(sb);
+				String a = (String) userModel.getValueAt(row, 5);
+				String b= (String) userModel.getValueAt(row, 6);
+				table.setValueAt(a, row, 5);
+				table.setValueAt(a, row, 6);
+
+				if (result != 0) {
+					table.updateUI();
+				}
+
+			} catch (SQLException e1) {
+
+				e1.printStackTrace();
+			} finally {
+				if (pstmt != null) {
+					try {
+						pstmt.close();
+					} catch (SQLException e1) {
+						e1.printStackTrace();
+					}
+				}
+			}
+		}
+
+	
 	}
 }

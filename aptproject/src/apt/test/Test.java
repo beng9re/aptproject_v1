@@ -13,15 +13,16 @@ import java.util.Vector;
 
 import db.DBManager;
 
-public class Test {
+public class Test{
 	
 	Connection con;
 	PreparedStatement pstm;
 	ResultSet rs;
 	HashMap<Integer, HashMap> maptop=new HashMap<Integer, HashMap>();
 	HashMap<Integer,Integer> mapdown=new HashMap<Integer,Integer>();
-	ArrayList<Integer> arrayList=new ArrayList<Integer>();
-	
+	Vector<Integer> arrayList=new Vector<Integer>();
+	Vector<Vector> aptvec=new Vector<Vector>();
+	Vector vc;
 	public Test(String name) {
 		con=DBManager.getInstance().getConnection();
 		String sql="select unit_name from view_cput where complex_name=? order by unit_name asc";
@@ -30,39 +31,36 @@ public class Test {
 			pstm.setString(1, name);
 			rs=pstm.executeQuery();
 			
-			int count =1;
-			int count2=0;
-			
 			
 			while (rs.next()){
+				
 				int value=Integer.parseInt(rs.getString("unit_name").split("\\s")[0]);
-				
-				int div=100*count;
-				
-				
 				arrayList.add(value);
 				
 				
-				/*
-			//	System.out.println("value="+value);
-					if(value>1000){}
-					else if((int)value/div!=1){
-						
-					//	mapdown.put(count2, value);
-						count2++;
+			/*	
+				
+				rs.next();
+				
+				
+				try {
+				} catch (Exception e) {
+					// TODO Auto-generated catch block
 					
-					}else{
-						
-						// maptop.put(count,mapdown);
-						count2=0;
-					//	mapdown=new HashMap<Integer,Integer>();
-						count++;
-					}
+				
+					
+				}
+				*/
+			
+			
+			
+				
+				
 				
 			
-			}
-			*/
-			
+				
+				
+				
 			}
 			paint2();
 			} catch (SQLException e) {
@@ -74,13 +72,39 @@ public class Test {
 	}
 	public void paint2(){
 		
-
 		Descending des=new Descending();
-		Collections.sort(vec,des);
+		Collections.sort(arrayList,des);
 		
-		for(int i=0;i<vec.size();i++){
-			System.out.println(vec.get(i));
+		
+		
+		int count =1;
+		int index=1;
+		int result=0;
+
+		int value2=arrayList.get(1);
+		index=(int)value2/100;//15
+		for(int i=1;i<arrayList.size();i++){
+			try {
+				vc=new Vector();
+				value2=arrayList.get(i);	
+				System.out.println(value2);
+				vc.add(value2);
+				result=((int)value2/(100*index));
+			} catch (Exception e) {
+			
+				index--;
+				aptvec.add(vc);
+			
+			}
+			
+		
 		}
+			for(int i=1;i<aptvec.size();i++){
+				for(int j=0; j<aptvec.get(i).size();j++){
+					System.out.print(aptvec.get(i).get(j)+"\t");
+				}
+				System.out.println();
+			}
 			
 	}
 		/*
@@ -123,8 +147,6 @@ public class Test {
 	}
 
 
-	
-	
 	public static void main(String[] args) {
 		new Test("103 µ¿");
 	}
