@@ -166,8 +166,8 @@ public class SendMessageList extends JFrame implements ActionListener , Runnable
 		area.setEditable(false);
 		
 		// Color
-		p_north.setBackground(Color.PINK);
-		p_center_south.setBackground(Color.PINK);
+		p_north.setBackground(new Color(247, 146, 30));
+		p_center_south.setBackground(new Color(247, 146, 30));
 		
 		init();
 		
