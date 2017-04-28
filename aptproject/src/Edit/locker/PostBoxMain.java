@@ -71,7 +71,7 @@ public class PostBoxMain  extends JFrame{
 		
 		
 		
-		setBounds(100, 100, 550, 600);
+		setBounds(157, 195, 550, 600);
 	
 	
 		

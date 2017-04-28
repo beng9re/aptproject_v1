@@ -22,14 +22,14 @@ public class PopUpTable extends JFrame{
 	AdminModel ad;
 	Connection con;
 	RetunPan rp;
-	
+	StringBuffer sql;
 	int clickCount=-1;
 	int selectrow;
 	
 	public PopUpTable(RetunPan rp,Connection con) {
 		this.con=con;
 		this.rp=rp;
-		StringBuffer sql =new StringBuffer();
+		 sql =new StringBuffer();
 		
 		
 		String name=rp.userList.get(0).getAptuser_id();
@@ -40,14 +40,17 @@ public class PopUpTable extends JFrame{
 	
 			sql.append("select invoice_id as 송장ID, invoice_barcode as 송장바코드, invoice_arrtime as 등록시간,");
 			sql.append("invoice_taker as 수령인, invoice_taketime as 수령시간, invoice_takeflag as 수령여부, aptuser_id as 회원ID ");
-			sql.append(" from view_acis where invoice_id not in(");
-			sql.append("select invoice_id  from RETURNINV r where r.INVOICE_ID  in(");
+			sql.append(" from view_acis where invoice_id in");
+			sql.append("(select v.invoice_id  from view_acis v where  aptuser_id="+"'"+name+"') and (");
+			sql.append(" invoice_id not in(");
+			sql.append("select invoice_id  from RETURNINV r where r.INVOICE_ID in(");
 			sql.append("select v.invoice_id  from view_acis v where  aptuser_id=");
 			sql.append("'");
 			sql.append(name);
-			sql.append("'))");
+			sql.append("')))  ");
+			//sql.append("(select v.invoice_id  from view_acis v where  aptuser_id="+"'"+name+"')");
 			
-		
+		System.out.println(sql.toString());
 
 		ad=new AdminModel(con);
 		System.out.println(sql.toString());
@@ -78,6 +81,7 @@ public class PopUpTable extends JFrame{
 					}else{
 						return;
 					}
+					ad.getList(sql.toString());
 				}
 				else if(clickCount==0){
 					

@@ -601,6 +601,7 @@ public class InvEditPan extends JPanel implements ActionListener,ItemListener{
 		public void mouseClicked(MouseEvent e) {
 			pm.setVisible(true);
 			
+			
 		};
 	};
 	
