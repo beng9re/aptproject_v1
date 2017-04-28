@@ -124,7 +124,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 		// Logo Image
 		try {
 			// Image Url
-			URL url = this.getClass().getResource("/·Î°í.jpg");
+			URL url = this.getClass().getResource("/Apms.jpg");
 			image = ImageIO.read(url);
 		} catch (IOException e1) {
 			e1.printStackTrace();
