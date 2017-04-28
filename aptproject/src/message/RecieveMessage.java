@@ -151,8 +151,8 @@ public class RecieveMessage extends JFrame implements ActionListener, Runnable {
 		la_new_msg_chk.setForeground(Color.BLUE);
 		t_title.setBackground(Color.WHITE);
 		area.setBackground(Color.WHITE);
-		p_north.setBackground(Color.PINK);
-		p_south.setBackground(Color.PINK);
+		p_north.setBackground(new Color(247, 146, 30));
+		p_south.setBackground(new Color(247, 146, 30));
 		
 		init();
 		

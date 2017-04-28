@@ -783,7 +783,7 @@ public class TreeMain extends JFrame implements TreeSelectionListener, ActionLis
 	    	}
 	    } else {
 	    	//JOptionPane.showMessageDialog(this, "화면이 존재하지 않습니다.");
-	    	System.out.println(menuName+" Class 미존재");
+	    	//System.out.println(menuName+" Class 미존재");
 	    }
 
 		p_center.updateUI();
