@@ -44,6 +44,7 @@ public class Login extends JFrame implements ActionListener {
 		pnl_field = new JPanel();
 		pnl_bot = new JPanel();
 		lb_id = new JLabel("I  D");
+		
 		lb_pw = new JLabel("P  W");
 		txf_id = new JTextField(15);
 		txf_pw = new JPasswordField(15);

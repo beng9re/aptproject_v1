@@ -15,7 +15,7 @@ public class DrawApt extends JPanel{
 		
 		add(la_name);
 		setBackground(Color.white);
-		setPreferredSize(new Dimension(50, 50));
+		setPreferredSize(new Dimension(25, 25));
 		setVisible(true);
 	
 	}
